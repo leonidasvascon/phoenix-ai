@@ -37,7 +37,13 @@ export class Runtime {
         ...task
       },
       logs: [],
-      outputs: {}
+      outputs: {},
+      quality: {
+        passed: true,
+        attempts: 0,
+        failed_agents: [],
+        final_score: 0
+      }
     };
 
     try {
@@ -67,13 +73,16 @@ export class Runtime {
 
       const executionTime = Number(((performance.now() - context.startedAt) / 1000).toFixed(3));
       const score = typeof context.outputs.score === "number" ? context.outputs.score : 0;
+      context.quality.final_score = score || context.quality.final_score;
+      context.quality.passed = context.quality.failed_agents.length === 0;
 
       return {
         status: "success",
         execution_id: context.executionId,
         execution_time: executionTime,
         pipeline: agentSteps.map((step) => step.agent ?? step.id),
-        score,
+        score: context.quality.final_score,
+        quality: context.quality,
         output: pickOutputFields(context.outputs, context.pipeline.outputFields),
         logs: context.logs
       };
@@ -88,6 +97,10 @@ export class Runtime {
         execution_time: executionTime,
         pipeline: context.pipeline?.steps.map((step) => step.agent ?? step.id) ?? [],
         score: 0,
+        quality: {
+          ...context.quality,
+          passed: false
+        },
         output: {
           error: message
         },

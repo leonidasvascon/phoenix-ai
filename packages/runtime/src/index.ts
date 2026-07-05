@@ -3,6 +3,10 @@ export { AgentRunner } from "./agents/agent-runner.ts";
 export { PromptAgent } from "./agents/prompt-agent.ts";
 export { MockProvider } from "./providers/mock-provider.ts";
 export { OpenAIProvider } from "./providers/openai-provider.ts";
+export { runQualityGate } from "./quality/quality-gate.ts";
+export { parseJsonOutput } from "./quality/json-parser.ts";
+export { scoreAgentOutput } from "./quality/quality-scorer.ts";
+export { validateAgentOutput } from "./quality/schema-validator.ts";
 export type {
   Agent,
   AgentInput,

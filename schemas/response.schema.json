@@ -10,6 +10,7 @@
     "execution_time",
     "pipeline",
     "score",
+    "quality",
     "output"
   ],
   "properties": {
@@ -39,6 +40,49 @@
       "minimum": 0,
       "maximum": 100
     },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "attempts",
+        "failed_agents",
+        "final_score"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "attempts": {
+          "type": "number",
+          "minimum": 0
+        },
+        "failed_agents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "agent",
+              "reason"
+            ],
+            "properties": {
+              "agent": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "final_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
     "output": {
       "type": "object"
     },
@@ -48,4 +92,3 @@
     }
   }
 }
-

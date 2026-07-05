@@ -94,4 +94,5 @@ Saida esperada:
 - Brand DNA carregado
 - pipeline carregado
 - agentes mockados executados
+- Quality Gate executado
 - JSON final com `status`, `pipeline`, `score` e `output`

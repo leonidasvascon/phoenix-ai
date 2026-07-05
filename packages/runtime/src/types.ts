@@ -54,6 +54,7 @@ export type ExecutionContext = {
   pipeline?: Pipeline;
   logs: ExecutionLog[];
   outputs: Record<string, unknown>;
+  quality: QualitySummary;
 };
 
 export type AgentInput = {
@@ -75,7 +76,19 @@ export type RuntimeResponse = {
   execution_time: number;
   pipeline: string[];
   score: number;
+  quality: QualitySummary;
   output: Record<string, unknown>;
   logs: ExecutionLog[];
 };
 
+export type FailedAgent = {
+  agent: string;
+  reason: string;
+};
+
+export type QualitySummary = {
+  passed: boolean;
+  attempts: number;
+  failed_agents: FailedAgent[];
+  final_score: number;
+};
