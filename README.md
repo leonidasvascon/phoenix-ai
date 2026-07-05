@@ -240,3 +240,28 @@ A tela mostra:
 - caminho do pacote em `output/`
 - indicador de fallback
 - botao para copiar caminho
+
+## Analytics Dashboard
+
+Sprint 16 adiciona dashboard de analytics no Studio.
+
+Tela:
+
+```text
+http://127.0.0.1:3000/analytics
+```
+
+Dados consumidos:
+
+- `GET /analytics`
+
+A tela mostra:
+
+- total de execucoes
+- taxa de sucesso
+- score medio
+- tempo medio
+- custo estimado total
+- agentes com mais falhas
+- temas mais usados
+- marcas mais usadas

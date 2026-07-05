@@ -201,6 +201,11 @@ select {
   margin: 40px auto;
 }
 
+.analytics-shell {
+  width: min(1120px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -317,6 +322,66 @@ select {
   color: var(--muted);
 }
 
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.metric-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.metric-card p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.metric-card strong {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.analytics-lists {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.analytics-lists article {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.analytics-lists h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+
+.analytics-lists ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.analytics-lists li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+  color: var(--foreground);
+}
+
 @media (max-width: 860px) {
   .studio-shell {
     grid-template-columns: 1fr;
@@ -330,9 +395,15 @@ select {
     grid-template-columns: 1fr;
   }
 
-  .history-shell {
+  .history-shell,
+  .analytics-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
+  }
+
+  .metric-grid,
+  .analytics-lists {
+    grid-template-columns: 1fr;
   }
 
   .execution-card header,
