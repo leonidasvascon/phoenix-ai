@@ -180,6 +180,7 @@ Sprint 13 inicia o primeiro produto visual da Phoenix AI.
 Rodar o Studio:
 
 ```bash
+npm run api:dev
 npm run studio:dev
 ```
 
@@ -191,4 +192,25 @@ Tela inicial:
 - escolher formato
 - gerar pacote publicavel sem usar terminal
 
-Por enquanto, o Studio usa uma rota interna em `apps/studio/app/api/tasks/route.ts` como ponte para o Runtime. A Sprint 14 deve separar essa camada em `apps/api`.
+## Phoenix API
+
+Sprint 14 separa o Studio do Runtime.
+
+Rodar a API:
+
+```bash
+npm run api:dev
+```
+
+Endpoints v1:
+
+- `POST /tasks`
+- `GET /executions`
+- `GET /analytics`
+- `GET /brands`
+
+Fluxo atualizado:
+
+```text
+Studio -> API -> Runtime -> Media Composer -> Output
+```

@@ -30,10 +30,12 @@ type TaskInput = {
   format: TaskFormat;
 };
 
+const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+
 function PhoenixStudio() {
   const mutation = useMutation({
     mutationFn: async (task: TaskInput): Promise<StudioResult> => {
-      const response = await fetch("/api/tasks", {
+      const response = await fetch(`${apiUrl}/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

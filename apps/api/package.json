@@ -1,0 +1,17 @@
+{
+  "name": "@phoenix-ai/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --experimental-strip-types src/server.ts"
+  },
+  "dependencies": {
+    "@phoenix-ai/media-composer": "workspace:*",
+    "@phoenix-ai/runtime": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "typescript": "^5.8.3"
+  }
+}

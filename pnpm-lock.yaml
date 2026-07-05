@@ -8,6 +8,22 @@ importers:
 
   .: {}
 
+  apps/api:
+    dependencies:
+      '@phoenix-ai/media-composer':
+        specifier: workspace:*
+        version: link:../../packages/media-composer
+      '@phoenix-ai/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.10
+        version: 24.13.2
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
   apps/studio:
     dependencies:
       '@phoenix-ai/media-composer':
