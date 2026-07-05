@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { ExecutionContext, RuntimeResponse, Task } from "./types.ts";
 import { loadBrand } from "./loaders/brand-loader.ts";
 import { loadPipeline } from "./loaders/pipeline-loader.ts";
-import { AgentRegistry } from "./registry/agent-registry.ts";
+import { AgentRunner } from "./agents/agent-runner.ts";
 import { logStep } from "./utils/logger.ts";
 
 function validateTask(task: Task): void {
@@ -51,18 +51,11 @@ export class Runtime {
       logStep(context, "pipeline_loader", "success", `Pipeline loaded: ${context.pipeline.name}.`);
 
       const agentSteps = context.pipeline.steps.filter((step) => step.type === "agent");
-      const registry = AgentRegistry.withMockAgents(
-        agentSteps.map((step) => step.agent ?? step.id)
-      );
+      const runner = new AgentRunner();
 
       for (const step of agentSteps) {
         const agentId = step.agent ?? step.id;
-        const agent = registry.get(agentId);
-        const result = await agent.execute({
-          task: context.task,
-          brand: context.brand,
-          context
-        });
+        const result = await runner.run(step, context.task, context.brand, context);
 
         context.outputs = {
           ...context.outputs,
@@ -103,4 +96,3 @@ export class Runtime {
     }
   }
 }
-

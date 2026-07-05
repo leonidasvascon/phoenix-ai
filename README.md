@@ -76,6 +76,18 @@ Rodar exemplo:
 npm run example:task
 ```
 
+Provider mock explicito:
+
+```bash
+PHOENIX_PROVIDER=mock npm run example:task
+```
+
+Provider OpenAI:
+
+```bash
+PHOENIX_PROVIDER=openai npm run example:task
+```
+
 Saida esperada:
 
 - task validada
