@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export type ExecutionCardData = {
   status: "success" | "error";
   execution_id: string;
@@ -78,9 +80,12 @@ export function ExecutionCard({ execution }: Readonly<{ execution: ExecutionCard
 
       <footer>
         <code>{outputPath}</code>
-        <button type="button" onClick={copyOutputPath}>
-          Copiar caminho
-        </button>
+        <div className="execution-actions">
+          <Link href={`/executions/${execution.execution_id}`}>Ver pacote</Link>
+          <button type="button" onClick={copyOutputPath}>
+            Copiar caminho
+          </button>
+        </div>
       </footer>
     </article>
   );

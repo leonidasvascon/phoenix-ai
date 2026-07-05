@@ -206,6 +206,7 @@ Endpoints v1:
 
 - `POST /tasks`
 - `GET /executions`
+- `GET /executions/:id`
 - `GET /analytics`
 - `GET /brands`
 
@@ -240,6 +241,31 @@ A tela mostra:
 - caminho do pacote em `output/`
 - indicador de fallback
 - botao para copiar caminho
+- botao para abrir o preview do pacote
+
+## Output Preview
+
+Sprint 17 adiciona visualizacao do pacote gerado sem abrir a pasta manualmente.
+
+Tela:
+
+```text
+http://127.0.0.1:3000/executions/{execution_id}
+```
+
+Dados consumidos:
+
+- `GET /executions/:id`
+
+A tela mostra:
+
+- dados da execucao
+- `metadata.json`
+- `roteiro.md`
+- `legenda.txt`
+- `hashtags.txt`
+- `video_prompt.txt`
+- `thumbnail_prompt.txt`
 
 ## Analytics Dashboard
 

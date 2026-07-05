@@ -4,6 +4,19 @@ import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { aggregateMetrics, readExecutionFiles, Runtime, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
 
 type TaskRequest = Partial<Task>;
+type MediaPackageReference = {
+  directory: string;
+  files: string[];
+};
+
+const mediaPackageFiles = [
+  "metadata.json",
+  "roteiro.md",
+  "legenda.txt",
+  "hashtags.txt",
+  "video_prompt.txt",
+  "thumbnail_prompt.txt"
+] as const;
 
 function isValidFormat(format: unknown): format is Task["format"] {
   return typeof format === "string" && ["reel", "carousel", "story"].includes(format);
@@ -38,7 +51,7 @@ export async function executeTask(input: TaskRequest) {
   };
 }
 
-export async function listExecutions(): Promise<RuntimeResponse[]> {
+export async function listExecutions(): Promise<Array<RuntimeResponse & { media_package?: MediaPackageReference }>> {
   const executionsPath = resolve(process.cwd(), ".storage", "executions");
   const mediaPackages = await findMediaPackages();
   let files: string[] = [];
@@ -68,6 +81,38 @@ export async function listExecutions(): Promise<RuntimeResponse[]> {
     });
 }
 
+export async function getExecutionPackage(executionId: string) {
+  const executions = await listExecutions();
+  const execution = executions.find((item) => item.execution_id === executionId);
+
+  if (!execution) {
+    return null;
+  }
+
+  if (!execution.media_package) {
+    return {
+      execution,
+      files: Object.fromEntries(mediaPackageFiles.map((file) => [file, ""]))
+    };
+  }
+
+  const packagePath = resolve(process.cwd(), execution.media_package.directory);
+  const files = await Promise.all(
+    mediaPackageFiles.map(async (file) => {
+      try {
+        return [file, await readFile(resolve(packagePath, file), "utf8")] as const;
+      } catch {
+        return [file, ""] as const;
+      }
+    })
+  );
+
+  return {
+    execution,
+    files: Object.fromEntries(files)
+  };
+}
+
 export async function getAnalytics() {
   const executions = await readExecutionFiles();
 
@@ -83,8 +128,8 @@ export function listBrands() {
   ];
 }
 
-async function findMediaPackages(root = resolve(process.cwd(), "output")): Promise<Map<string, { directory: string; files: string[] }>> {
-  const packages = new Map<string, { directory: string; files: string[] }>();
+async function findMediaPackages(root = resolve(process.cwd(), "output")): Promise<Map<string, MediaPackageReference>> {
+  const packages = new Map<string, MediaPackageReference>();
 
   async function visit(directory: string): Promise<void> {
     let entries: Awaited<ReturnType<typeof readdir>> = [];

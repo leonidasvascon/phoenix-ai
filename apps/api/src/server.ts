@@ -39,7 +39,7 @@ const server = createServer(async (request, response) => {
   }
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
-  const route = routes[url.pathname];
+  const route = url.pathname.startsWith("/executions/") ? handleExecutionsRoute : routes[url.pathname];
 
   if (!route) {
     notFound(response);
