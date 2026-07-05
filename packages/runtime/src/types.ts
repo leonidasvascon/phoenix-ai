@@ -48,6 +48,25 @@ export type KnowledgeContext = {
   by_category: Record<string, KnowledgeDocument[]>;
 };
 
+export type RecentOutput = {
+  execution_id: string;
+  theme: string;
+  format: string;
+  hook?: string;
+  cta?: string;
+  score?: number;
+  created_at: string;
+};
+
+export type BrandMemory = {
+  brand_id: string;
+  used_hooks: string[];
+  used_themes: string[];
+  used_ctas: string[];
+  used_storytelling: string[];
+  recent_outputs: RecentOutput[];
+};
+
 export type PipelineStep = {
   id: string;
   type: "system" | "agent";
@@ -76,6 +95,7 @@ export type ExecutionContext = {
   brand?: Brand;
   pipeline?: Pipeline;
   knowledge?: KnowledgeContext;
+  memory?: BrandMemory;
   logs: ExecutionLog[];
   outputs: Record<string, unknown>;
   quality: QualitySummary;

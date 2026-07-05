@@ -12,4 +12,6 @@ importers:
 
   packages/media-composer: {}
 
+  packages/memory-engine: {}
+
   packages/runtime: {}

@@ -23,6 +23,7 @@ export type {
   Brand,
   ExecutionContext,
   ExecutionLog,
+  BrandMemory,
   KnowledgeContext,
   KnowledgeDocument,
   Pipeline,

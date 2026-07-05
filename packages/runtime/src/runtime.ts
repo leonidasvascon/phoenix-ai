@@ -7,6 +7,7 @@ import { logStep } from "./utils/logger.ts";
 import { createExecutionContext } from "./execution/execution-context.ts";
 import { FilePersistenceAdapter } from "./persistence/file-persistence-adapter.ts";
 import type { PersistenceAdapter } from "./persistence/persistence-adapter.ts";
+import { FileMemoryStore, retrieveMemory, writeMemory } from "../../memory-engine/src/index.ts";
 
 function validateTask(task: Task): void {
   const required: Array<keyof Task> = ["brand", "objective", "platform", "format", "theme"];
@@ -30,6 +31,10 @@ function pickOutputFields(source: Record<string, unknown>, fields: string[]): Re
   return output;
 }
 
+function getStorytellingIds(context: { knowledge?: { by_category: Record<string, Array<{ id: string }>> } }): string[] {
+  return context.knowledge?.by_category.storytelling?.map((document) => document.id) ?? [];
+}
+
 export class Runtime {
   static async execute(task: Task, persistence: PersistenceAdapter = new FilePersistenceAdapter()): Promise<RuntimeResponse> {
     const context = createExecutionContext(task);
@@ -43,6 +48,10 @@ export class Runtime {
 
       context.knowledge = await loadKnowledge(context.task, context.brand);
       logStep(context, "knowledge_loader", "success", `Knowledge loaded: ${context.knowledge.documents.length} documents.`);
+
+      const memoryStore = new FileMemoryStore();
+      context.memory = await retrieveMemory(memoryStore, context.brand.brand.id);
+      logStep(context, "memory_loader", "success", `Memory loaded for brand: ${context.memory.brand_id}.`);
 
       context.pipeline = await loadPipeline(context.task.format);
       logStep(context, "pipeline_loader", "success", `Pipeline loaded: ${context.pipeline.name}.`);
@@ -69,6 +78,16 @@ export class Runtime {
       context.execution.duration_ms = Math.round(performance.now() - context.startedAt);
       context.execution.provider = process.env.PHOENIX_PROVIDER ?? "mock";
       context.execution.task = context.task;
+      context.memory = await writeMemory(memoryStore, {
+        memory: context.memory,
+        execution_id: context.executionId,
+        theme: context.task.theme,
+        format: context.task.format,
+        output: context.outputs,
+        score: context.quality.final_score,
+        storytelling: getStorytellingIds(context)
+      });
+      logStep(context, "memory_writer", "success", `Memory updated for brand: ${context.memory.brand_id}.`);
 
       const response: RuntimeResponse = {
         status: "success",

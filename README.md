@@ -143,3 +143,32 @@ Fluxo atualizado:
 ```text
 Task -> Brand Loader -> Knowledge Loader -> Pipeline -> Agents -> Media Composer
 ```
+
+## Memory Engine
+
+Sprint 12 adiciona memoria operacional por marca para reduzir repeticao e alimentar os agentes com historico.
+
+Estrutura inicial:
+
+- `packages/memory-engine/`: carrega, recupera e grava memoria por marca.
+- `.storage/memory/{brand_id}.json`: memoria local gerada em runtime.
+
+Memoria v1 registra:
+
+- `used_hooks`
+- `used_themes`
+- `used_ctas`
+- `used_storytelling`
+- `recent_outputs`
+
+Fluxo atualizado:
+
+```text
+Task -> Brand Loader -> Knowledge Loader -> Memory Loader -> Pipeline -> Agents -> Quality Gate -> Persistence -> Analytics -> Media Composer
+```
+
+O payload dos agentes agora recebe:
+
+```text
+task + brand + knowledge + memory + previous_outputs
+```
