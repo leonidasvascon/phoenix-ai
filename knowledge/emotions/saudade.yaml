@@ -1,0 +1,18 @@
+id: saudade
+title: Saudade
+objective: Criar ausencia emocional sem explicar demais.
+usage: |
+  Use quando o tema envolver memoria, distancia, silencio ou reencontro.
+  A saudade deve parecer uma presenca que ficou, nao apenas falta.
+keywords:
+  - saudade
+  - ausencia
+  - memoria
+  - silencio
+examples:
+  - Ela nao saiu da historia, so mudou de lugar dentro dele.
+  - Algumas ausencias continuam respondendo em silencio.
+avoid:
+  - voce faz falta
+  - queria voce aqui
+  - sinto sua falta

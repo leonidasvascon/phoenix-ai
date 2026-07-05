@@ -1,0 +1,13 @@
+id: question
+title: Pergunta aberta
+objective: Gerar curiosidade imediata.
+usage: |
+  Comece com uma pergunta que abra uma ferida emocional.
+  Nunca entregue a resposta no primeiro segundo.
+examples:
+  - Voce tambem sente isso quando alguem some devagar?
+  - E se a saudade nao fosse falta, mas aviso?
+avoid:
+  - pergunta generica
+  - resposta no gancho
+  - tom didatico

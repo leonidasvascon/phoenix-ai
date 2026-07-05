@@ -1,0 +1,11 @@
+id: confession
+title: Confissao
+objective: Gerar identificacao por vulnerabilidade.
+usage: |
+  O narrador revela algo que nunca teve coragem de dizer.
+  Funciona melhor em primeira pessoa ou terceira pessoa intima.
+examples:
+  - Ele nunca admitiu, mas esperava ouvir o nome dela em qualquer rua.
+avoid:
+  - explicacao longa
+  - vitimismo

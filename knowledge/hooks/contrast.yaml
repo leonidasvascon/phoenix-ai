@@ -1,0 +1,11 @@
+id: contrast
+title: Contraste emocional
+objective: Criar impacto usando uma virada inesperada.
+usage: |
+  Mostre que a causa aparente nao era a causa real.
+examples:
+  - Ela nao foi embora por falta de amor.
+  - O fim nao comecou no adeus.
+avoid:
+  - contradicao vazia
+  - frase de efeito previsivel

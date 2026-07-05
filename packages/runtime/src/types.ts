@@ -22,7 +22,30 @@ export type Brand = {
   emotions?: string[];
   avoid?: string[];
   success_metrics?: Record<string, unknown>;
+  preferred_hooks?: string[];
+  preferred_storytelling?: string[];
+  preferred_cta?: string;
+  preferred_emotions?: string[];
+  forbidden_patterns?: string[];
   [key: string]: unknown;
+};
+
+export type KnowledgeDocument = {
+  category: string;
+  id: string;
+  title?: string;
+  objective?: string;
+  usage?: string;
+  examples?: string[];
+  avoid?: string[];
+  keywords?: string[];
+  notes?: string;
+  [key: string]: unknown;
+};
+
+export type KnowledgeContext = {
+  documents: KnowledgeDocument[];
+  by_category: Record<string, KnowledgeDocument[]>;
 };
 
 export type PipelineStep = {
@@ -52,6 +75,7 @@ export type ExecutionContext = {
   task: Task;
   brand?: Brand;
   pipeline?: Pipeline;
+  knowledge?: KnowledgeContext;
   logs: ExecutionLog[];
   outputs: Record<string, unknown>;
   quality: QualitySummary;

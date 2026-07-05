@@ -1,0 +1,10 @@
+id: hero
+title: Heroi emocional
+objective: Mostrar transformacao interna.
+usage: |
+  O personagem termina com mais consciencia do que tinha no inicio.
+examples:
+  - Ele nao venceu a saudade. Aprendeu a nao obedecer a ela.
+avoid:
+  - final motivacional generico
+  - autoajuda explicita

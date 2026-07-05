@@ -1,0 +1,17 @@
+id: encanto-intenso
+title: Vocabulario Encanto Intenso
+objective: Manter consistencia lexical da marca.
+usage: |
+  Priorize palavras curtas, sensoriais e cinematograficas.
+keywords:
+  - silencio
+  - olhar
+  - memoria
+  - ausencia
+  - desejo
+  - noite
+avoid:
+  - crush
+  - contatinho
+  - lacrou
+  - ranco

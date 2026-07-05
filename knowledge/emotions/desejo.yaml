@@ -1,0 +1,17 @@
+id: desejo
+title: Desejo
+objective: Criar tensao elegante e implicita.
+usage: |
+  Use desejo como subtexto. A cena deve sugerir, nao declarar.
+keywords:
+  - desejo
+  - tensao
+  - pele
+  - olhar
+examples:
+  - O olhar ficou tempo demais para ser acaso.
+  - Havia coisas que os dois fingiam nao entender.
+avoid:
+  - linguagem vulgar
+  - descricao explicita
+  - erotizacao direta

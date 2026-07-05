@@ -1,0 +1,12 @@
+id: cliches
+title: Cliches romanticos
+objective: Evitar frases prontas e previsiveis.
+usage: |
+  Rejeite formulas muito usadas em perfis de frases.
+examples:
+  - O amor tudo sofre, tudo espera.
+  - Quem ama cuida.
+avoid:
+  - frases famosas
+  - proverbios
+  - melodrama previsivel

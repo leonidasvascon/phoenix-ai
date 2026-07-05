@@ -8,6 +8,8 @@ importers:
 
   .: {}
 
+  packages/knowledge-engine: {}
+
   packages/media-composer: {}
 
   packages/runtime: {}

@@ -60,3 +60,20 @@ success_metrics:
   saves: high
   shares: high
 
+preferred_hooks:
+  - contrast
+  - question
+  - curiosity
+
+preferred_storytelling:
+  - confession
+  - memory
+
+preferred_cta: subtle
+
+preferred_emotions:
+  - saudade
+  - desejo
+
+forbidden_patterns:
+  - cliches

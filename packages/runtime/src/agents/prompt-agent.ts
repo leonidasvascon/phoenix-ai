@@ -7,6 +7,7 @@ function buildUserPayload(input: AgentInput): string {
     {
       task: input.task,
       brand: input.brand,
+      knowledge: input.context.knowledge,
       previous_outputs: input.context.outputs
     },
     null,

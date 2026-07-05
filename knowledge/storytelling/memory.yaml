@@ -1,0 +1,10 @@
+id: memory
+title: Memoria
+objective: Transformar uma lembranca em cena.
+usage: |
+  Use objetos, sons e silencios como gatilhos emocionais.
+examples:
+  - A musica mudou, mas o lugar continuou dizendo o nome dela.
+avoid:
+  - nostalgia obvia
+  - descricao excessiva

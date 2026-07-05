@@ -1,0 +1,11 @@
+id: curiosity
+title: Curiosidade narrativa
+objective: Abrir uma lacuna que o usuario precise completar.
+usage: |
+  Sugira que existe algo escondido por tras da cena.
+examples:
+  - Antes da ultima mensagem, ela ja sabia.
+  - Ele guardou uma resposta que nunca enviou.
+avoid:
+  - suspense artificial
+  - exagero dramatico

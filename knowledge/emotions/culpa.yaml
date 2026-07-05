@@ -1,0 +1,14 @@
+id: culpa
+title: Culpa
+objective: Mostrar conflito interno e arrependimento contido.
+usage: |
+  Use quando o personagem entende tarde demais o peso do que fez.
+keywords:
+  - culpa
+  - arrependimento
+  - tarde demais
+examples:
+  - Ele so entendeu o silencio quando ja nao havia ninguem para ouvir.
+avoid:
+  - moralismo
+  - discurso explicativo

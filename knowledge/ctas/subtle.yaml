@@ -1,0 +1,12 @@
+id: subtle
+title: CTA sutil
+objective: Pedir acao sem quebrar a atmosfera.
+usage: |
+  Convide o usuario a salvar, compartilhar ou comentar sem parecer venda.
+examples:
+  - Salve se isso ja teve nome na sua vida.
+  - Envie para quem entenderia sem explicacao.
+avoid:
+  - clique agora
+  - siga para mais
+  - chamada agressiva

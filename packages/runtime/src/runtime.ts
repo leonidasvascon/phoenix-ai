@@ -1,5 +1,6 @@
 import type { RuntimeResponse, Task } from "./types.ts";
 import { loadBrand } from "./loaders/brand-loader.ts";
+import { loadKnowledge } from "./loaders/knowledge-loader.ts";
 import { loadPipeline } from "./loaders/pipeline-loader.ts";
 import { AgentRunner } from "./agents/agent-runner.ts";
 import { logStep } from "./utils/logger.ts";
@@ -39,6 +40,9 @@ export class Runtime {
 
       context.brand = await loadBrand(context.task.brand);
       logStep(context, "brand_loader", "success", `Brand loaded: ${context.brand.brand.id}.`);
+
+      context.knowledge = await loadKnowledge(context.task, context.brand);
+      logStep(context, "knowledge_loader", "success", `Knowledge loaded: ${context.knowledge.documents.length} documents.`);
 
       context.pipeline = await loadPipeline(context.task.format);
       logStep(context, "pipeline_loader", "success", `Pipeline loaded: ${context.pipeline.name}.`);

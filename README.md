@@ -26,6 +26,7 @@ Isso permite criar novos perfis sem alterar o codigo central da plataforma.
 - `docs/`: documentacao de produto, arquitetura, ADRs e diagramas.
 - `apps/`: aplicacoes da plataforma.
 - `packages/`: engines e bibliotecas internas.
+- `knowledge/`: base de conhecimento criativa usada pelos agentes.
 - `workflows/`: automacoes n8n e GitHub.
 - `prompts/`: prompts por finalidade e contexto.
 - `assets/`: fontes, logos, videos, musicas e templates.
@@ -122,3 +123,23 @@ Saida esperada:
 - JSON final com `status`, `pipeline`, `score`, `quality`, `execution` e `output`
 - execucoes persistidas em `.storage/executions/{execution_id}.json`
 - pacote de midia gerado em `output/YYYY-MM-DD/{format}_NNN/`
+
+## Knowledge Engine
+
+Sprint 11 adiciona uma base de conhecimento versionada para alimentar os agentes antes da geracao de conteudo.
+
+Estrutura inicial:
+
+- `packages/knowledge-engine/`: carrega e recupera conhecimento criativo.
+- `knowledge/emotions/`: mapas emocionais por tema.
+- `knowledge/hooks/`: estrategias de abertura.
+- `knowledge/storytelling/`: estruturas narrativas.
+- `knowledge/ctas/`: chamadas de acao por estilo.
+- `knowledge/forbidden/`: padroes proibidos.
+- `knowledge/vocabulary/`: vocabulario de marca.
+
+Fluxo atualizado:
+
+```text
+Task -> Brand Loader -> Knowledge Loader -> Pipeline -> Agents -> Media Composer
+```
