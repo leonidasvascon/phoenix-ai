@@ -125,4 +125,6 @@ export type ExecutionReport = {
   agents: ExecutionAgentReport[];
   tokens: TokenUsage;
   cost: CostUsage;
+  persisted: boolean;
+  storage?: string;
 };

@@ -96,3 +96,4 @@ Saida esperada:
 - agentes mockados executados
 - Quality Gate executado
 - JSON final com `status`, `pipeline`, `score`, `quality`, `execution` e `output`
+- execucoes persistidas em `.storage/executions/{execution_id}.json`

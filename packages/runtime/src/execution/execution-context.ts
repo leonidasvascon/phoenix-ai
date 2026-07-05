@@ -27,8 +27,8 @@ export function createExecutionContext(task: Task): ExecutionContext {
       duration_ms: 0,
       agents: [],
       tokens: emptyTokenUsage(),
-      cost: emptyCostUsage()
+      cost: emptyCostUsage(),
+      persisted: false
     }
   };
 }
-

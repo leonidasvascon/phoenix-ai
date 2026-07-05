@@ -11,6 +11,8 @@ export { createExecutionContext } from "./execution/execution-context.ts";
 export { recordAgentExecution } from "./execution/execution-log.ts";
 export { addCostUsage, emptyCostUsage, estimateCost } from "./execution/cost-tracker.ts";
 export { addTokenUsage, emptyTokenUsage } from "./execution/token-tracker.ts";
+export { FilePersistenceAdapter } from "./persistence/file-persistence-adapter.ts";
+export { MemoryPersistenceAdapter } from "./persistence/memory-persistence-adapter.ts";
 export type {
   Agent,
   AgentInput,
@@ -23,4 +25,5 @@ export type {
   RuntimeResponse,
   Task
 } from "./types.ts";
+export type { PersistenceAdapter, PersistenceResult } from "./persistence/persistence-adapter.ts";
 export type { LlmMessage, LlmProvider, LlmProviderResponse, LlmRequest } from "./providers/llm-provider.ts";

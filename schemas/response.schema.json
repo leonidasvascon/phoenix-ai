@@ -93,7 +93,8 @@
         "duration_ms",
         "agents",
         "tokens",
-        "cost"
+        "cost",
+        "persisted"
       ],
       "properties": {
         "id": {
@@ -166,6 +167,12 @@
         },
         "cost": {
           "$ref": "#/$defs/cost"
+        },
+        "persisted": {
+          "type": "boolean"
+        },
+        "storage": {
+          "type": "string"
         }
       }
     },

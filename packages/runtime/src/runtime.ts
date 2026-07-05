@@ -4,6 +4,8 @@ import { loadPipeline } from "./loaders/pipeline-loader.ts";
 import { AgentRunner } from "./agents/agent-runner.ts";
 import { logStep } from "./utils/logger.ts";
 import { createExecutionContext } from "./execution/execution-context.ts";
+import { FilePersistenceAdapter } from "./persistence/file-persistence-adapter.ts";
+import type { PersistenceAdapter } from "./persistence/persistence-adapter.ts";
 
 function validateTask(task: Task): void {
   const required: Array<keyof Task> = ["brand", "objective", "platform", "format", "theme"];
@@ -28,7 +30,7 @@ function pickOutputFields(source: Record<string, unknown>, fields: string[]): Re
 }
 
 export class Runtime {
-  static async execute(task: Task): Promise<RuntimeResponse> {
+  static async execute(task: Task, persistence: PersistenceAdapter = new FilePersistenceAdapter()): Promise<RuntimeResponse> {
     const context = createExecutionContext(task);
 
     try {
@@ -63,7 +65,7 @@ export class Runtime {
       context.execution.duration_ms = Math.round(performance.now() - context.startedAt);
       context.execution.provider = process.env.PHOENIX_PROVIDER ?? "mock";
 
-      return {
+      const response: RuntimeResponse = {
         status: "success",
         execution_id: context.executionId,
         execution_time: executionTime,
@@ -74,13 +76,19 @@ export class Runtime {
         output: pickOutputFields(context.outputs, context.pipeline.outputFields),
         logs: context.logs
       };
+
+      const persistenceResult = await persistence.saveExecution(response);
+      response.execution.persisted = persistenceResult.persisted;
+      response.execution.storage = persistenceResult.storage;
+
+      return response;
     } catch (error) {
       const executionTime = Number(((performance.now() - context.startedAt) / 1000).toFixed(3));
       const message = error instanceof Error ? error.message : "Unknown runtime error.";
       context.execution.duration_ms = Math.round(performance.now() - context.startedAt);
       logStep(context, "runtime", "error", message);
 
-      return {
+      const response: RuntimeResponse = {
         status: "error",
         execution_id: context.executionId,
         execution_time: executionTime,
@@ -96,6 +104,12 @@ export class Runtime {
         },
         logs: context.logs
       };
+
+      const persistenceResult = await persistence.saveExecution(response);
+      response.execution.persisted = persistenceResult.persisted;
+      response.execution.storage = persistenceResult.storage;
+
+      return response;
     }
   }
 }
