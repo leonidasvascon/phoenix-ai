@@ -35,3 +35,13 @@ Isso permite criar novos perfis sem alterar o codigo central da plataforma.
 ## Sprint atual
 
 Sprint 1 - Fundacao.
+
+## Documentos principais
+
+- `docs/00-Vision.md`
+- `docs/01-BrandBook.md`
+- `docs/02-AI-Manual.md`
+- `docs/03-Architecture.md`
+- `docs/04-Roadmap.md`
+- `docs/06-PRD.md`
+- `docs/07-Phoenix-AI-Brain.md`
