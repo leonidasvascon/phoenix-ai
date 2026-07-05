@@ -214,3 +214,29 @@ Fluxo atualizado:
 ```text
 Studio -> API -> Runtime -> Media Composer -> Output
 ```
+
+## Execution History
+
+Sprint 15 adiciona historico operacional no Studio.
+
+Tela:
+
+```text
+http://127.0.0.1:3000/history
+```
+
+Dados consumidos:
+
+- `GET /executions`
+
+A tela mostra:
+
+- data e hora
+- marca
+- tema
+- formato
+- score
+- status
+- caminho do pacote em `output/`
+- indicador de fallback
+- botao para copiar caminho

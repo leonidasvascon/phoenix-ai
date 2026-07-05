@@ -40,6 +40,7 @@ export async function executeTask(input: TaskRequest) {
 
 export async function listExecutions(): Promise<RuntimeResponse[]> {
   const executionsPath = resolve(process.cwd(), ".storage", "executions");
+  const mediaPackages = await findMediaPackages();
   let files: string[] = [];
 
   try {
@@ -54,7 +55,17 @@ export async function listExecutions(): Promise<RuntimeResponse[]> {
       .map(async (file) => JSON.parse(await readFile(resolve(executionsPath, file), "utf8")) as RuntimeResponse)
   );
 
-  return executions.sort((a, b) => b.execution_id.localeCompare(a.execution_id));
+  return executions
+    .map((execution) => ({
+      ...execution,
+      media_package: mediaPackages.get(execution.execution_id)
+    }))
+    .sort((a, b) => {
+      const aTimestamp = a.logs[0]?.timestamp ?? "";
+      const bTimestamp = b.logs[0]?.timestamp ?? "";
+
+      return bTimestamp.localeCompare(aTimestamp);
+    });
 }
 
 export async function getAnalytics() {
@@ -70,4 +81,41 @@ export function listBrands() {
       name: "Encanto Intenso"
     }
   ];
+}
+
+async function findMediaPackages(root = resolve(process.cwd(), "output")): Promise<Map<string, { directory: string; files: string[] }>> {
+  const packages = new Map<string, { directory: string; files: string[] }>();
+
+  async function visit(directory: string): Promise<void> {
+    let entries: Awaited<ReturnType<typeof readdir>> = [];
+
+    try {
+      entries = await readdir(directory, { withFileTypes: true });
+    } catch {
+      return;
+    }
+
+    const metadata = entries.find((entry) => entry.isFile() && entry.name === "metadata.json");
+
+    if (metadata) {
+      try {
+        const source = await readFile(resolve(directory, metadata.name), "utf8");
+        const parsed = JSON.parse(source) as { execution_id?: string };
+        if (parsed.execution_id) {
+          packages.set(parsed.execution_id, {
+            directory: directory.replace(`${process.cwd()}\\`, "").replace(`${process.cwd()}/`, ""),
+            files: entries.filter((entry) => entry.isFile()).map((entry) => entry.name)
+          });
+        }
+      } catch {
+        return;
+      }
+    }
+
+    await Promise.all(entries.filter((entry) => entry.isDirectory()).map((entry) => visit(resolve(directory, entry.name))));
+  }
+
+  await visit(root);
+
+  return packages;
 }

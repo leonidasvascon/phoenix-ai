@@ -2,6 +2,7 @@
 
 import { useMutation } from "@tanstack/react-query";
 import type { FormEvent } from "react";
+import { Navigation } from "../components/navigation";
 import { QueryProvider } from "./query-provider";
 
 type TaskFormat = "reel" | "carousel" | "story";
@@ -66,6 +67,7 @@ function PhoenixStudio() {
 
   return (
     <main className="studio-shell">
+      <Navigation />
       <section className="studio-panel">
         <div className="studio-heading">
           <p>Phoenix AI</p>
