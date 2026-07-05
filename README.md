@@ -95,4 +95,4 @@ Saida esperada:
 - pipeline carregado
 - agentes mockados executados
 - Quality Gate executado
-- JSON final com `status`, `pipeline`, `score` e `output`
+- JSON final com `status`, `pipeline`, `score`, `quality`, `execution` e `output`

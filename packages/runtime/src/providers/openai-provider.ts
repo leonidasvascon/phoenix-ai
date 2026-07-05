@@ -1,4 +1,5 @@
-import type { LlmProvider, LlmRequest } from "./llm-provider.ts";
+import type { LlmProvider, LlmProviderResponse, LlmRequest } from "./llm-provider.ts";
+import { estimateCost } from "../execution/cost-tracker.ts";
 
 type OpenAIChatResponse = {
   choices?: Array<{
@@ -6,6 +7,11 @@ type OpenAIChatResponse = {
       content?: string;
     };
   }>;
+  usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  };
 };
 
 function extractJson(content: string): Record<string, unknown> {
@@ -30,7 +36,7 @@ export class OpenAIProvider implements LlmProvider {
     this.model = options?.model ?? process.env.OPENAI_MODEL ?? "gpt-4.1-mini";
   }
 
-  async generateJson(request: LlmRequest): Promise<Record<string, unknown>> {
+  async generateJson(request: LlmRequest): Promise<LlmProviderResponse> {
     if (!this.apiKey) {
       throw new Error("OPENAI_API_KEY is not configured.");
     }
@@ -63,7 +69,17 @@ export class OpenAIProvider implements LlmProvider {
       throw new Error("OpenAI response was empty.");
     }
 
-    return extractJson(content);
+    const usage = {
+      input: data.usage?.prompt_tokens ?? 0,
+      output: data.usage?.completion_tokens ?? 0,
+      total: data.usage?.total_tokens ?? 0
+    };
+
+    return {
+      output: extractJson(content),
+      model: this.model,
+      usage,
+      cost: estimateCost(this.id, this.model, usage)
+    };
   }
 }
-

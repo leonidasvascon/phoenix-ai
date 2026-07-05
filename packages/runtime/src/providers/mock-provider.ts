@@ -1,4 +1,4 @@
-import type { LlmProvider, LlmRequest } from "./llm-provider.ts";
+import type { LlmProvider, LlmProviderResponse, LlmRequest } from "./llm-provider.ts";
 
 const mockOutputs: Record<string, Record<string, unknown>> = {
   research: {
@@ -37,13 +37,26 @@ const mockOutputs: Record<string, Record<string, unknown>> = {
 export class MockProvider implements LlmProvider {
   readonly id = "mock";
 
-  async generateJson(request: LlmRequest): Promise<Record<string, unknown>> {
-    return mockOutputs[request.agentId] ?? {
+  async generateJson(request: LlmRequest): Promise<LlmProviderResponse> {
+    const output = mockOutputs[request.agentId] ?? {
       [request.agentId]: {
         status: "mocked",
         message: `No mock output registered for ${request.agentId}.`
       }
     };
+
+    return {
+      output,
+      model: "mock",
+      usage: {
+        input: 0,
+        output: 0,
+        total: 0
+      },
+      cost: {
+        currency: "USD",
+        estimated: 0
+      }
+    };
   }
 }
-

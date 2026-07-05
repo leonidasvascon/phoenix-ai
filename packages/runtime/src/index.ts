@@ -7,6 +7,10 @@ export { runQualityGate } from "./quality/quality-gate.ts";
 export { parseJsonOutput } from "./quality/json-parser.ts";
 export { scoreAgentOutput } from "./quality/quality-scorer.ts";
 export { validateAgentOutput } from "./quality/schema-validator.ts";
+export { createExecutionContext } from "./execution/execution-context.ts";
+export { recordAgentExecution } from "./execution/execution-log.ts";
+export { addCostUsage, emptyCostUsage, estimateCost } from "./execution/cost-tracker.ts";
+export { addTokenUsage, emptyTokenUsage } from "./execution/token-tracker.ts";
 export type {
   Agent,
   AgentInput,
@@ -19,4 +23,4 @@ export type {
   RuntimeResponse,
   Task
 } from "./types.ts";
-export type { LlmMessage, LlmProvider, LlmRequest } from "./providers/llm-provider.ts";
+export type { LlmMessage, LlmProvider, LlmProviderResponse, LlmRequest } from "./providers/llm-provider.ts";

@@ -55,6 +55,7 @@ export type ExecutionContext = {
   logs: ExecutionLog[];
   outputs: Record<string, unknown>;
   quality: QualitySummary;
+  execution: ExecutionReport;
 };
 
 export type AgentInput = {
@@ -77,6 +78,7 @@ export type RuntimeResponse = {
   pipeline: string[];
   score: number;
   quality: QualitySummary;
+  execution: ExecutionReport;
   output: Record<string, unknown>;
   logs: ExecutionLog[];
 };
@@ -91,4 +93,36 @@ export type QualitySummary = {
   attempts: number;
   failed_agents: FailedAgent[];
   final_score: number;
+};
+
+export type TokenUsage = {
+  input: number;
+  output: number;
+  total: number;
+};
+
+export type CostUsage = {
+  currency: "USD";
+  estimated: number;
+};
+
+export type ExecutionAgentReport = {
+  name: string;
+  status: "success" | "error";
+  provider: string;
+  attempts: number;
+  duration_ms: number;
+  score: number;
+  tokens: TokenUsage;
+  cost: CostUsage;
+  error?: string;
+};
+
+export type ExecutionReport = {
+  id: string;
+  provider: string;
+  duration_ms: number;
+  agents: ExecutionAgentReport[];
+  tokens: TokenUsage;
+  cost: CostUsage;
 };

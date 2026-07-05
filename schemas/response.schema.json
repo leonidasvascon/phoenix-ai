@@ -11,6 +11,7 @@
     "pipeline",
     "score",
     "quality",
+    "execution",
     "output"
   ],
   "properties": {
@@ -83,12 +84,142 @@
         }
       }
     },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "provider",
+        "duration_ms",
+        "agents",
+        "tokens",
+        "cost"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "duration_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "agents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name",
+              "status",
+              "provider",
+              "attempts",
+              "duration_ms",
+              "score",
+              "tokens",
+              "cost"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "success",
+                  "error"
+                ]
+              },
+              "provider": {
+                "type": "string"
+              },
+              "attempts": {
+                "type": "number",
+                "minimum": 0
+              },
+              "duration_ms": {
+                "type": "number",
+                "minimum": 0
+              },
+              "score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "tokens": {
+                "$ref": "#/$defs/tokens"
+              },
+              "cost": {
+                "$ref": "#/$defs/cost"
+              },
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "tokens": {
+          "$ref": "#/$defs/tokens"
+        },
+        "cost": {
+          "$ref": "#/$defs/cost"
+        }
+      }
+    },
     "output": {
       "type": "object"
     },
     "error": {
       "type": "object",
       "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "tokens": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input",
+        "output",
+        "total"
+      ],
+      "properties": {
+        "input": {
+          "type": "number",
+          "minimum": 0
+        },
+        "output": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "currency",
+        "estimated"
+      ],
+      "properties": {
+        "currency": {
+          "type": "string",
+          "enum": [
+            "USD"
+          ]
+        },
+        "estimated": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
     }
   }
 }
