@@ -3,5 +3,8 @@
   "version": "0.1.0",
   "type": "module",
   "main": "composer.ts",
+  "exports": {
+    ".": "./composer.ts"
+  },
   "private": true
 }
