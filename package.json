@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "example:task": "node --experimental-strip-types examples/run-task.ts"
+    "example:task": "node --experimental-strip-types examples/run-task.ts",
+    "example:analytics": "node --experimental-strip-types examples/generate-analytics.ts"
   },
   "workspaces": [
     "packages/*"
   ]
 }
-

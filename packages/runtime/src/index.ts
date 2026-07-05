@@ -13,6 +13,8 @@ export { addCostUsage, emptyCostUsage, estimateCost } from "./execution/cost-tra
 export { addTokenUsage, emptyTokenUsage } from "./execution/token-tracker.ts";
 export { FilePersistenceAdapter } from "./persistence/file-persistence-adapter.ts";
 export { MemoryPersistenceAdapter } from "./persistence/memory-persistence-adapter.ts";
+export { readExecutionFiles } from "./analytics/analytics-reader.ts";
+export { aggregateMetrics } from "./analytics/metrics-aggregator.ts";
 export type {
   Agent,
   AgentInput,
@@ -26,4 +28,5 @@ export type {
   Task
 } from "./types.ts";
 export type { PersistenceAdapter, PersistenceResult } from "./persistence/persistence-adapter.ts";
+export type { AnalyticsReport, RankedMetric } from "./analytics/analytics-report.ts";
 export type { LlmMessage, LlmProvider, LlmProviderResponse, LlmRequest } from "./providers/llm-provider.ts";

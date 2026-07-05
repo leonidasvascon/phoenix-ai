@@ -127,4 +127,5 @@ export type ExecutionReport = {
   cost: CostUsage;
   persisted: boolean;
   storage?: string;
+  task?: Task;
 };

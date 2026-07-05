@@ -64,6 +64,7 @@ export class Runtime {
       context.quality.passed = context.quality.failed_agents.length === 0;
       context.execution.duration_ms = Math.round(performance.now() - context.startedAt);
       context.execution.provider = process.env.PHOENIX_PROVIDER ?? "mock";
+      context.execution.task = context.task;
 
       const response: RuntimeResponse = {
         status: "success",

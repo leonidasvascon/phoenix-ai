@@ -168,6 +168,9 @@
         "cost": {
           "$ref": "#/$defs/cost"
         },
+        "task": {
+          "type": "object"
+        },
         "persisted": {
           "type": "boolean"
         },

@@ -76,6 +76,12 @@ Rodar exemplo:
 npm run example:task
 ```
 
+Gerar analytics a partir das execucoes persistidas:
+
+```bash
+npm run example:analytics
+```
+
 Provider mock explicito:
 
 ```bash
