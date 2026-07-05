@@ -82,6 +82,24 @@ Gerar analytics a partir das execucoes persistidas:
 npm run example:analytics
 ```
 
+Gerar pacote de midia publicavel:
+
+```bash
+npm run example:task
+```
+
+O comando executa o Runtime, persiste a execucao e cria:
+
+```text
+output/YYYY-MM-DD/reel_001/
+  roteiro.md
+  legenda.txt
+  hashtags.txt
+  thumbnail_prompt.txt
+  video_prompt.txt
+  metadata.json
+```
+
 Provider mock explicito:
 
 ```bash
@@ -103,3 +121,4 @@ Saida esperada:
 - Quality Gate executado
 - JSON final com `status`, `pipeline`, `score`, `quality`, `execution` e `output`
 - execucoes persistidas em `.storage/executions/{execution_id}.json`
+- pacote de midia gerado em `output/YYYY-MM-DD/{format}_NNN/`
