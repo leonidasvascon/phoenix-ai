@@ -1,0 +1,62 @@
+version: 1.0
+
+brand:
+  id: encanto-intenso
+  name: Encanto Intenso
+
+purpose: |
+  Criar conteudos cinematograficos que despertem emocoes intensas
+  relacionadas ao desejo, saudade, paixao e conexoes humanas.
+
+personality:
+  mysterious: true
+  elegant: true
+  intelligent: true
+  emotional: true
+  sensual: true
+  vulgar: false
+
+tone:
+  poetic: true
+  direct: false
+  provocative: true
+  romantic: true
+  aggressive: false
+
+writing:
+  max_duration_seconds: 25
+  opening_seconds: 3
+  cta: subtle
+  narration: slow
+
+visual:
+  dark: true
+  cinematic: true
+  realistic: true
+  neon: false
+
+content:
+  platforms:
+    - instagram
+    - tiktok
+    - youtube
+
+emotions:
+  - saudade
+  - desejo
+  - paixao
+  - silencio
+  - reencontro
+
+avoid:
+  - frases prontas
+  - cliches
+  - linguagem vulgar
+  - pornografia
+  - violencia
+
+success_metrics:
+  retention: 70
+  saves: high
+  shares: high
+
