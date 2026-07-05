@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phoenix-ai.local/schemas/brand.schema.json",
+  "title": "Phoenix Brand DNA",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "version",
+    "brand",
+    "purpose",
+    "personality",
+    "tone",
+    "writing",
+    "visual",
+    "content",
+    "emotions",
+    "avoid",
+    "success_metrics"
+  ],
+  "properties": {
+    "version": {
+      "type": [
+        "string",
+        "number"
+      ]
+    },
+    "brand": {
+      "type": "object",
+      "required": [
+        "id",
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "personality": {
+      "type": "object"
+    },
+    "tone": {
+      "type": "object"
+    },
+    "writing": {
+      "type": "object"
+    },
+    "visual": {
+      "type": "object"
+    },
+    "content": {
+      "type": "object"
+    },
+    "emotions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "avoid": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "success_metrics": {
+      "type": "object"
+    }
+  }
+}
+

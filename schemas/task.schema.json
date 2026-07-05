@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phoenix-ai.local/schemas/task.schema.json",
+  "title": "Phoenix Task",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "brand",
+    "objective",
+    "platform",
+    "format",
+    "theme"
+  ],
+  "properties": {
+    "brand": {
+      "type": "string",
+      "minLength": 1
+    },
+    "objective": {
+      "type": "string",
+      "minLength": 1
+    },
+    "platform": {
+      "type": "string",
+      "minLength": 1
+    },
+    "format": {
+      "type": "string",
+      "minLength": 1
+    },
+    "theme": {
+      "type": "string",
+      "minLength": 1
+    },
+    "language": {
+      "type": "string",
+      "default": "pt-BR"
+    }
+  }
+}
+

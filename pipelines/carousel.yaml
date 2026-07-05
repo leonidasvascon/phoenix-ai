@@ -1,0 +1,38 @@
+name: carousel
+version: 1.0
+description: Pipeline for carousel content generation.
+
+input_schema: ../schemas/task.schema.json
+response_schema: ../schemas/response.schema.json
+
+steps:
+  - id: brand_loader
+    type: system
+    description: Load Brand DNA from brand registry.
+
+  - id: research
+    type: agent
+    agent: research
+    description: Extract emotional and content angle insights.
+
+  - id: story_writer
+    type: agent
+    agent: story_writer
+    description: Generate slide narrative.
+
+  - id: reviewer
+    type: agent
+    agent: reviewer
+    description: Score and approve or reject the result.
+    gate:
+      pass_if: score >= 90
+      on_fail: revision_required
+
+output:
+  fields:
+    - title
+    - slides
+    - caption
+    - hashtags
+    - cta
+

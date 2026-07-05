@@ -1,0 +1,35 @@
+name: story
+version: 1.0
+description: Pipeline for story format generation.
+
+input_schema: ../schemas/task.schema.json
+response_schema: ../schemas/response.schema.json
+
+steps:
+  - id: brand_loader
+    type: system
+    description: Load Brand DNA from brand registry.
+
+  - id: hook_specialist
+    type: agent
+    agent: hook_specialist
+    description: Generate story opening.
+
+  - id: story_writer
+    type: agent
+    agent: story_writer
+    description: Generate short sequence.
+
+  - id: reviewer
+    type: agent
+    agent: reviewer
+    description: Score and approve or reject the result.
+    gate:
+      pass_if: score >= 90
+      on_fail: revision_required
+
+output:
+  fields:
+    - frames
+    - cta
+

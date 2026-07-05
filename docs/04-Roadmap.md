@@ -24,6 +24,31 @@ Objetivo: transformar a inteligencia da Phoenix AI em artefatos executaveis.
 - Definir gates de Brand Guardian e Quality Reviewer
 - Preparar execucao futura por n8n ou API
 
+## Sprint 3 - Phoenix Runtime
+
+Objetivo: desenhar o coracao de execucao da plataforma.
+
+- Criar contratos JSON Schema
+- Criar Pipeline Registry
+- Definir Runtime.execute(task)
+- Definir Agent Registry
+- Definir Brand Loader
+- Definir Execution Context
+- Definir estrategia de logging
+- Decidir Runtime como biblioteca TypeScript
+
+## Sprint 4 - Runtime Core
+
+Objetivo: escrever a primeira linha de codigo executavel da Phoenix AI.
+
+- Criar package `runtime`
+- Criar package `agent-sdk`
+- Criar package `brand-loader`
+- Validar task com schema
+- Carregar Brand DNA
+- Carregar pipeline por formato
+- Executar primeira task ponta a ponta
+
 ## Epics
 
 ### Epic 1 - Fundacao

@@ -53,3 +53,15 @@ Artefatos iniciais:
 - `prompts/agents/`
 - `prompts/brands/encanto-intenso.brand.yaml`
 - `prompts/pipelines/content_engine_v1.yaml`
+
+## Phoenix Runtime
+
+Contratos e arquitetura da Sprint 3:
+
+- `schemas/task.schema.json`
+- `schemas/brand.schema.json`
+- `schemas/response.schema.json`
+- `pipelines/reel.yaml`
+- `pipelines/carousel.yaml`
+- `pipelines/story.yaml`
+- `docs/08-Phoenix-Runtime.md`

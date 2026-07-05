@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://phoenix-ai.local/schemas/response.schema.json",
+  "title": "Phoenix Runtime Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "execution_id",
+    "execution_time",
+    "pipeline",
+    "score",
+    "output"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "error"
+      ]
+    },
+    "execution_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "execution_time": {
+      "type": "number",
+      "minimum": 0
+    },
+    "pipeline": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "output": {
+      "type": "object"
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}
+
