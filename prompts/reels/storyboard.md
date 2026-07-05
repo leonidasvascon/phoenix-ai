@@ -4,8 +4,8 @@ Crie um storyboard para um conteudo em video sobre [tema], com duracao [duracao]
 
 Inclua:
 
-- Cena.
-- Visual sugerido.
-- Texto ou fala.
-- Observacoes de edicao.
+- cena
+- visual sugerido
+- texto ou fala
+- observacoes de edicao
 

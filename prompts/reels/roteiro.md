@@ -4,8 +4,8 @@ Crie um roteiro para [tema] com objetivo de [objetivo], publico-alvo [publico] e
 
 Inclua:
 
-- Gancho inicial.
-- Desenvolvimento em blocos.
-- Exemplo pratico.
-- Chamada para acao.
+- gancho inicial
+- desenvolvimento em blocos
+- exemplo pratico
+- chamada para acao
 
