@@ -1,0 +1,13 @@
+{
+  "name": "phoenix-ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "example:task": "node --experimental-strip-types examples/run-task.ts"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
+

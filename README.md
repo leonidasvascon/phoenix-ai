@@ -65,3 +65,21 @@ Contratos e arquitetura da Sprint 3:
 - `pipelines/carousel.yaml`
 - `pipelines/story.yaml`
 - `docs/08-Phoenix-Runtime.md`
+
+## Runtime MVP
+
+Sprint 4 adiciona o primeiro runtime executavel com agentes mockados.
+
+Rodar exemplo:
+
+```bash
+npm run example:task
+```
+
+Saida esperada:
+
+- task validada
+- Brand DNA carregado
+- pipeline carregado
+- agentes mockados executados
+- JSON final com `status`, `pipeline`, `score` e `output`
