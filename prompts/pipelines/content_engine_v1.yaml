@@ -1,0 +1,111 @@
+name: content_engine_v1
+version: 0.1
+description: First executable prompt pipeline for Phoenix AI Brain.
+
+input:
+  theme: string
+  brand_dna: object
+  objective: string
+  format: string
+  platform: string
+
+steps:
+  - id: orchestrate
+    agent: orchestrator
+    input:
+      - theme
+      - brand_dna
+      - objective
+      - format
+      - platform
+
+  - id: research
+    agent: research_agent
+    input:
+      - theme
+      - brand_dna
+      - objective
+      - platform
+
+  - id: creative_direction
+    agent: creative_director
+    input:
+      - theme
+      - brand_dna
+      - research
+      - objective
+      - format
+      - platform
+
+  - id: hook
+    agent: hook_specialist
+    input:
+      - theme
+      - brand_dna
+      - research
+      - creative_direction
+
+  - id: script
+    agent: story_writer
+    input:
+      - theme
+      - brand_dna
+      - research
+      - creative_direction
+      - hook.recommended_hook
+      - format
+      - platform
+
+  - id: storyboard
+    agent: storyboard_ai
+    input:
+      - brand_dna
+      - script
+      - format
+      - platform
+
+  - id: media_plan
+    agent: media_planner
+    input:
+      - brand_dna
+      - script
+      - storyboard
+      - platform
+
+  - id: brand_review
+    agent: brand_guardian
+    input:
+      - brand_dna
+      - script
+      - storyboard
+    gate:
+      pass_if: approved == true
+      on_fail: revise_script
+
+  - id: quality_review
+    agent: quality_reviewer
+    input:
+      - brand_dna
+      - research
+      - creative_direction
+      - hook
+      - script
+      - storyboard
+      - media_plan
+    gate:
+      pass_if: approved == true
+      on_fail: route_to_agent
+
+  - id: publish_package
+    agent: publisher
+    input:
+      - brand_dna
+      - platform
+      - approved_content
+      - objective
+
+output:
+  publish_package: object
+  review_score: number
+  revision_history: array
+

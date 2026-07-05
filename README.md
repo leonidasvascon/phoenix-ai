@@ -45,3 +45,11 @@ Sprint 1 - Fundacao.
 - `docs/04-Roadmap.md`
 - `docs/06-PRD.md`
 - `docs/07-Phoenix-AI-Brain.md`
+
+## Prompt Engine v1
+
+Artefatos iniciais:
+
+- `prompts/agents/`
+- `prompts/brands/encanto-intenso.brand.yaml`
+- `prompts/pipelines/content_engine_v1.yaml`

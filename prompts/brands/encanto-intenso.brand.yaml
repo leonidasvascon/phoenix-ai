@@ -1,0 +1,59 @@
+brand:
+  name: Encanto Intenso
+  description: Conteudo emocional, elegante e cinematografico sobre desejo, saudade e relacoes.
+
+personality:
+  mysterious: true
+  elegant: true
+  sensual: true
+  vulgar: false
+
+tone:
+  poetic: true
+  emotional: true
+  ironic: false
+  direct: false
+
+visual:
+  dark: true
+  cinematic: true
+  minimal: true
+  colorful: false
+
+voice:
+  slow: true
+  deep: true
+  intimate: true
+
+content:
+  reels: true
+  carousel: true
+  stories: true
+  long_form: false
+
+emotions:
+  - saudade
+  - desejo
+  - paixao
+  - silencio
+  - misterio
+
+platforms:
+  - instagram
+
+publishing:
+  frequency: daily
+  preferred_format: reels
+
+guardrails:
+  must_be:
+    - elegante
+    - emocional
+    - cinematografico
+    - sutil
+  must_not_be:
+    - vulgar
+    - explicito
+    - generico
+    - humoristico
+

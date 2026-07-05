@@ -14,6 +14,16 @@ Objetivo: construir o cerebro inicial da plataforma.
 - Criar Prompt Engine inicial
 - Criar primeiros agentes
 
+## Sprint 2 - Prompt Engine funcional
+
+Objetivo: transformar a inteligencia da Phoenix AI em artefatos executaveis.
+
+- Criar agentes independentes em `prompts/agents`
+- Criar primeiro Brand DNA em YAML
+- Criar pipeline `content_engine_v1`
+- Definir gates de Brand Guardian e Quality Reviewer
+- Preparar execucao futura por n8n ou API
+
 ## Epics
 
 ### Epic 1 - Fundacao
