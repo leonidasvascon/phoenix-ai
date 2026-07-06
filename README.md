@@ -208,6 +208,7 @@ Endpoints v1:
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
+- `POST /brands`
 - `GET /brands`
 - `GET /brands/:id`
 - `PUT /brands/:id`
@@ -344,6 +345,39 @@ O endpoint:
 
 Campos editaveis no Studio:
 
+- proposito
+- tom
+- emocoes
+- hooks preferidos
+- storytelling preferido
+- CTA preferido
+- padroes proibidos
+
+## Brand Creation
+
+Sprint 20 adiciona criacao de marcas pelo Studio.
+
+Tela:
+
+```text
+http://127.0.0.1:3000/brands/new
+```
+
+Endpoint:
+
+- `POST /brands`
+
+O endpoint:
+
+- recebe dados basicos da nova marca
+- gera um id slugificado a partir do nome
+- valida duplicidade em `prompts/brands/{id}.yaml`
+- cria o arquivo YAML da marca
+- retorna o Brand DNA criado
+
+Campos da tela:
+
+- nome da marca
 - proposito
 - tom
 - emocoes

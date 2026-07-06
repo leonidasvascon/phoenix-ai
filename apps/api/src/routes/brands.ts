@@ -1,9 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { sendJson } from "../http.ts";
-import { getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
+import { createBrand, getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
 
 export async function handleBrandsRoute(request: IncomingMessage, response: ServerResponse): Promise<void> {
-  if (request.method !== "GET" && request.method !== "PUT") {
+  if (request.method !== "GET" && request.method !== "POST" && request.method !== "PUT") {
     sendJson(response, 405, {
       status: "error",
       message: "Method not allowed."
@@ -13,6 +13,21 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
   const [, , brandId] = url.pathname.split("/");
+
+  if (request.method === "POST") {
+    if (brandId) {
+      sendJson(response, 400, {
+        status: "error",
+        message: "Use POST /brands to create a brand."
+      });
+      return;
+    }
+
+    const payload = await readJsonBody(request);
+    const brand = await createBrand(payload);
+    sendJson(response, 201, brand);
+    return;
+  }
 
   if (request.method === "PUT") {
     if (!brandId) {

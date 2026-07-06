@@ -11,6 +11,17 @@ type MediaPackageReference = {
 type EditableBrand = Brand & {
   [key: string]: unknown;
 };
+type CreateBrandInput = {
+  name?: unknown;
+  purpose?: unknown;
+  tone?: unknown;
+  emotions?: unknown;
+  preferred_hooks?: unknown;
+  preferred_storytelling?: unknown;
+  preferred_cta?: unknown;
+  avoid?: unknown;
+  forbidden_patterns?: unknown;
+};
 
 const mediaPackageFiles = [
   "metadata.json",
@@ -147,6 +158,47 @@ export async function getBrand(brandId: string): Promise<Brand | null> {
   }
 }
 
+export async function createBrand(input: unknown): Promise<Brand> {
+  const payload = validateCreateBrandInput(input);
+  const brandId = slugify(payload.name);
+
+  if (!brandId) {
+    throw new Error("Brand name must generate a valid id.");
+  }
+
+  const brandPath = resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`);
+
+  try {
+    await readFile(brandPath, "utf8");
+    throw new Error("Brand already exists.");
+  } catch (error) {
+    if (error instanceof Error && error.message === "Brand already exists.") {
+      throw error;
+    }
+  }
+
+  const forbiddenPatterns = payload.forbidden_patterns.length > 0 ? payload.forbidden_patterns : payload.avoid;
+  const brand: EditableBrand = {
+    version: "1.0",
+    brand: {
+      id: brandId,
+      name: payload.name
+    },
+    purpose: payload.purpose,
+    tone: payload.tone,
+    emotions: payload.emotions,
+    preferred_hooks: payload.preferred_hooks,
+    preferred_storytelling: payload.preferred_storytelling,
+    preferred_cta: payload.preferred_cta,
+    avoid: payload.avoid,
+    forbidden_patterns: forbiddenPatterns
+  };
+
+  await writeFile(brandPath, stringifyYaml(brand), "utf8");
+
+  return loadBrand(brandId);
+}
+
 export async function updateBrand(brandId: string, input: unknown): Promise<Brand> {
   if (!/^[a-z0-9-]+$/.test(brandId)) {
     throw new Error("Invalid brand id.");
@@ -158,6 +210,31 @@ export async function updateBrand(brandId: string, input: unknown): Promise<Bran
   await writeFile(brandPath, stringifyYaml(brand), "utf8");
 
   return loadBrand(brandId);
+}
+
+function validateCreateBrandInput(input: unknown) {
+  if (!input || typeof input !== "object") {
+    throw new Error("Invalid brand payload.");
+  }
+
+  const payload = input as CreateBrandInput;
+  const name = typeof payload.name === "string" ? payload.name.trim() : "";
+
+  if (!name) {
+    throw new Error("Brand name is required.");
+  }
+
+  return {
+    name,
+    purpose: typeof payload.purpose === "string" ? payload.purpose.trim() : "",
+    tone: normalizeRecord(payload.tone),
+    emotions: normalizeStringArray(payload.emotions),
+    preferred_hooks: normalizeStringArray(payload.preferred_hooks),
+    preferred_storytelling: normalizeStringArray(payload.preferred_storytelling),
+    preferred_cta: typeof payload.preferred_cta === "string" ? payload.preferred_cta.trim() : "",
+    avoid: normalizeStringArray(payload.avoid),
+    forbidden_patterns: normalizeStringArray(payload.forbidden_patterns)
+  };
 }
 
 function validateBrandInput(brandId: string, input: unknown): EditableBrand {
@@ -192,6 +269,12 @@ function stringifyYaml(value: Record<string, unknown>, indent = 0): string {
 
   for (const [key, item] of Object.entries(value)) {
     if (Array.isArray(item)) {
+      if (item.length === 0) {
+        lines.push(`${padding}${key}: []`);
+        if (indent === 0) lines.push("");
+        continue;
+      }
+
       lines.push(`${padding}${key}:`);
       for (const entry of item) {
         lines.push(`${padding}  - ${formatScalar(entry)}`);
@@ -221,6 +304,38 @@ function stringifyYaml(value: Record<string, unknown>, indent = 0): string {
   }
 
   return `${lines.join("\n").trimEnd()}\n`;
+}
+
+function normalizeRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+
+  return value as Record<string, unknown>;
+}
+
+function normalizeStringArray(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item).trim()).filter(Boolean);
+  }
+
+  if (typeof value === "string") {
+    return value
+      .split(/\r?\n|,/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+}
+
+function slugify(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function formatScalar(value: unknown, key?: string): string {

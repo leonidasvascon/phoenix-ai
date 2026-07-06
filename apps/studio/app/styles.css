@@ -225,6 +225,13 @@ select {
   margin: 24px 0;
 }
 
+.history-heading-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .history-heading p {
   margin: 0 0 8px;
   color: var(--muted);
@@ -236,6 +243,21 @@ select {
   margin: 0;
   font-size: 28px;
   line-height: 1.1;
+}
+
+.history-heading-actions > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: var(--accent);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .execution-list {
@@ -785,6 +807,7 @@ select {
 
   .execution-card header,
   .execution-card footer,
+  .history-heading-actions,
   .output-preview > header,
   .brand-card header,
   .brand-detail > header {

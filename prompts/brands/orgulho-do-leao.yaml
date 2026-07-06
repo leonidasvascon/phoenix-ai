@@ -1,0 +1,40 @@
+version: 1.0
+
+brand:
+  id: orgulho-do-leao
+  name: Orgulho do Leao
+
+purpose: Criar conteudos fortes, nobres e inspiradores sobre coragem, disciplina e identidade.
+
+tone:
+  direct: true
+  emotional: true
+  noble: true
+  aggressive: false
+
+emotions:
+  - orgulho
+  - coragem
+  - disciplina
+  - honra
+
+preferred_hooks:
+  - challenge
+  - identity
+  - question
+
+preferred_storytelling:
+  - manifesto
+  - transformation
+
+preferred_cta: subtle
+
+avoid:
+  - cliches
+  - promessas vazias
+  - linguagem agressiva
+
+forbidden_patterns:
+  - cliches
+  - promessas vazias
+  - linguagem agressiva

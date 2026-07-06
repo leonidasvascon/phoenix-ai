@@ -5,6 +5,8 @@ function parseScalar(value: string): unknown {
 
   if (trimmed === "true") return true;
   if (trimmed === "false") return false;
+  if (trimmed === "[]") return [];
+  if (trimmed === "{}") return {};
   if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed);
   return trimmed.replace(/^["']|["']$/g, "");
 }
@@ -101,4 +103,3 @@ export function parseSimpleYaml(source: string): ParsedYaml {
 
   return root;
 }
-

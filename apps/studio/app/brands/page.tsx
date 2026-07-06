@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { BrandCard, type BrandDna } from "../../components/brand-card";
 import { Navigation } from "../../components/navigation";
 import { QueryProvider } from "../query-provider";
@@ -24,9 +25,12 @@ function BrandsView() {
   return (
     <main className="brands-shell">
       <Navigation />
-      <section className="history-heading">
-        <p>Phoenix Studio</p>
-        <h1>Marcas</h1>
+      <section className="history-heading history-heading-actions">
+        <div>
+          <p>Phoenix Studio</p>
+          <h1>Marcas</h1>
+        </div>
+        <Link href="/brands/new">Nova Marca</Link>
       </section>
 
       {brands.isLoading ? <p className="muted">Carregando marcas...</p> : null}
