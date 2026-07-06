@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import type { BrandDna } from "../../../components/brand-card";
 import { Navigation } from "../../../components/navigation";
@@ -190,15 +190,63 @@ function BrandEditor({
   );
 }
 
+function BrandDuplicateForm({
+  brand,
+  isDuplicating,
+  onCancel,
+  onDuplicate
+}: Readonly<{
+  brand: BrandDna;
+  isDuplicating: boolean;
+  onCancel: () => void;
+  onDuplicate: (input: { name: string; purpose: string }) => void;
+}>) {
+  const [name, setName] = useState(`${brand.brand.name} Copy`);
+  const [purpose, setPurpose] = useState(brand.purpose ?? "");
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onDuplicate({ name, purpose });
+  }
+
+  return (
+    <form className="brand-duplicate-form" onSubmit={handleSubmit}>
+      <label>
+        Novo nome
+        <input value={name} onChange={(event) => setName(event.target.value)} required />
+      </label>
+
+      <label>
+        Novo proposito
+        <textarea value={purpose} onChange={(event) => setPurpose(event.target.value)} rows={4} required />
+      </label>
+
+      <div className="brand-editor-actions">
+        <button type="submit" disabled={isDuplicating}>
+          {isDuplicating ? "Duplicando..." : "Criar duplicata"}
+        </button>
+        <button type="button" onClick={onCancel}>
+          Cancelar
+        </button>
+      </div>
+    </form>
+  );
+}
+
 function BrandDetail({
   brand,
+  isDuplicating,
   isSaving,
+  onDuplicate,
   onSave
 }: Readonly<{
   brand: BrandDna;
+  isDuplicating: boolean;
   isSaving: boolean;
+  onDuplicate: (input: { name: string; purpose: string }) => void;
   onSave: (brand: BrandDna) => void;
 }>) {
+  const [isDuplicatingBrand, setIsDuplicatingBrand] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   return (
@@ -213,11 +261,23 @@ function BrandDetail({
           <button type="button" onClick={() => setIsEditing((current) => !current)}>
             {isEditing ? "Ver DNA" : "Editar DNA"}
           </button>
+          <button type="button" onClick={() => setIsDuplicatingBrand((current) => !current)}>
+            Duplicar marca
+          </button>
         </div>
       </header>
 
       {isEditing ? (
         <BrandEditor brand={brand} isSaving={isSaving} onCancel={() => setIsEditing(false)} onSave={onSave} />
+      ) : null}
+
+      {isDuplicatingBrand ? (
+        <BrandDuplicateForm
+          brand={brand}
+          isDuplicating={isDuplicating}
+          onCancel={() => setIsDuplicatingBrand(false)}
+          onDuplicate={onDuplicate}
+        />
       ) : null}
 
       <section className="brand-purpose">
@@ -250,6 +310,7 @@ function BrandDetail({
 
 function BrandDetailView() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const brandId = params.id;
   const queryClient = useQueryClient();
   const brand = useQuery({
@@ -286,6 +347,27 @@ function BrandDetailView() {
       queryClient.invalidateQueries({ queryKey: ["brands"] });
     }
   });
+  const duplicateBrand = useMutation({
+    mutationFn: async (input: { name: string; purpose: string }): Promise<BrandDna> => {
+      const response = await fetch(`${apiUrl}/brands/${brandId}/duplicate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(input)
+      });
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel duplicar a marca.");
+      }
+
+      return response.json();
+    },
+    onSuccess: (createdBrand) => {
+      queryClient.invalidateQueries({ queryKey: ["brands"] });
+      router.push(`/brands/${createdBrand.brand.id}`);
+    }
+  });
 
   return (
     <main className="brands-shell">
@@ -298,8 +380,17 @@ function BrandDetailView() {
       {brand.isLoading ? <p className="muted">Carregando Brand DNA...</p> : null}
       {brand.error ? <p className="error">{brand.error.message}</p> : null}
       {updateBrand.error ? <p className="error">{updateBrand.error.message}</p> : null}
+      {duplicateBrand.error ? <p className="error">{duplicateBrand.error.message}</p> : null}
       {updateBrand.isSuccess ? <p className="success">Brand DNA salvo com sucesso.</p> : null}
-      {brand.data ? <BrandDetail brand={brand.data} isSaving={updateBrand.isPending} onSave={(input) => updateBrand.mutate(input)} /> : null}
+      {brand.data ? (
+        <BrandDetail
+          brand={brand.data}
+          isDuplicating={duplicateBrand.isPending}
+          isSaving={updateBrand.isPending}
+          onDuplicate={(input) => duplicateBrand.mutate(input)}
+          onSave={(input) => updateBrand.mutate(input)}
+        />
+      ) : null}
     </main>
   );
 }

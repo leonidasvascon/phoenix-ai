@@ -732,7 +732,8 @@ select {
   white-space: pre-wrap;
 }
 
-.brand-editor {
+.brand-editor,
+.brand-duplicate-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
@@ -742,7 +743,8 @@ select {
   padding: 18px;
 }
 
-.brand-editor label {
+.brand-editor label,
+.brand-duplicate-form label {
   display: grid;
   gap: 8px;
   color: var(--muted);
@@ -752,12 +754,15 @@ select {
 .brand-editor label:first-child,
 .brand-editor label:nth-child(2),
 .brand-editor label:last-of-type,
+.brand-duplicate-form label,
 .brand-editor-actions {
   grid-column: 1 / -1;
 }
 
 .brand-editor textarea,
-.brand-editor input {
+.brand-editor input,
+.brand-duplicate-form textarea,
+.brand-duplicate-form input {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -767,7 +772,8 @@ select {
   line-height: 1.45;
 }
 
-.brand-editor input {
+.brand-editor input,
+.brand-duplicate-form input {
   height: 42px;
 }
 
@@ -824,7 +830,8 @@ select {
     flex-wrap: wrap;
   }
 
-  .brand-editor {
+  .brand-editor,
+  .brand-duplicate-form {
     grid-template-columns: 1fr;
   }
 }

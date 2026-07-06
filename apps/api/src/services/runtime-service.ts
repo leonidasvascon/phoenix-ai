@@ -22,6 +22,10 @@ type CreateBrandInput = {
   avoid?: unknown;
   forbidden_patterns?: unknown;
 };
+type DuplicateBrandInput = {
+  name?: unknown;
+  purpose?: unknown;
+};
 
 const mediaPackageFiles = [
   "metadata.json",
@@ -199,6 +203,50 @@ export async function createBrand(input: unknown): Promise<Brand> {
   return loadBrand(brandId);
 }
 
+export async function duplicateBrand(sourceBrandId: string, input: unknown): Promise<Brand> {
+  if (!/^[a-z0-9-]+$/.test(sourceBrandId)) {
+    throw new Error("Invalid source brand id.");
+  }
+
+  const sourceBrand = await getBrand(sourceBrandId);
+
+  if (!sourceBrand) {
+    throw new Error("Source brand not found.");
+  }
+
+  const payload = validateDuplicateBrandInput(input);
+  const newBrandId = slugify(payload.name);
+
+  if (!newBrandId) {
+    throw new Error("Brand name must generate a valid id.");
+  }
+
+  const brandPath = resolve(process.cwd(), "prompts", "brands", `${newBrandId}.yaml`);
+
+  try {
+    await readFile(brandPath, "utf8");
+    throw new Error("Brand already exists.");
+  } catch (error) {
+    if (error instanceof Error && error.message === "Brand already exists.") {
+      throw error;
+    }
+  }
+
+  const duplicatedBrand: EditableBrand = {
+    ...(structuredClone(sourceBrand) as EditableBrand),
+    brand: {
+      ...sourceBrand.brand,
+      id: newBrandId,
+      name: payload.name
+    },
+    purpose: payload.purpose
+  };
+
+  await writeFile(brandPath, stringifyYaml(duplicatedBrand), "utf8");
+
+  return loadBrand(newBrandId);
+}
+
 export async function updateBrand(brandId: string, input: unknown): Promise<Brand> {
   if (!/^[a-z0-9-]+$/.test(brandId)) {
     throw new Error("Invalid brand id.");
@@ -210,6 +258,24 @@ export async function updateBrand(brandId: string, input: unknown): Promise<Bran
   await writeFile(brandPath, stringifyYaml(brand), "utf8");
 
   return loadBrand(brandId);
+}
+
+function validateDuplicateBrandInput(input: unknown) {
+  if (!input || typeof input !== "object") {
+    throw new Error("Invalid duplicate payload.");
+  }
+
+  const payload = input as DuplicateBrandInput;
+  const name = typeof payload.name === "string" ? payload.name.trim() : "";
+
+  if (!name) {
+    throw new Error("New brand name is required.");
+  }
+
+  return {
+    name,
+    purpose: typeof payload.purpose === "string" ? payload.purpose.trim() : ""
+  };
 }
 
 function validateCreateBrandInput(input: unknown) {

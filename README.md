@@ -209,6 +209,7 @@ Endpoints v1:
 - `GET /executions/:id`
 - `GET /analytics`
 - `POST /brands`
+- `POST /brands/:id/duplicate`
 - `GET /brands`
 - `GET /brands/:id`
 - `PUT /brands/:id`
@@ -352,6 +353,30 @@ Campos editaveis no Studio:
 - storytelling preferido
 - CTA preferido
 - padroes proibidos
+
+## Brand Duplication
+
+Sprint 21 adiciona duplicacao de marcas a partir de um Brand DNA existente.
+
+Endpoint:
+
+- `POST /brands/:id/duplicate`
+
+O endpoint:
+
+- carrega o Brand DNA original
+- recebe novo nome e novo proposito
+- gera um novo id slugificado
+- copia estrutura e preferencias
+- atualiza `brand.id`, `brand.name` e `purpose`
+- salva em `prompts/brands/{new_id}.yaml`
+- impede duplicidade
+
+No Studio:
+
+- a tela `/brands/{id}` tem o botao `Duplicar marca`
+- o formulario pede novo nome e novo proposito
+- apos criar, redireciona para `/brands/{new_id}`
 
 ## Brand Creation
 

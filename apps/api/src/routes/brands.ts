@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { sendJson } from "../http.ts";
-import { createBrand, getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
+import { createBrand, duplicateBrand, getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
 
 export async function handleBrandsRoute(request: IncomingMessage, response: ServerResponse): Promise<void> {
   if (request.method !== "GET" && request.method !== "POST" && request.method !== "PUT") {
@@ -12,9 +12,16 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
   }
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
-  const [, , brandId] = url.pathname.split("/");
+  const [, , brandId, action] = url.pathname.split("/");
 
   if (request.method === "POST") {
+    if (brandId && action === "duplicate") {
+      const payload = await readJsonBody(request);
+      const brand = await duplicateBrand(brandId, payload);
+      sendJson(response, 201, brand);
+      return;
+    }
+
     if (brandId) {
       sendJson(response, 400, {
         status: "error",
