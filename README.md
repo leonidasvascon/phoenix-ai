@@ -210,6 +210,7 @@ Endpoints v1:
 - `GET /analytics`
 - `GET /brands`
 - `GET /brands/:id`
+- `PUT /brands/:id`
 
 Fluxo atualizado:
 
@@ -324,4 +325,29 @@ A tela de DNA mostra:
 - emocoes
 - visual
 - preferencias
+- padroes proibidos
+
+## Brand Editor
+
+Sprint 19 adiciona edicao do Brand DNA pelo Studio.
+
+Endpoint:
+
+- `PUT /brands/:id`
+
+O endpoint:
+
+- recebe JSON do Brand DNA
+- valida `version`, `brand.id` e `brand.name`
+- salva em `prompts/brands/{id}.yaml`
+- retorna o Brand DNA atualizado
+
+Campos editaveis no Studio:
+
+- proposito
+- tom
+- emocoes
+- hooks preferidos
+- storytelling preferido
+- CTA preferido
 - padroes proibidos

@@ -151,6 +151,11 @@ select {
   font-weight: 700;
 }
 
+.success {
+  color: #245c33;
+  font-weight: 700;
+}
+
 .result-content {
   display: grid;
   gap: 24px;
@@ -607,13 +612,42 @@ select {
   padding: 18px;
 }
 
-.brand-detail > header span {
+.brand-detail-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.brand-detail-actions span {
   border-radius: 999px;
   padding: 6px 10px;
   background: #ece7dd;
   color: var(--foreground);
   font-size: 13px;
   font-weight: 700;
+}
+
+.brand-detail-actions button,
+.brand-editor-actions button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #fffdfa;
+  color: var(--foreground);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.brand-editor-actions button[type="submit"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.brand-editor-actions button:disabled {
+  background: var(--accent-dark);
+  cursor: progress;
 }
 
 .brand-purpose h2,
@@ -676,6 +710,51 @@ select {
   white-space: pre-wrap;
 }
 
+.brand-editor {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.brand-editor label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.brand-editor label:first-child,
+.brand-editor label:nth-child(2),
+.brand-editor label:last-of-type,
+.brand-editor-actions {
+  grid-column: 1 / -1;
+}
+
+.brand-editor textarea,
+.brand-editor input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #fffdfa;
+  color: var(--foreground);
+  line-height: 1.45;
+}
+
+.brand-editor input {
+  height: 42px;
+}
+
+.brand-editor-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 @media (max-width: 860px) {
   .studio-shell {
     grid-template-columns: 1fr;
@@ -715,5 +794,14 @@ select {
 
   .execution-actions {
     flex-wrap: wrap;
+  }
+
+  .brand-detail-actions,
+  .brand-editor-actions {
+    flex-wrap: wrap;
+  }
+
+  .brand-editor {
+    grid-template-columns: 1fr;
   }
 }

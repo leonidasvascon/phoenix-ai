@@ -1,4 +1,4 @@
-import { readdir, readFile } from "node:fs/promises";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { aggregateMetrics, loadBrand, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
@@ -7,6 +7,9 @@ type TaskRequest = Partial<Task>;
 type MediaPackageReference = {
   directory: string;
   files: string[];
+};
+type EditableBrand = Brand & {
+  [key: string]: unknown;
 };
 
 const mediaPackageFiles = [
@@ -142,6 +145,95 @@ export async function getBrand(brandId: string): Promise<Brand | null> {
   } catch {
     return null;
   }
+}
+
+export async function updateBrand(brandId: string, input: unknown): Promise<Brand> {
+  if (!/^[a-z0-9-]+$/.test(brandId)) {
+    throw new Error("Invalid brand id.");
+  }
+
+  const brand = validateBrandInput(brandId, input);
+  const brandPath = resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`);
+
+  await writeFile(brandPath, stringifyYaml(brand), "utf8");
+
+  return loadBrand(brandId);
+}
+
+function validateBrandInput(brandId: string, input: unknown): EditableBrand {
+  if (!input || typeof input !== "object") {
+    throw new Error("Invalid Brand DNA.");
+  }
+
+  const brand = input as EditableBrand;
+
+  if (!brand.brand || typeof brand.brand !== "object") {
+    throw new Error("Brand identity is required.");
+  }
+
+  if (brand.brand.id !== brandId || typeof brand.brand.name !== "string" || !brand.brand.name.trim()) {
+    throw new Error("Brand id and name are required.");
+  }
+
+  if (typeof brand.version !== "string" && typeof brand.version !== "number") {
+    throw new Error("Brand version is required.");
+  }
+
+  if (brand.purpose !== undefined && typeof brand.purpose !== "string") {
+    throw new Error("Brand purpose must be a string.");
+  }
+
+  return brand;
+}
+
+function stringifyYaml(value: Record<string, unknown>, indent = 0): string {
+  const lines: string[] = [];
+  const padding = " ".repeat(indent);
+
+  for (const [key, item] of Object.entries(value)) {
+    if (Array.isArray(item)) {
+      lines.push(`${padding}${key}:`);
+      for (const entry of item) {
+        lines.push(`${padding}  - ${formatScalar(entry)}`);
+      }
+      if (indent === 0) lines.push("");
+      continue;
+    }
+
+    if (item && typeof item === "object") {
+      lines.push(`${padding}${key}:`);
+      lines.push(stringifyYaml(item as Record<string, unknown>, indent + 2).trimEnd());
+      if (indent === 0) lines.push("");
+      continue;
+    }
+
+    if (typeof item === "string" && item.includes("\n")) {
+      lines.push(`${padding}${key}: |`);
+      for (const line of item.split("\n")) {
+        lines.push(`${padding}  ${line}`);
+      }
+      if (indent === 0) lines.push("");
+      continue;
+    }
+
+    lines.push(`${padding}${key}: ${formatScalar(item, key)}`);
+    if (indent === 0) lines.push("");
+  }
+
+  return `${lines.join("\n").trimEnd()}\n`;
+}
+
+function formatScalar(value: unknown, key?: string): string {
+  if (key === "version" && Number(value) === 1) return "1.0";
+  if (typeof value === "boolean" || typeof value === "number") return String(value);
+  if (value === null || value === undefined) return "";
+
+  const text = String(value);
+  if (!text || text.includes(":") || text.startsWith("-") || text !== text.trim()) {
+    return JSON.stringify(text);
+  }
+
+  return text;
 }
 
 async function findMediaPackages(root = resolve(process.cwd(), "output")): Promise<Map<string, MediaPackageReference>> {

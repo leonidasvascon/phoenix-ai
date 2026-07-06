@@ -1,9 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { sendJson } from "../http.ts";
-import { getBrand, listBrands } from "../services/runtime-service.ts";
+import { getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
 
 export async function handleBrandsRoute(request: IncomingMessage, response: ServerResponse): Promise<void> {
-  if (request.method !== "GET") {
+  if (request.method !== "GET" && request.method !== "PUT") {
     sendJson(response, 405, {
       status: "error",
       message: "Method not allowed."
@@ -13,6 +13,21 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
   const [, , brandId] = url.pathname.split("/");
+
+  if (request.method === "PUT") {
+    if (!brandId) {
+      sendJson(response, 400, {
+        status: "error",
+        message: "Brand id is required."
+      });
+      return;
+    }
+
+    const payload = await readJsonBody(request);
+    const brand = await updateBrand(brandId, payload);
+    sendJson(response, 200, brand);
+    return;
+  }
 
   if (brandId) {
     const brand = await getBrand(brandId);
@@ -30,4 +45,20 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
   }
 
   sendJson(response, 200, await listBrands());
+}
+
+async function readJsonBody(request: IncomingMessage): Promise<unknown> {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of request) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  const body = Buffer.concat(chunks).toString("utf8");
+
+  if (!body.trim()) {
+    throw new Error("Request body is required.");
+  }
+
+  return JSON.parse(body) as unknown;
 }
