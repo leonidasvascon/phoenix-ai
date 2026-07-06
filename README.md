@@ -398,6 +398,7 @@ No Studio:
 - a tela `/brands/{id}` tem o botao `Arquivar marca`
 - exige confirmacao antes de arquivar
 - redireciona para `/brands`
+- acesso direto a marca arquivada mostra `Marca nao encontrada ou arquivada.`
 
 ## Brand Creation
 

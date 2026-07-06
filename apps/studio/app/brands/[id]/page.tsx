@@ -8,6 +8,7 @@ import { Navigation } from "../../../components/navigation";
 import { QueryProvider } from "../../query-provider";
 
 const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+const archivedBrandMessage = "Marca nao encontrada ou arquivada.";
 
 function formatLabel(value: string): string {
   return value.replace(/_/g, " ");
@@ -326,6 +327,10 @@ function BrandDetailView() {
     queryFn: async (): Promise<BrandDna> => {
       const response = await fetch(`${apiUrl}/brands/${brandId}`);
 
+      if (response.status === 404) {
+        throw new Error(archivedBrandMessage);
+      }
+
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar o Brand DNA.");
       }
@@ -395,7 +400,7 @@ function BrandDetailView() {
 
   function handleArchive() {
     const brandName = brand.data?.brand.name ?? brandId;
-    const confirmed = window.confirm(`Arquivar a marca ${brandName}? Ela sairá da lista, mas o YAML sera preservado.`);
+    const confirmed = window.confirm(`Arquivar a marca ${brandName}? Ela saira da lista, mas o YAML sera preservado.`);
 
     if (confirmed) {
       archiveBrand.mutate();
@@ -411,7 +416,13 @@ function BrandDetailView() {
       </section>
 
       {brand.isLoading ? <p className="muted">Carregando Brand DNA...</p> : null}
-      {brand.error ? <p className="error">{brand.error.message}</p> : null}
+      {brand.error?.message === archivedBrandMessage ? (
+        <section className="empty-state">
+          <h2>{archivedBrandMessage}</h2>
+          <p>Volte para Marcas para selecionar um Brand DNA ativo.</p>
+        </section>
+      ) : null}
+      {brand.error && brand.error.message !== archivedBrandMessage ? <p className="error">{brand.error.message}</p> : null}
       {archiveBrand.error ? <p className="error">{archiveBrand.error.message}</p> : null}
       {updateBrand.error ? <p className="error">{updateBrand.error.message}</p> : null}
       {duplicateBrand.error ? <p className="error">{duplicateBrand.error.message}</p> : null}
