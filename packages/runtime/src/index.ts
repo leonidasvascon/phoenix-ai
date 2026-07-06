@@ -13,6 +13,7 @@ export { addCostUsage, emptyCostUsage, estimateCost } from "./execution/cost-tra
 export { addTokenUsage, emptyTokenUsage } from "./execution/token-tracker.ts";
 export { FilePersistenceAdapter } from "./persistence/file-persistence-adapter.ts";
 export { MemoryPersistenceAdapter } from "./persistence/memory-persistence-adapter.ts";
+export { loadBrand } from "./loaders/brand-loader.ts";
 export { loadKnowledge } from "./loaders/knowledge-loader.ts";
 export { readExecutionFiles } from "./analytics/analytics-reader.ts";
 export { aggregateMetrics } from "./analytics/metrics-aggregator.ts";

@@ -6,6 +6,7 @@ export function Navigation() {
       <Link href="/">Nova Task</Link>
       <Link href="/history">Historico</Link>
       <Link href="/analytics">Analytics</Link>
+      <Link href="/brands">Marcas</Link>
     </nav>
   );
 }

@@ -206,6 +206,11 @@ select {
   margin: 40px auto;
 }
 
+.brands-shell {
+  width: min(1120px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .analytics-shell {
   width: min(1120px, calc(100vw - 40px));
   margin: 40px auto;
@@ -511,6 +516,166 @@ select {
   color: var(--foreground);
 }
 
+.brand-list {
+  display: grid;
+  gap: 14px;
+}
+
+.brand-card {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.brand-card header,
+.brand-detail > header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-card header p,
+.brand-detail header p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.brand-card h2,
+.brand-detail h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.brand-card header a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: var(--accent);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.brand-card > p {
+  margin: 0;
+  color: var(--foreground);
+  line-height: 1.5;
+}
+
+.brand-card ul,
+.brand-dna-section ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.brand-card li,
+.brand-dna-section li {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #fffdfa;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.brand-detail {
+  display: grid;
+  gap: 18px;
+}
+
+.brand-detail > header,
+.brand-purpose,
+.brand-dna-section,
+.brand-json {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.brand-detail > header span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #ece7dd;
+  color: var(--foreground);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.brand-purpose h2,
+.brand-dna-section h2,
+.brand-json h2 {
+  margin: 0 0 12px;
+  font-size: 17px;
+}
+
+.brand-purpose p {
+  margin: 0;
+  color: var(--foreground);
+  line-height: 1.5;
+}
+
+.brand-dna-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.brand-dna-section dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.brand-dna-section dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.brand-dna-section dt {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.brand-dna-section dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+  font-weight: 700;
+}
+
+.brand-json pre {
+  max-height: 520px;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px;
+  background: #fffdfa;
+  color: var(--foreground);
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
 @media (max-width: 860px) {
   .studio-shell {
     grid-template-columns: 1fr;
@@ -526,6 +691,7 @@ select {
 
   .history-shell,
   .output-shell,
+  .brands-shell,
   .analytics-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
@@ -533,13 +699,16 @@ select {
 
   .metric-grid,
   .analytics-lists,
-  .output-summary {
+  .output-summary,
+  .brand-dna-grid {
     grid-template-columns: 1fr;
   }
 
   .execution-card header,
   .execution-card footer,
-  .output-preview > header {
+  .output-preview > header,
+  .brand-card header,
+  .brand-detail > header {
     align-items: flex-start;
     flex-direction: column;
   }

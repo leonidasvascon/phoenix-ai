@@ -209,6 +209,7 @@ Endpoints v1:
 - `GET /executions/:id`
 - `GET /analytics`
 - `GET /brands`
+- `GET /brands/:id`
 
 Fluxo atualizado:
 
@@ -291,3 +292,36 @@ A tela mostra:
 - agentes com mais falhas
 - temas mais usados
 - marcas mais usadas
+
+## Brand Manager
+
+Sprint 18 adiciona visualizacao de marcas e Brand DNA no Studio.
+
+Telas:
+
+```text
+http://127.0.0.1:3000/brands
+http://127.0.0.1:3000/brands/{brand_id}
+```
+
+Dados consumidos:
+
+- `GET /brands`
+- `GET /brands/:id`
+
+A tela de marcas mostra:
+
+- lista de marcas cadastradas em `prompts/brands`
+- nome
+- proposito
+- personalidade
+- botao para abrir o DNA
+
+A tela de DNA mostra:
+
+- Brand DNA completo
+- tom de voz
+- emocoes
+- visual
+- preferencias
+- padroes proibidos

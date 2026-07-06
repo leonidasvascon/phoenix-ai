@@ -30,6 +30,14 @@ const routes: Record<string, ApiHandler> = {
   "/brands": handleBrandsRoute
 };
 
+function resolveRoute(pathname: string): ApiHandler | undefined {
+  if (pathname.startsWith("/executions/") || pathname.startsWith("/brands/")) {
+    return routes[`/${pathname.split("/")[1]}`];
+  }
+
+  return routes[pathname];
+}
+
 ensureRepositoryRoot();
 
 const server = createServer(async (request, response) => {
@@ -39,7 +47,7 @@ const server = createServer(async (request, response) => {
   }
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
-  const route = url.pathname.startsWith("/executions/") ? handleExecutionsRoute : routes[url.pathname];
+  const route = resolveRoute(url.pathname);
 
   if (!route) {
     notFound(response);

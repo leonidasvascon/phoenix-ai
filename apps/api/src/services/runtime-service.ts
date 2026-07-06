@@ -1,7 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
-import { aggregateMetrics, readExecutionFiles, Runtime, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
+import { aggregateMetrics, loadBrand, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
 
 type TaskRequest = Partial<Task>;
 type MediaPackageReference = {
@@ -119,13 +119,29 @@ export async function getAnalytics() {
   return aggregateMetrics(executions);
 }
 
-export function listBrands() {
-  return [
-    {
-      id: "encanto-intenso",
-      name: "Encanto Intenso"
-    }
-  ];
+export async function listBrands(): Promise<Brand[]> {
+  const brandsPath = resolve(process.cwd(), "prompts", "brands");
+  let files: string[] = [];
+
+  try {
+    files = await readdir(brandsPath);
+  } catch {
+    return [];
+  }
+
+  const brandIds = files
+    .filter((file) => file.endsWith(".yaml") && !file.endsWith(".brand.yaml"))
+    .map((file) => file.replace(/\.yaml$/, ""));
+
+  return Promise.all(brandIds.map((brandId) => loadBrand(brandId)));
+}
+
+export async function getBrand(brandId: string): Promise<Brand | null> {
+  try {
+    return await loadBrand(brandId);
+  } catch {
+    return null;
+  }
 }
 
 async function findMediaPackages(root = resolve(process.cwd(), "output")): Promise<Map<string, MediaPackageReference>> {
