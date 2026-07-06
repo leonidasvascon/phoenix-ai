@@ -661,6 +661,16 @@ select {
   font-weight: 700;
 }
 
+.brand-detail-actions .danger-action {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.brand-detail-actions .danger-action:disabled {
+  color: var(--accent-dark);
+  cursor: progress;
+}
+
 .brand-editor-actions button[type="submit"] {
   border-color: var(--accent);
   background: var(--accent);

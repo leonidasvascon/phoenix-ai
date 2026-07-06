@@ -1,4 +1,4 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { aggregateMetrics, loadBrand, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
@@ -160,6 +160,33 @@ export async function getBrand(brandId: string): Promise<Brand | null> {
   } catch {
     return null;
   }
+}
+
+export async function archiveBrand(brandId: string) {
+  if (!/^[a-z0-9-]+$/.test(brandId)) {
+    throw new Error("Invalid brand id.");
+  }
+
+  if (brandId === "encanto-intenso") {
+    throw new Error("The default brand cannot be archived.");
+  }
+
+  const brandPath = resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`);
+  const brand = await loadBrand(brandId);
+  const archiveDirectory = resolve(process.cwd(), ".storage", "archived-brands");
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const archivePath = resolve(archiveDirectory, `${brandId}-${timestamp}.yaml`);
+
+  await mkdir(archiveDirectory, { recursive: true });
+  await rename(brandPath, archivePath);
+
+  return {
+    status: "archived",
+    brand_id: brandId,
+    brand_name: brand.brand.name,
+    archived_at: timestamp,
+    archive_path: archivePath.replace(`${process.cwd()}\\`, "").replace(`${process.cwd()}/`, "")
+  };
 }
 
 export async function createBrand(input: unknown): Promise<Brand> {

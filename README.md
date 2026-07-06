@@ -204,6 +204,7 @@ npm run api:dev
 
 Endpoints v1:
 
+- `DELETE /brands/:id`
 - `POST /tasks`
 - `GET /executions`
 - `GET /executions/:id`
@@ -377,6 +378,26 @@ No Studio:
 - a tela `/brands/{id}` tem o botao `Duplicar marca`
 - o formulario pede novo nome e novo proposito
 - apos criar, redireciona para `/brands/{new_id}`
+
+## Brand Archive
+
+Sprint 22 adiciona arquivamento seguro de marcas.
+
+Endpoint:
+
+- `DELETE /brands/:id`
+
+O endpoint:
+
+- move `prompts/brands/{id}.yaml` para `.storage/archived-brands/{id}-{timestamp}.yaml`
+- impede arquivamento de `encanto-intenso`
+- retorna status, id da marca, nome, timestamp e caminho do arquivo arquivado
+
+No Studio:
+
+- a tela `/brands/{id}` tem o botao `Arquivar marca`
+- exige confirmacao antes de arquivar
+- redireciona para `/brands`
 
 ## Brand Creation
 

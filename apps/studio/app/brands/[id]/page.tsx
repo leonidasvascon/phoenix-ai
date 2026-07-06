@@ -235,14 +235,18 @@ function BrandDuplicateForm({
 
 function BrandDetail({
   brand,
+  isArchiving,
   isDuplicating,
   isSaving,
+  onArchive,
   onDuplicate,
   onSave
 }: Readonly<{
   brand: BrandDna;
+  isArchiving: boolean;
   isDuplicating: boolean;
   isSaving: boolean;
+  onArchive: () => void;
   onDuplicate: (input: { name: string; purpose: string }) => void;
   onSave: (brand: BrandDna) => void;
 }>) {
@@ -263,6 +267,9 @@ function BrandDetail({
           </button>
           <button type="button" onClick={() => setIsDuplicatingBrand((current) => !current)}>
             Duplicar marca
+          </button>
+          <button className="danger-action" type="button" disabled={isArchiving} onClick={onArchive}>
+            {isArchiving ? "Arquivando..." : "Arquivar marca"}
           </button>
         </div>
       </header>
@@ -368,6 +375,32 @@ function BrandDetailView() {
       router.push(`/brands/${createdBrand.brand.id}`);
     }
   });
+  const archiveBrand = useMutation({
+    mutationFn: async (): Promise<{ status: string; archive_path: string }> => {
+      const response = await fetch(`${apiUrl}/brands/${brandId}`, {
+        method: "DELETE"
+      });
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel arquivar a marca.");
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["brands"] });
+      router.push("/brands");
+    }
+  });
+
+  function handleArchive() {
+    const brandName = brand.data?.brand.name ?? brandId;
+    const confirmed = window.confirm(`Arquivar a marca ${brandName}? Ela sairá da lista, mas o YAML sera preservado.`);
+
+    if (confirmed) {
+      archiveBrand.mutate();
+    }
+  }
 
   return (
     <main className="brands-shell">
@@ -379,14 +412,17 @@ function BrandDetailView() {
 
       {brand.isLoading ? <p className="muted">Carregando Brand DNA...</p> : null}
       {brand.error ? <p className="error">{brand.error.message}</p> : null}
+      {archiveBrand.error ? <p className="error">{archiveBrand.error.message}</p> : null}
       {updateBrand.error ? <p className="error">{updateBrand.error.message}</p> : null}
       {duplicateBrand.error ? <p className="error">{duplicateBrand.error.message}</p> : null}
       {updateBrand.isSuccess ? <p className="success">Brand DNA salvo com sucesso.</p> : null}
       {brand.data ? (
         <BrandDetail
           brand={brand.data}
+          isArchiving={archiveBrand.isPending}
           isDuplicating={duplicateBrand.isPending}
           isSaving={updateBrand.isPending}
+          onArchive={handleArchive}
           onDuplicate={(input) => duplicateBrand.mutate(input)}
           onSave={(input) => updateBrand.mutate(input)}
         />

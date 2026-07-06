@@ -1,9 +1,9 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { sendJson } from "../http.ts";
-import { createBrand, duplicateBrand, getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
+import { archiveBrand, createBrand, duplicateBrand, getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
 
 export async function handleBrandsRoute(request: IncomingMessage, response: ServerResponse): Promise<void> {
-  if (request.method !== "GET" && request.method !== "POST" && request.method !== "PUT") {
+  if (request.method !== "DELETE" && request.method !== "GET" && request.method !== "POST" && request.method !== "PUT") {
     sendJson(response, 405, {
       status: "error",
       message: "Method not allowed."
@@ -13,6 +13,28 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
   const [, , brandId, action] = url.pathname.split("/");
+
+  if (request.method === "DELETE") {
+    if (!brandId) {
+      sendJson(response, 400, {
+        status: "error",
+        message: "Brand id is required."
+      });
+      return;
+    }
+
+    if (brandId === "encanto-intenso") {
+      sendJson(response, 409, {
+        status: "error",
+        message: "The default brand cannot be archived."
+      });
+      return;
+    }
+
+    const result = await archiveBrand(brandId);
+    sendJson(response, 200, result);
+    return;
+  }
 
   if (request.method === "POST") {
     if (brandId && action === "duplicate") {
