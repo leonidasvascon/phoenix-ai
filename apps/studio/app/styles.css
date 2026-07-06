@@ -245,7 +245,14 @@ select {
   line-height: 1.1;
 }
 
-.history-heading-actions > a {
+.heading-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.history-heading-actions > a,
+.heading-actions > a {
   display: inline-flex;
   align-items: center;
   min-height: 38px;
@@ -548,7 +555,13 @@ select {
   gap: 14px;
 }
 
-.brand-card {
+.archived-brand-list {
+  display: grid;
+  gap: 14px;
+}
+
+.brand-card,
+.archived-brand-card {
   display: grid;
   gap: 16px;
   border: 1px solid var(--line);
@@ -558,6 +571,7 @@ select {
 }
 
 .brand-card header,
+.archived-brand-card header,
 .brand-detail > header {
   display: flex;
   gap: 16px;
@@ -566,6 +580,7 @@ select {
 }
 
 .brand-card header p,
+.archived-brand-card header p,
 .brand-detail header p {
   margin: 0 0 6px;
   color: var(--muted);
@@ -573,12 +588,14 @@ select {
 }
 
 .brand-card h2,
+.archived-brand-card h2,
 .brand-detail h2 {
   margin: 0;
   font-size: 20px;
 }
 
-.brand-card header a {
+.brand-card header a,
+.archived-brand-card button {
   display: inline-flex;
   align-items: center;
   min-height: 36px;
@@ -591,6 +608,28 @@ select {
   font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
+}
+
+.archived-brand-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.archived-brand-card dl div {
+  display: grid;
+  gap: 4px;
+}
+
+.archived-brand-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.archived-brand-card dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
 }
 
 .brand-card > p {
@@ -824,8 +863,10 @@ select {
   .execution-card header,
   .execution-card footer,
   .history-heading-actions,
+  .heading-actions,
   .output-preview > header,
   .brand-card header,
+  .archived-brand-card header,
   .brand-detail > header {
     align-items: flex-start;
     flex-direction: column;

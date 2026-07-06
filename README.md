@@ -209,8 +209,10 @@ Endpoints v1:
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
+- `GET /brands/archived`
 - `POST /brands`
 - `POST /brands/:id/duplicate`
+- `POST /brands/:id/restore`
 - `GET /brands`
 - `GET /brands/:id`
 - `PUT /brands/:id`
@@ -399,6 +401,36 @@ No Studio:
 - exige confirmacao antes de arquivar
 - redireciona para `/brands`
 - acesso direto a marca arquivada mostra `Marca nao encontrada ou arquivada.`
+
+## Brand Restore
+
+Sprint 23 adiciona restauracao segura de marcas arquivadas.
+
+Endpoints:
+
+- `GET /brands/archived`
+- `POST /brands/:id/restore`
+
+`GET /brands/archived` retorna:
+
+- `id`
+- `nome`
+- `arquivado_em`
+- `arquivo`
+
+`POST /brands/:id/restore`:
+
+- localiza a ultima versao arquivada da marca
+- valida que `prompts/brands/{id}.yaml` ainda nao existe
+- move o YAML de `.storage/archived-brands/` para `prompts/brands/`
+- retorna o Brand DNA restaurado
+
+No Studio:
+
+- `/brands` tem o botao `Marcas arquivadas`
+- `/brands/archived` lista as marcas arquivadas
+- cada marca arquivada pode ser restaurada
+- estado vazio quando nao ha arquivos arquivados
 
 ## Brand Creation
 

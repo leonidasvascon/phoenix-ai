@@ -1,6 +1,7 @@
 export { Runtime } from "./runtime.ts";
 export { AgentRunner } from "./agents/agent-runner.ts";
 export { PromptAgent } from "./agents/prompt-agent.ts";
+export { parseSimpleYaml } from "./utils/simple-yaml.ts";
 export { MockProvider } from "./providers/mock-provider.ts";
 export { OpenAIProvider } from "./providers/openai-provider.ts";
 export { runQualityGate } from "./quality/quality-gate.ts";

@@ -1,7 +1,7 @@
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
-import { aggregateMetrics, loadBrand, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
+import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
 
 type TaskRequest = Partial<Task>;
 type MediaPackageReference = {
@@ -25,6 +25,12 @@ type CreateBrandInput = {
 type DuplicateBrandInput = {
   name?: unknown;
   purpose?: unknown;
+};
+type ArchivedBrand = {
+  id: string;
+  nome: string;
+  arquivado_em: string;
+  arquivo: string;
 };
 
 const mediaPackageFiles = [
@@ -154,6 +160,19 @@ export async function listBrands(): Promise<Brand[]> {
   return Promise.all(brandIds.map((brandId) => loadBrand(brandId)));
 }
 
+export async function listArchivedBrands(): Promise<ArchivedBrand[]> {
+  const archivedFiles = await readArchivedBrandFiles();
+
+  return archivedFiles
+    .map((file) => ({
+      id: file.brand.brand.id,
+      nome: file.brand.brand.name,
+      arquivado_em: file.archivedAt,
+      arquivo: file.relativePath
+    }))
+    .sort((a, b) => b.arquivado_em.localeCompare(a.arquivado_em));
+}
+
 export async function getBrand(brandId: string): Promise<Brand | null> {
   try {
     return await loadBrand(brandId);
@@ -187,6 +206,37 @@ export async function archiveBrand(brandId: string) {
     archived_at: timestamp,
     archive_path: archivePath.replace(`${process.cwd()}\\`, "").replace(`${process.cwd()}/`, "")
   };
+}
+
+export async function restoreBrand(brandId: string): Promise<Brand> {
+  if (!/^[a-z0-9-]+$/.test(brandId)) {
+    throw new Error("Invalid brand id.");
+  }
+
+  const activeBrandPath = resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`);
+
+  try {
+    await readFile(activeBrandPath, "utf8");
+    throw new Error("Brand already exists.");
+  } catch (error) {
+    if (error instanceof Error && error.message === "Brand already exists.") {
+      throw error;
+    }
+  }
+
+  const archivedFiles = await readArchivedBrandFiles();
+  const latestArchive = archivedFiles
+    .filter((file) => file.brand.brand.id === brandId)
+    .sort((a, b) => b.archivedAt.localeCompare(a.archivedAt))[0];
+
+  if (!latestArchive) {
+    throw new Error("Archived brand not found.");
+  }
+
+  await mkdir(resolve(process.cwd(), "prompts", "brands"), { recursive: true });
+  await rename(latestArchive.absolutePath, activeBrandPath);
+
+  return loadBrand(brandId);
 }
 
 export async function createBrand(input: unknown): Promise<Brand> {
@@ -303,6 +353,47 @@ function validateDuplicateBrandInput(input: unknown) {
     name,
     purpose: typeof payload.purpose === "string" ? payload.purpose.trim() : ""
   };
+}
+
+async function readArchivedBrandFiles() {
+  const archiveDirectory = resolve(process.cwd(), ".storage", "archived-brands");
+  let files: string[] = [];
+
+  try {
+    files = await readdir(archiveDirectory);
+  } catch {
+    return [];
+  }
+
+  const archivedFiles = await Promise.all(
+    files
+      .filter((file) => file.endsWith(".yaml"))
+      .map(async (file) => {
+        const absolutePath = resolve(archiveDirectory, file);
+        const source = await readFile(absolutePath, "utf8");
+        const brand = parseSimpleYaml(source) as Brand;
+        const archivedAt = parseArchiveTimestamp(file);
+
+        if (!brand.brand?.id || !brand.brand?.name) {
+          return null;
+        }
+
+        return {
+          absolutePath,
+          archivedAt,
+          brand,
+          relativePath: absolutePath.replace(`${process.cwd()}\\`, "").replace(`${process.cwd()}/`, "")
+        };
+      })
+  );
+
+  return archivedFiles.filter((file): file is NonNullable<(typeof archivedFiles)[number]> => Boolean(file));
+}
+
+function parseArchiveTimestamp(file: string): string {
+  const match = file.match(/-(\d{4}-\d{2}-\d{2}T.+)\.yaml$/);
+
+  return match?.[1] ?? "";
 }
 
 function validateCreateBrandInput(input: unknown) {

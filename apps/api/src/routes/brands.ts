@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { sendJson } from "../http.ts";
-import { archiveBrand, createBrand, duplicateBrand, getBrand, listBrands, updateBrand } from "../services/runtime-service.ts";
+import { archiveBrand, createBrand, duplicateBrand, getBrand, listArchivedBrands, listBrands, restoreBrand, updateBrand } from "../services/runtime-service.ts";
 
 export async function handleBrandsRoute(request: IncomingMessage, response: ServerResponse): Promise<void> {
   if (request.method !== "DELETE" && request.method !== "GET" && request.method !== "POST" && request.method !== "PUT") {
@@ -13,6 +13,11 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
 
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
   const [, , brandId, action] = url.pathname.split("/");
+
+  if (request.method === "GET" && brandId === "archived") {
+    sendJson(response, 200, await listArchivedBrands());
+    return;
+  }
 
   if (request.method === "DELETE") {
     if (!brandId) {
@@ -37,6 +42,12 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
   }
 
   if (request.method === "POST") {
+    if (brandId && action === "restore") {
+      const brand = await restoreBrand(brandId);
+      sendJson(response, 200, brand);
+      return;
+    }
+
     if (brandId && action === "duplicate") {
       const payload = await readJsonBody(request);
       const brand = await duplicateBrand(brandId, payload);
