@@ -782,7 +782,8 @@ select {
 }
 
 .brand-editor,
-.brand-duplicate-form {
+.brand-duplicate-form,
+.brand-import-form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
@@ -793,7 +794,8 @@ select {
 }
 
 .brand-editor label,
-.brand-duplicate-form label {
+.brand-duplicate-form label,
+.brand-import-form label {
   display: grid;
   gap: 8px;
   color: var(--muted);
@@ -811,7 +813,8 @@ select {
 .brand-editor textarea,
 .brand-editor input,
 .brand-duplicate-form textarea,
-.brand-duplicate-form input {
+.brand-duplicate-form input,
+.brand-import-form textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 6px;
@@ -819,6 +822,33 @@ select {
   background: #fffdfa;
   color: var(--foreground);
   line-height: 1.45;
+}
+
+.brand-import-form {
+  grid-template-columns: 1fr;
+}
+
+.brand-import-form textarea {
+  min-height: 420px;
+  resize: vertical;
+  font-family: "Courier New", monospace;
+}
+
+.brand-import-form button {
+  justify-self: start;
+  min-height: 42px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0 16px;
+  background: var(--accent);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.brand-import-form button:disabled {
+  background: var(--accent-dark);
+  cursor: progress;
 }
 
 .brand-editor input,
@@ -882,7 +912,8 @@ select {
   }
 
   .brand-editor,
-  .brand-duplicate-form {
+  .brand-duplicate-form,
+  .brand-import-form {
     grid-template-columns: 1fr;
   }
 }

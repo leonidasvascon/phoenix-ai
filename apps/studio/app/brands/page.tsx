@@ -31,6 +31,7 @@ function BrandsView() {
           <h1>Marcas</h1>
         </div>
         <div className="heading-actions">
+          <Link href="/brands/import">Importar YAML</Link>
           <Link href="/brands/archived">Marcas arquivadas</Link>
           <Link href="/brands/new">Nova Marca</Link>
         </div>

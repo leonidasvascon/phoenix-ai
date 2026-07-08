@@ -1,6 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { sendJson } from "../http.ts";
-import { archiveBrand, createBrand, duplicateBrand, getBrand, listArchivedBrands, listBrands, restoreBrand, updateBrand } from "../services/runtime-service.ts";
+import { archiveBrand, createBrand, duplicateBrand, exportBrand, getBrand, importBrand, listArchivedBrands, listBrands, restoreBrand, updateBrand } from "../services/runtime-service.ts";
 
 export async function handleBrandsRoute(request: IncomingMessage, response: ServerResponse): Promise<void> {
   if (request.method !== "DELETE" && request.method !== "GET" && request.method !== "POST" && request.method !== "PUT") {
@@ -16,6 +16,26 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
 
   if (request.method === "GET" && brandId === "archived") {
     sendJson(response, 200, await listArchivedBrands());
+    return;
+  }
+
+  if (request.method === "GET" && brandId && action === "export") {
+    const yaml = await exportBrand(brandId);
+
+    if (!yaml) {
+      sendJson(response, 404, {
+        status: "error",
+        message: "Brand not found."
+      });
+      return;
+    }
+
+    response.writeHead(200, {
+      "Access-Control-Allow-Origin": process.env.PHOENIX_STUDIO_ORIGIN ?? "http://127.0.0.1:3000",
+      "Content-Disposition": `attachment; filename="${brandId}.yaml"`,
+      "Content-Type": "text/yaml; charset=utf-8"
+    });
+    response.end(yaml);
     return;
   }
 
@@ -42,6 +62,21 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
   }
 
   if (request.method === "POST") {
+    if (brandId === "import" && !action) {
+      try {
+        const yaml = await readImportBody(request);
+        const brand = await importBrand(yaml);
+        sendJson(response, 201, brand);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Invalid Brand YAML.";
+        sendJson(response, message === "Brand already exists." ? 409 : 400, {
+          status: "error",
+          message
+        });
+      }
+      return;
+    }
+
     if (brandId && action === "restore") {
       const brand = await restoreBrand(brandId);
       sendJson(response, 200, brand);
@@ -100,6 +135,30 @@ export async function handleBrandsRoute(request: IncomingMessage, response: Serv
   }
 
   sendJson(response, 200, await listBrands());
+}
+
+async function readImportBody(request: IncomingMessage): Promise<string> {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of request) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  const body = Buffer.concat(chunks).toString("utf8");
+
+  if (!body.trim()) {
+    throw new Error("Request body is required.");
+  }
+
+  if (request.headers["content-type"]?.includes("application/json")) {
+    const parsed = JSON.parse(body) as { yaml?: unknown };
+    if (typeof parsed.yaml !== "string") {
+      throw new Error("Brand YAML is required.");
+    }
+    return parsed.yaml;
+  }
+
+  return body;
 }
 
 async function readJsonBody(request: IncomingMessage): Promise<unknown> {

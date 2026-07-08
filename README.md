@@ -215,6 +215,8 @@ Endpoints v1:
 - `POST /brands/:id/restore`
 - `GET /brands`
 - `GET /brands/:id`
+- `GET /brands/:id/export`
+- `POST /brands/import`
 - `PUT /brands/:id`
 
 Fluxo atualizado:
@@ -453,6 +455,18 @@ O endpoint:
 - valida duplicidade em `prompts/brands/{id}.yaml`
 - cria o arquivo YAML da marca
 - retorna o Brand DNA criado
+
+## Brand Export & Import
+
+Sprint 24 adiciona backup e migracao de Brand DNA em YAML.
+
+Endpoints:
+
+- `GET /brands/:id/export` retorna o YAML original como arquivo para download
+- `POST /brands/import` aceita YAML puro ou JSON no formato `{ "yaml": "..." }`
+
+A importacao valida `brand.id`, `brand.name` e `purpose`, impede IDs duplicados e salva o arquivo em
+`prompts/brands/{id}.yaml`. No Studio, `/brands/import` recebe o YAML e redireciona para a marca importada.
 
 Campos da tela:
 

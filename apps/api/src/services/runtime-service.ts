@@ -181,6 +181,68 @@ export async function getBrand(brandId: string): Promise<Brand | null> {
   }
 }
 
+export async function exportBrand(brandId: string): Promise<string | null> {
+  if (!/^[a-z0-9-]+$/.test(brandId)) {
+    throw new Error("Invalid brand id.");
+  }
+
+  try {
+    return await readFile(resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`), "utf8");
+  } catch {
+    return null;
+  }
+}
+
+export async function importBrand(input: unknown): Promise<Brand> {
+  const source = typeof input === "string"
+    ? input
+    : input && typeof input === "object" && typeof (input as { yaml?: unknown }).yaml === "string"
+      ? (input as { yaml: string }).yaml
+      : "";
+
+  if (!source.trim()) {
+    throw new Error("Brand YAML is required.");
+  }
+
+  let parsed: unknown;
+
+  try {
+    parsed = parseSimpleYaml(source);
+  } catch {
+    throw new Error("Invalid Brand YAML.");
+  }
+
+  if (!parsed || typeof parsed !== "object") {
+    throw new Error("Invalid Brand YAML.");
+  }
+
+  const brand = parsed as EditableBrand;
+  const identity = brand.brand;
+  const brandId = identity && typeof identity === "object" && typeof identity.id === "string" ? identity.id.trim() : "";
+  const brandName = identity && typeof identity === "object" && typeof identity.name === "string" ? identity.name.trim() : "";
+  const purpose = typeof brand.purpose === "string" ? brand.purpose.trim() : "";
+
+  if (!brandId || !/^[a-z0-9-]+$/.test(brandId) || !brandName || !purpose) {
+    throw new Error("Brand id, name and purpose are required.");
+  }
+
+  const brandPath = resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`);
+
+  try {
+    await readFile(brandPath, "utf8");
+    throw new Error("Brand already exists.");
+  } catch (error) {
+    if (error instanceof Error && error.message === "Brand already exists.") {
+      throw error;
+    }
+  }
+
+  await mkdir(resolve(process.cwd(), "prompts", "brands"), { recursive: true });
+  await writeFile(brandPath, source.endsWith("\n") ? source : `${source}\n`, "utf8");
+
+  return loadBrand(brandId);
+}
+
 export async function archiveBrand(brandId: string) {
   if (!/^[a-z0-9-]+$/.test(brandId)) {
     throw new Error("Invalid brand id.");

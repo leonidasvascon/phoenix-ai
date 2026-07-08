@@ -240,6 +240,7 @@ function BrandDetail({
   isDuplicating,
   isSaving,
   onArchive,
+  onExport,
   onDuplicate,
   onSave
 }: Readonly<{
@@ -248,6 +249,7 @@ function BrandDetail({
   isDuplicating: boolean;
   isSaving: boolean;
   onArchive: () => void;
+  onExport: () => void;
   onDuplicate: (input: { name: string; purpose: string }) => void;
   onSave: (brand: BrandDna) => void;
 }>) {
@@ -268,6 +270,9 @@ function BrandDetail({
           </button>
           <button type="button" onClick={() => setIsDuplicatingBrand((current) => !current)}>
             Duplicar marca
+          </button>
+          <button type="button" onClick={onExport}>
+            Exportar YAML
           </button>
           <button className="danger-action" type="button" disabled={isArchiving} onClick={onArchive}>
             {isArchiving ? "Arquivando..." : "Arquivar marca"}
@@ -407,6 +412,23 @@ function BrandDetailView() {
     }
   }
 
+  async function handleExport() {
+    const response = await fetch(`${apiUrl}/brands/${brandId}/export`);
+
+    if (!response.ok) {
+      window.alert("Nao foi possivel exportar o Brand DNA.");
+      return;
+    }
+
+    const blob = await response.blob();
+    const downloadUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = `${brandId}.yaml`;
+    link.click();
+    URL.revokeObjectURL(downloadUrl);
+  }
+
   return (
     <main className="brands-shell">
       <Navigation />
@@ -434,6 +456,7 @@ function BrandDetailView() {
           isDuplicating={duplicateBrand.isPending}
           isSaving={updateBrand.isPending}
           onArchive={handleArchive}
+          onExport={() => void handleExport()}
           onDuplicate={(input) => duplicateBrand.mutate(input)}
           onSave={(input) => updateBrand.mutate(input)}
         />
