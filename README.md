@@ -273,6 +273,20 @@ As configuracoes ficam persistidas em `.storage/settings.json` e controlam:
 Ao gerar uma nova task via API, o Runtime usa o provider, score minimo e tentativas salvas. O Media Composer
 usa a pasta de output configurada.
 
+## Task Templates
+
+Sprint 30 adiciona modelos reutilizaveis de task persistidos em `.storage/task-templates.json`.
+
+Endpoints:
+
+- `GET /task-templates`
+- `POST /task-templates`
+- `PUT /task-templates/:id`
+- `DELETE /task-templates/:id`
+
+O Studio oferece a tela `/templates` para criar, editar, excluir e usar modelos. O comando `Usar template`
+abre a Nova Task com marca, tema, objetivo, plataforma e formato preenchidos.
+
 ## Execution History
 
 Sprint 15 adiciona historico operacional no Studio.

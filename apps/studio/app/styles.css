@@ -306,6 +306,11 @@ select {
   margin: 40px auto;
 }
 
+.templates-shell {
+  width: min(1120px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -877,6 +882,120 @@ select {
   grid-column: 1 / -1;
 }
 
+.templates-layout {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.template-form,
+.template-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.template-form {
+  display: grid;
+  gap: 16px;
+}
+
+.template-form h2,
+.template-card h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.template-form-actions,
+.template-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.template-list {
+  display: grid;
+  gap: 14px;
+}
+
+.template-card {
+  display: grid;
+  gap: 16px;
+}
+
+.template-card header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.template-card header p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 6px;
+}
+
+.template-card span {
+  background: #ece7dd;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 10px;
+}
+
+.template-card dl {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+
+.template-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.template-card dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+}
+
+.template-card-actions a,
+.template-card-actions button,
+.template-form-actions button {
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  min-height: 36px;
+  padding: 0 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.template-card-actions a,
+.template-form-actions button[type="submit"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.template-card-actions button,
+.template-form-actions button {
+  background: #fffdfa;
+  color: var(--foreground);
+}
+
+.template-card-actions .danger-action {
+  border-color: #d9a6a6;
+  color: var(--accent-dark);
+}
+
 .brand-detail > header,
 .brand-purpose,
 .brand-dna-section,
@@ -1093,7 +1212,8 @@ select {
   .output-shell,
   .brands-shell,
   .analytics-shell,
-  .settings-shell {
+  .settings-shell,
+  .templates-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
   }
@@ -1102,7 +1222,9 @@ select {
   .analytics-lists,
   .output-summary,
   .brand-dna-grid,
-  .settings-form {
+  .settings-form,
+  .templates-layout,
+  .template-card dl {
     grid-template-columns: 1fr;
   }
 
@@ -1113,7 +1235,8 @@ select {
   .output-preview > header,
   .brand-card header,
   .archived-brand-card header,
-  .brand-detail > header {
+  .brand-detail > header,
+  .template-card header {
     align-items: flex-start;
     flex-direction: column;
   }

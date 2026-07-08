@@ -1,7 +1,8 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
-import type { FormEvent } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import { Suspense, type FormEvent, useEffect, useState } from "react";
 import { Navigation } from "../components/navigation";
 import { QueryProvider } from "./query-provider";
 import { apiFetch } from "./api-client";
@@ -32,7 +33,37 @@ type TaskInput = {
   format: TaskFormat;
 };
 
+type TaskTemplate = TaskInput & {
+  id: string;
+  name: string;
+};
+
+const defaultTask: TaskInput = {
+  brand: "encanto-intenso",
+  theme: "",
+  objective: "",
+  platform: "instagram",
+  format: "reel"
+};
+
 function PhoenixStudio() {
+  const searchParams = useSearchParams();
+  const templateId = searchParams.get("template");
+  const [task, setTask] = useState<TaskInput>(defaultTask);
+  const templates = useQuery({
+    enabled: Boolean(templateId),
+    queryKey: ["task-templates"],
+    queryFn: async (): Promise<TaskTemplate[]> => {
+      const response = await apiFetch("/task-templates");
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel carregar templates.");
+      }
+
+      return response.json();
+    }
+  });
+  const selectedTemplate = templates.data?.find((item) => item.id === templateId);
   const mutation = useMutation({
     mutationFn: async (task: TaskInput): Promise<StudioResult> => {
       const response = await apiFetch("/tasks", {
@@ -51,17 +82,32 @@ function PhoenixStudio() {
     }
   });
 
+  useEffect(() => {
+    if (!templateId || !templates.data) {
+      return;
+    }
+
+    if (selectedTemplate) {
+      setTask({
+        brand: selectedTemplate.brand,
+        theme: selectedTemplate.theme,
+        objective: selectedTemplate.objective,
+        platform: selectedTemplate.platform,
+        format: selectedTemplate.format
+      });
+    }
+  }, [selectedTemplate, templateId]);
+
+  function updateTask<K extends keyof TaskInput>(field: K, value: TaskInput[K]) {
+    setTask((current) => ({
+      ...current,
+      [field]: value
+    }));
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    mutation.mutate({
-      brand: String(formData.get("brand") ?? "encanto-intenso"),
-      theme: String(formData.get("theme") ?? ""),
-      objective: String(formData.get("objective") ?? ""),
-      platform: "instagram",
-      format: String(formData.get("format") ?? "reel") as TaskFormat
-    });
+    mutation.mutate(task);
   }
 
   return (
@@ -72,37 +118,70 @@ function PhoenixStudio() {
           <p>Phoenix AI</p>
           <h1>Phoenix Studio</h1>
         </div>
+        {selectedTemplate ? <p className="success">Template carregado na task.</p> : null}
+        {templates.error ? <p className="error">{templates.error.message}</p> : null}
 
         <form className="task-form" onSubmit={handleSubmit}>
           <label>
             Marca
-            <select name="brand" defaultValue="encanto-intenso">
+            <select name="brand" value={task.brand} onChange={(event) => updateTask("brand", event.target.value)}>
+              {task.brand !== "encanto-intenso" ? <option value={task.brand}>{task.brand}</option> : null}
               <option value="encanto-intenso">Encanto Intenso</option>
             </select>
           </label>
 
           <label>
             Tema
-            <input name="theme" placeholder="Saudade" required />
+            <input
+              name="theme"
+              onChange={(event) => updateTask("theme", event.target.value)}
+              placeholder="Saudade"
+              required
+              value={task.theme}
+            />
           </label>
 
           <label>
             Objetivo
-            <input name="objective" placeholder="Viralizar" required />
+            <input
+              name="objective"
+              onChange={(event) => updateTask("objective", event.target.value)}
+              placeholder="Viralizar"
+              required
+              value={task.objective}
+            />
           </label>
 
           <fieldset>
             <legend>Formato</legend>
             <label>
-              <input type="radio" name="format" value="reel" defaultChecked />
+              <input
+                checked={task.format === "reel"}
+                name="format"
+                onChange={() => updateTask("format", "reel")}
+                type="radio"
+                value="reel"
+              />
               Reel
             </label>
             <label>
-              <input type="radio" name="format" value="carousel" />
+              <input
+                checked={task.format === "carousel"}
+                name="format"
+                onChange={() => updateTask("format", "carousel")}
+                type="radio"
+                value="carousel"
+              />
               Carrossel
             </label>
             <label>
-              <input type="radio" name="format" value="story" />
+              <input
+                checked={task.format === "story"}
+                name="format"
+                onChange={() => updateTask("format", "story")}
+                type="radio"
+                value="story"
+              />
               Story
             </label>
           </fieldset>
@@ -160,7 +239,9 @@ function PhoenixStudio() {
 export default function Page() {
   return (
     <QueryProvider>
-      <PhoenixStudio />
+      <Suspense fallback={<main className="session-loading">Carregando Studio...</main>}>
+        <PhoenixStudio />
+      </Suspense>
     </QueryProvider>
   );
 }
