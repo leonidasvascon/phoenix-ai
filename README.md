@@ -256,6 +256,9 @@ O Studio centraliza as chamadas autenticadas e oferece login local em `/login`. 
 armazenada no navegador. Esta primeira versao e adequada para ambiente controlado; autenticacao por
 usuario, sessoes e autorizacao granular ficam para uma evolucao posterior.
 
+Todas as rotas do Studio, exceto `/login`, sao protegidas por sessao local. Sem token salvo, o Studio
+redireciona automaticamente para o login. O botao `Sair` remove o token e encerra a sessao no navegador.
+
 ## Execution History
 
 Sprint 15 adiciona historico operacional no Studio.

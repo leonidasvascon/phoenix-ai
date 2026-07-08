@@ -30,8 +30,12 @@ export function clearApiKey(): void {
 
 export function getApiKey(): string {
   if (typeof window !== "undefined") {
-    return window.localStorage.getItem(storageKey) ?? configuredApiKey;
+    return window.localStorage.getItem(storageKey) ?? "";
   }
 
+  return "";
+}
+
+export function getConfiguredApiKey(): string {
   return configuredApiKey;
 }

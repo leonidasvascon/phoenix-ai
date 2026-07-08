@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoutButton } from "./logout-button";
 
 export function Navigation() {
   return (
@@ -7,7 +8,7 @@ export function Navigation() {
       <Link href="/history">Historico</Link>
       <Link href="/analytics">Analytics</Link>
       <Link href="/brands">Marcas</Link>
-      <Link href="/login">Login</Link>
+      <LogoutButton />
     </nav>
   );
 }

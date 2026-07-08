@@ -2,11 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
-import { apiFetch, clearApiKey, getApiKey, saveApiKey } from "../api-client";
+import { apiFetch, clearApiKey, getConfiguredApiKey, saveApiKey } from "../api-client";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [apiKey, setApiKey] = useState(getApiKey);
+  const [apiKey, setApiKey] = useState(getConfiguredApiKey);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -25,7 +25,8 @@ export default function LoginPage() {
         return;
       }
 
-      router.push("/");
+      router.replace("/");
+      router.refresh();
     } catch {
       clearApiKey();
       setError("A API Phoenix nao esta disponivel.");
