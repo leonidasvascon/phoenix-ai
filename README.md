@@ -216,7 +216,10 @@ Endpoints v1:
 - `GET /brands`
 - `GET /brands/:id`
 - `GET /brands/:id/export`
+- `GET /brands/:id/versions`
+- `GET /brands/:id/versions/:version`
 - `POST /brands/import`
+- `POST /brands/:id/versions/:version/restore`
 - `PUT /brands/:id`
 
 Fluxo atualizado:
@@ -467,6 +470,25 @@ Endpoints:
 
 A importacao valida `brand.id`, `brand.name` e `purpose`, impede IDs duplicados e salva o arquivo em
 `prompts/brands/{id}.yaml`. No Studio, `/brands/import` recebe o YAML e redireciona para a marca importada.
+
+## Brand Versioning
+
+Sprint 25 adiciona historico auditavel do Brand DNA. Os snapshots sao armazenados em:
+
+```text
+.storage/brand-versions/{id}/{timestamp}.yaml
+```
+
+Uma versao e criada antes de editar, duplicar ou arquivar uma marca. A importacao registra o YAML recebido
+como versao inicial. Ao restaurar uma versao antiga, o estado atual tambem e preservado antes da troca.
+
+Endpoints:
+
+- `GET /brands/:id/versions` lista o historico
+- `GET /brands/:id/versions/:version` retorna metadados, YAML e Brand DNA parseado
+- `POST /brands/:id/versions/:version/restore` restaura a versao selecionada
+
+O Studio exibe o historico em `/brands/{id}`, permite visualizar o YAML e restaurar uma versao com confirmacao.
 
 Campos da tela:
 

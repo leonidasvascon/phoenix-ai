@@ -32,6 +32,11 @@ type ArchivedBrand = {
   arquivado_em: string;
   arquivo: string;
 };
+type BrandVersion = {
+  version: string;
+  created_at: string;
+  file: string;
+};
 
 const mediaPackageFiles = [
   "metadata.json",
@@ -238,7 +243,79 @@ export async function importBrand(input: unknown): Promise<Brand> {
   }
 
   await mkdir(resolve(process.cwd(), "prompts", "brands"), { recursive: true });
+  await saveBrandVersion(brandId, source);
   await writeFile(brandPath, source.endsWith("\n") ? source : `${source}\n`, "utf8");
+
+  return loadBrand(brandId);
+}
+
+export async function listBrandVersions(brandId: string): Promise<BrandVersion[]> {
+  validateBrandId(brandId);
+  const versionsPath = resolve(process.cwd(), ".storage", "brand-versions", brandId);
+  let files: string[] = [];
+
+  try {
+    files = await readdir(versionsPath);
+  } catch {
+    return [];
+  }
+
+  return files
+    .filter((file) => file.endsWith(".yaml"))
+    .map((file) => {
+      const version = file.replace(/\.yaml$/, "");
+
+      return {
+        version,
+        created_at: versionToTimestamp(version),
+        file: resolve(versionsPath, file).replace(`${process.cwd()}\\`, "").replace(`${process.cwd()}/`, "")
+      };
+    })
+    .sort((a, b) => b.version.localeCompare(a.version));
+}
+
+export async function getBrandVersion(brandId: string, version: string) {
+  validateBrandId(brandId);
+  validateVersion(version);
+
+  try {
+    const yaml = await readFile(brandVersionPath(brandId, version), "utf8");
+
+    return {
+      brand_id: brandId,
+      version,
+      created_at: versionToTimestamp(version),
+      yaml,
+      brand: parseSimpleYaml(yaml) as Brand
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function restoreBrandVersion(brandId: string, version: string): Promise<Brand> {
+  validateBrandId(brandId);
+  validateVersion(version);
+  const selectedVersion = await getBrandVersion(brandId, version);
+
+  if (!selectedVersion) {
+    throw new Error("Brand version not found.");
+  }
+
+  if (selectedVersion.brand.brand?.id !== brandId) {
+    throw new Error("Brand version does not match brand id.");
+  }
+
+  const brandPath = resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`);
+
+  try {
+    const currentYaml = await readFile(brandPath, "utf8");
+    await saveBrandVersion(brandId, currentYaml);
+  } catch {
+    await mkdir(resolve(process.cwd(), "prompts", "brands"), { recursive: true });
+  }
+
+  await writeFile(brandPath, selectedVersion.yaml, "utf8");
 
   return loadBrand(brandId);
 }
@@ -259,6 +336,7 @@ export async function archiveBrand(brandId: string) {
   const archivePath = resolve(archiveDirectory, `${brandId}-${timestamp}.yaml`);
 
   await mkdir(archiveDirectory, { recursive: true });
+  await saveBrandVersion(brandId, await readFile(brandPath, "utf8"));
   await rename(brandPath, archivePath);
 
   return {
@@ -381,6 +459,7 @@ export async function duplicateBrand(sourceBrandId: string, input: unknown): Pro
     purpose: payload.purpose
   };
 
+  await saveActiveBrandVersion(sourceBrandId);
   await writeFile(brandPath, stringifyYaml(duplicatedBrand), "utf8");
 
   return loadBrand(newBrandId);
@@ -394,6 +473,7 @@ export async function updateBrand(brandId: string, input: unknown): Promise<Bran
   const brand = validateBrandInput(brandId, input);
   const brandPath = resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`);
 
+  await saveActiveBrandVersion(brandId);
   await writeFile(brandPath, stringifyYaml(brand), "utf8");
 
   return loadBrand(brandId);
@@ -415,6 +495,59 @@ function validateDuplicateBrandInput(input: unknown) {
     name,
     purpose: typeof payload.purpose === "string" ? payload.purpose.trim() : ""
   };
+}
+
+async function saveActiveBrandVersion(brandId: string): Promise<void> {
+  const source = await readFile(resolve(process.cwd(), "prompts", "brands", `${brandId}.yaml`), "utf8");
+  await saveBrandVersion(brandId, source);
+}
+
+async function saveBrandVersion(brandId: string, source: string): Promise<string> {
+  validateBrandId(brandId);
+  const directory = resolve(process.cwd(), ".storage", "brand-versions", brandId);
+
+  await mkdir(directory, { recursive: true });
+  let timestamp = Date.now();
+
+  while (true) {
+    const version = new Date(timestamp).toISOString().replace(/[:.]/g, "-");
+
+    try {
+      await writeFile(
+        brandVersionPath(brandId, version),
+        source.endsWith("\n") ? source : `${source}\n`,
+        { encoding: "utf8", flag: "wx" }
+      );
+      return version;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "EEXIST") {
+        throw error;
+      }
+      timestamp += 1;
+    }
+  }
+}
+
+function brandVersionPath(brandId: string, version: string): string {
+  return resolve(process.cwd(), ".storage", "brand-versions", brandId, `${version}.yaml`);
+}
+
+function validateBrandId(brandId: string): void {
+  if (!/^[a-z0-9-]+$/.test(brandId)) {
+    throw new Error("Invalid brand id.");
+  }
+}
+
+function validateVersion(version: string): void {
+  if (!/^[0-9TZ-]+$/.test(version)) {
+    throw new Error("Invalid brand version.");
+  }
+}
+
+function versionToTimestamp(version: string): string {
+  const match = version.match(/^(\d{4}-\d{2}-\d{2}T)(\d{2})-(\d{2})-(\d{2})-(\d{3})Z$/);
+
+  return match ? `${match[1]}${match[2]}:${match[3]}:${match[4]}.${match[5]}Z` : version;
 }
 
 async function readArchivedBrandFiles() {

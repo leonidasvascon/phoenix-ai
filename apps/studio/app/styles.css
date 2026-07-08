@@ -663,6 +663,110 @@ select {
   gap: 18px;
 }
 
+.brand-versions {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.brand-versions > header,
+.brand-version-list article,
+.brand-version-preview > header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-versions header p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.brand-versions h2,
+.brand-version-preview h3 {
+  margin: 0;
+}
+
+.brand-versions > header > span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.brand-version-list {
+  display: grid;
+  gap: 10px;
+}
+
+.brand-version-list article {
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.brand-version-list article > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.brand-version-list code {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.brand-version-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.brand-version-actions button,
+.brand-version-preview button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #fffdfa;
+  color: var(--foreground);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.brand-version-actions button:last-child {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.brand-version-preview {
+  display: grid;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+
+.brand-version-preview h3 {
+  font-size: 16px;
+}
+
+.brand-version-preview pre {
+  max-height: 420px;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px;
+  background: #fffdfa;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 .brand-detail > header,
 .brand-purpose,
 .brand-dna-section,
@@ -907,8 +1011,16 @@ select {
   }
 
   .brand-detail-actions,
-  .brand-editor-actions {
+  .brand-editor-actions,
+  .brand-version-actions {
     flex-wrap: wrap;
+  }
+
+  .brand-versions > header,
+  .brand-version-list article,
+  .brand-version-preview > header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .brand-editor,

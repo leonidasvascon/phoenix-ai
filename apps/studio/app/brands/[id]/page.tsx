@@ -10,6 +10,18 @@ import { QueryProvider } from "../../query-provider";
 const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
 const archivedBrandMessage = "Marca nao encontrada ou arquivada.";
 
+type BrandVersionSummary = {
+  version: string;
+  created_at: string;
+  file: string;
+};
+
+type BrandVersionDetail = BrandVersionSummary & {
+  brand_id: string;
+  yaml: string;
+  brand: BrandDna;
+};
+
 function formatLabel(value: string): string {
   return value.replace(/_/g, " ");
 }
@@ -102,6 +114,115 @@ function ListSection({ title, values }: Readonly<{ title: string; values?: strin
       ) : (
         <p className="muted">Nao informado.</p>
       )}
+    </section>
+  );
+}
+
+function BrandVersionHistory({
+  brandId,
+  onRestored
+}: Readonly<{
+  brandId: string;
+  onRestored: (brand: BrandDna) => void;
+}>) {
+  const [selectedVersion, setSelectedVersion] = useState("");
+  const versions = useQuery({
+    queryKey: ["brand-versions", brandId],
+    queryFn: async (): Promise<BrandVersionSummary[]> => {
+      const response = await fetch(`${apiUrl}/brands/${brandId}/versions`);
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel carregar o historico.");
+      }
+
+      return response.json();
+    }
+  });
+  const versionDetail = useQuery({
+    enabled: Boolean(selectedVersion),
+    queryKey: ["brand-version", brandId, selectedVersion],
+    queryFn: async (): Promise<BrandVersionDetail> => {
+      const response = await fetch(`${apiUrl}/brands/${brandId}/versions/${selectedVersion}`);
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel carregar esta versao.");
+      }
+
+      return response.json();
+    }
+  });
+  const restoreVersion = useMutation({
+    mutationFn: async (version: string): Promise<BrandDna> => {
+      const response = await fetch(`${apiUrl}/brands/${brandId}/versions/${version}/restore`, {
+        method: "POST"
+      });
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel restaurar esta versao.");
+      }
+
+      return response.json();
+    },
+    onSuccess: (restoredBrand) => {
+      onRestored(restoredBrand);
+      versions.refetch();
+    }
+  });
+
+  function handleRestore(version: string) {
+    if (window.confirm("Restaurar esta versao do Brand DNA? A versao atual sera preservada no historico.")) {
+      restoreVersion.mutate(version);
+    }
+  }
+
+  return (
+    <section className="brand-versions">
+      <header>
+        <div>
+          <p>Auditoria</p>
+          <h2>Historico de versoes</h2>
+        </div>
+        <span>{versions.data?.length ?? 0} versoes</span>
+      </header>
+
+      {versions.isLoading ? <p className="muted">Carregando historico...</p> : null}
+      {versions.error ? <p className="error">{versions.error.message}</p> : null}
+      {restoreVersion.error ? <p className="error">{restoreVersion.error.message}</p> : null}
+      {restoreVersion.isSuccess ? <p className="success">Versao restaurada com sucesso.</p> : null}
+      {versions.data?.length === 0 ? <p className="muted">Nenhuma versao registrada.</p> : null}
+
+      {versions.data && versions.data.length > 0 ? (
+        <div className="brand-version-list">
+          {versions.data.map((item) => (
+            <article key={item.version}>
+              <div>
+                <strong>{new Date(item.created_at).toLocaleString("pt-BR")}</strong>
+                <code>{item.version}</code>
+              </div>
+              <div className="brand-version-actions">
+                <button type="button" onClick={() => setSelectedVersion(item.version)}>
+                  Ver versao
+                </button>
+                <button type="button" disabled={restoreVersion.isPending} onClick={() => handleRestore(item.version)}>
+                  Restaurar versao
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
+      {versionDetail.isLoading ? <p className="muted">Carregando versao...</p> : null}
+      {versionDetail.error ? <p className="error">{versionDetail.error.message}</p> : null}
+      {versionDetail.data ? (
+        <section className="brand-version-preview">
+          <header>
+            <h3>Versao de {new Date(versionDetail.data.created_at).toLocaleString("pt-BR")}</h3>
+            <button type="button" onClick={() => setSelectedVersion("")}>Fechar</button>
+          </header>
+          <pre>{versionDetail.data.yaml}</pre>
+        </section>
+      ) : null}
     </section>
   );
 }
@@ -450,16 +571,25 @@ function BrandDetailView() {
       {duplicateBrand.error ? <p className="error">{duplicateBrand.error.message}</p> : null}
       {updateBrand.isSuccess ? <p className="success">Brand DNA salvo com sucesso.</p> : null}
       {brand.data ? (
-        <BrandDetail
-          brand={brand.data}
-          isArchiving={archiveBrand.isPending}
-          isDuplicating={duplicateBrand.isPending}
-          isSaving={updateBrand.isPending}
-          onArchive={handleArchive}
-          onExport={() => void handleExport()}
-          onDuplicate={(input) => duplicateBrand.mutate(input)}
-          onSave={(input) => updateBrand.mutate(input)}
-        />
+        <>
+          <BrandDetail
+            brand={brand.data}
+            isArchiving={archiveBrand.isPending}
+            isDuplicating={duplicateBrand.isPending}
+            isSaving={updateBrand.isPending}
+            onArchive={handleArchive}
+            onExport={() => void handleExport()}
+            onDuplicate={(input) => duplicateBrand.mutate(input)}
+            onSave={(input) => updateBrand.mutate(input)}
+          />
+          <BrandVersionHistory
+            brandId={brandId}
+            onRestored={(restoredBrand) => {
+              queryClient.setQueryData(["brand", brandId], restoredBrand);
+              queryClient.invalidateQueries({ queryKey: ["brands"] });
+            }}
+          />
+        </>
       ) : null}
     </main>
   );
