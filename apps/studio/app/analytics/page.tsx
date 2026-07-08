@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { MetricCard } from "../../components/metric-card";
 import { Navigation } from "../../components/navigation";
 import { QueryProvider } from "../query-provider";
+import { apiFetch } from "../api-client";
 
 type RankedMetric = {
   name: string;
@@ -23,8 +24,6 @@ type AnalyticsReport = {
   top_brands: string[];
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
-
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("en-US", {
     currency: "USD",
@@ -36,7 +35,7 @@ function AnalyticsView() {
   const analytics = useQuery({
     queryKey: ["analytics"],
     queryFn: async (): Promise<AnalyticsReport> => {
-      const response = await fetch(`${apiUrl}/analytics`);
+      const response = await apiFetch("/analytics");
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar analytics.");

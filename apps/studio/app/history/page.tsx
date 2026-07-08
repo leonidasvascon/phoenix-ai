@@ -4,14 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { ExecutionCard, type ExecutionCardData } from "../../components/execution-card";
 import { Navigation } from "../../components/navigation";
 import { QueryProvider } from "../query-provider";
-
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+import { apiFetch } from "../api-client";
 
 function HistoryView() {
   const executions = useQuery({
     queryKey: ["executions"],
     queryFn: async (): Promise<ExecutionCardData[]> => {
-      const response = await fetch(`${apiUrl}/executions`);
+      const response = await apiFetch("/executions");
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar o historico.");

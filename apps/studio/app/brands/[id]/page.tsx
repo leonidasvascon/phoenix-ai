@@ -6,8 +6,8 @@ import { type FormEvent, useState } from "react";
 import type { BrandDna } from "../../../components/brand-card";
 import { Navigation } from "../../../components/navigation";
 import { QueryProvider } from "../../query-provider";
+import { apiFetch } from "../../api-client";
 
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
 const archivedBrandMessage = "Marca nao encontrada ou arquivada.";
 
 type BrandVersionSummary = {
@@ -129,7 +129,7 @@ function BrandVersionHistory({
   const versions = useQuery({
     queryKey: ["brand-versions", brandId],
     queryFn: async (): Promise<BrandVersionSummary[]> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}/versions`);
+      const response = await apiFetch(`/brands/${brandId}/versions`);
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar o historico.");
@@ -142,7 +142,7 @@ function BrandVersionHistory({
     enabled: Boolean(selectedVersion),
     queryKey: ["brand-version", brandId, selectedVersion],
     queryFn: async (): Promise<BrandVersionDetail> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}/versions/${selectedVersion}`);
+      const response = await apiFetch(`/brands/${brandId}/versions/${selectedVersion}`);
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar esta versao.");
@@ -153,7 +153,7 @@ function BrandVersionHistory({
   });
   const restoreVersion = useMutation({
     mutationFn: async (version: string): Promise<BrandDna> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}/versions/${version}/restore`, {
+      const response = await apiFetch(`/brands/${brandId}/versions/${version}/restore`, {
         method: "POST"
       });
 
@@ -451,7 +451,7 @@ function BrandDetailView() {
     enabled: Boolean(brandId),
     queryKey: ["brand", brandId],
     queryFn: async (): Promise<BrandDna> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}`);
+      const response = await apiFetch(`/brands/${brandId}`);
 
       if (response.status === 404) {
         throw new Error(archivedBrandMessage);
@@ -466,7 +466,7 @@ function BrandDetailView() {
   });
   const updateBrand = useMutation({
     mutationFn: async (input: BrandDna): Promise<BrandDna> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}`, {
+      const response = await apiFetch(`/brands/${brandId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -487,7 +487,7 @@ function BrandDetailView() {
   });
   const duplicateBrand = useMutation({
     mutationFn: async (input: { name: string; purpose: string }): Promise<BrandDna> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}/duplicate`, {
+      const response = await apiFetch(`/brands/${brandId}/duplicate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -508,7 +508,7 @@ function BrandDetailView() {
   });
   const archiveBrand = useMutation({
     mutationFn: async (): Promise<{ status: string; archive_path: string }> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}`, {
+      const response = await apiFetch(`/brands/${brandId}`, {
         method: "DELETE"
       });
 
@@ -534,7 +534,7 @@ function BrandDetailView() {
   }
 
   async function handleExport() {
-    const response = await fetch(`${apiUrl}/brands/${brandId}/export`);
+    const response = await apiFetch(`/brands/${brandId}/export`);
 
     if (!response.ok) {
       window.alert("Nao foi possivel exportar o Brand DNA.");

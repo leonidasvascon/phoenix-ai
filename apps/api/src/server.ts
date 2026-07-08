@@ -1,5 +1,6 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { basename, dirname, resolve } from "node:path";
+import { authenticateApiKey } from "./auth/api-key-auth.ts";
 import { sendJson } from "./http.ts";
 import { handleAnalyticsRoute } from "./routes/analytics.ts";
 import { handleBrandsRoute } from "./routes/brands.ts";
@@ -43,6 +44,16 @@ ensureRepositoryRoot();
 const server = createServer(async (request, response) => {
   if (request.method === "OPTIONS") {
     sendJson(response, 204, {});
+    return;
+  }
+
+  const auth = authenticateApiKey(request);
+
+  if (!auth.authenticated) {
+    sendJson(response, auth.status, {
+      status: "error",
+      message: auth.message
+    });
     return;
   }
 

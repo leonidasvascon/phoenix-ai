@@ -6,8 +6,7 @@ import { type FormEvent, useState } from "react";
 import type { BrandDna } from "../../../components/brand-card";
 import { Navigation } from "../../../components/navigation";
 import { QueryProvider } from "../../query-provider";
-
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+import { apiFetch } from "../../api-client";
 
 function BrandImportView() {
   const router = useRouter();
@@ -15,7 +14,7 @@ function BrandImportView() {
   const [yaml, setYaml] = useState("");
   const importBrand = useMutation({
     mutationFn: async (source: string): Promise<BrandDna> => {
-      const response = await fetch(`${apiUrl}/brands/import`, {
+      const response = await apiFetch("/brands/import", {
         method: "POST",
         headers: {
           "Content-Type": "text/yaml"

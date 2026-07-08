@@ -5,8 +5,7 @@ import { useParams } from "next/navigation";
 import { Navigation } from "../../../components/navigation";
 import { OutputPreview, type OutputPackage } from "../../../components/output-preview";
 import { QueryProvider } from "../../query-provider";
-
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+import { apiFetch } from "../../api-client";
 
 function ExecutionDetailView() {
   const params = useParams<{ id: string }>();
@@ -15,7 +14,7 @@ function ExecutionDetailView() {
     enabled: Boolean(executionId),
     queryKey: ["execution", executionId],
     queryFn: async (): Promise<OutputPackage> => {
-      const response = await fetch(`${apiUrl}/executions/${executionId}`);
+      const response = await apiFetch(`/executions/${executionId}`);
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar o pacote gerado.");

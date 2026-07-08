@@ -4,8 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Navigation } from "../../../components/navigation";
 import { QueryProvider } from "../../query-provider";
-
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+import { apiFetch } from "../../api-client";
 
 type ArchivedBrand = {
   id: string;
@@ -27,7 +26,7 @@ function ArchivedBrandsView() {
   const archivedBrands = useQuery({
     queryKey: ["archived-brands"],
     queryFn: async (): Promise<ArchivedBrand[]> => {
-      const response = await fetch(`${apiUrl}/brands/archived`);
+      const response = await apiFetch("/brands/archived");
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar marcas arquivadas.");
@@ -38,7 +37,7 @@ function ArchivedBrandsView() {
   });
   const restoreBrand = useMutation({
     mutationFn: async (brandId: string): Promise<RestoredBrand> => {
-      const response = await fetch(`${apiUrl}/brands/${brandId}/restore`, {
+      const response = await apiFetch(`/brands/${brandId}/restore`, {
         method: "POST"
       });
 

@@ -234,6 +234,28 @@ Fluxo atualizado:
 Studio -> API -> Runtime -> Media Composer -> Output
 ```
 
+## Authentication v1
+
+Sprint 27 protege todos os endpoints da Phoenix API com uma chave configurada em `PHOENIX_API_KEY`.
+
+Configure o ambiente:
+
+```env
+PHOENIX_API_KEY=change-me
+NEXT_PUBLIC_PHOENIX_API_URL=http://127.0.0.1:4000
+NEXT_PUBLIC_PHOENIX_API_KEY=change-me
+```
+
+A API aceita a chave em `Authorization: Bearer <token>` ou `X-Phoenix-Api-Key`.
+
+- requisicao sem chave retorna `401`
+- chave invalida retorna `403`
+- chave valida executa o endpoint normalmente
+
+O Studio centraliza as chamadas autenticadas e oferece login local em `/login`. A chave informada e
+armazenada no navegador. Esta primeira versao e adequada para ambiente controlado; autenticacao por
+usuario, sessoes e autorizacao granular ficam para uma evolucao posterior.
+
 ## Execution History
 
 Sprint 15 adiciona historico operacional no Studio.

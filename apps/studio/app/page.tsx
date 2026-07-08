@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { FormEvent } from "react";
 import { Navigation } from "../components/navigation";
 import { QueryProvider } from "./query-provider";
+import { apiFetch } from "./api-client";
 
 type TaskFormat = "reel" | "carousel" | "story";
 
@@ -31,12 +32,10 @@ type TaskInput = {
   format: TaskFormat;
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
-
 function PhoenixStudio() {
   const mutation = useMutation({
     mutationFn: async (task: TaskInput): Promise<StudioResult> => {
-      const response = await fetch(`${apiUrl}/tasks`, {
+      const response = await apiFetch("/tasks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

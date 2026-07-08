@@ -5,14 +5,13 @@ import Link from "next/link";
 import { BrandCard, type BrandDna } from "../../components/brand-card";
 import { Navigation } from "../../components/navigation";
 import { QueryProvider } from "../query-provider";
-
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+import { apiFetch } from "../api-client";
 
 function BrandsView() {
   const brands = useQuery({
     queryKey: ["brands"],
     queryFn: async (): Promise<BrandDna[]> => {
-      const response = await fetch(`${apiUrl}/brands`);
+      const response = await apiFetch("/brands");
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar marcas.");

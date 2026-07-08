@@ -6,8 +6,7 @@ import { type FormEvent, useState } from "react";
 import type { BrandDna } from "../../../components/brand-card";
 import { Navigation } from "../../../components/navigation";
 import { QueryProvider } from "../../query-provider";
-
-const apiUrl = process.env.NEXT_PUBLIC_PHOENIX_API_URL ?? "http://127.0.0.1:4000";
+import { apiFetch } from "../../api-client";
 
 type BrandCreateInput = {
   name: string;
@@ -68,7 +67,7 @@ function BrandCreationView() {
   const [forbiddenPatterns, setForbiddenPatterns] = useState("");
   const createBrand = useMutation({
     mutationFn: async (input: BrandCreateInput): Promise<BrandDna> => {
-      const response = await fetch(`${apiUrl}/brands`, {
+      const response = await apiFetch("/brands", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
