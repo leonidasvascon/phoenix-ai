@@ -1,6 +1,6 @@
 # Phoenix AI
 
-Versao: 0.1
+Versao: 0.2.0
 
 Phoenix AI e uma plataforma inteligente para criar, aprender, publicar e otimizar conteudo digital para diferentes marcas, nichos e canais usando Inteligencia Artificial.
 
@@ -33,9 +33,15 @@ Isso permite criar novos perfis sem alterar o codigo central da plataforma.
 - `database/`: modelos, migrations e seeds.
 - `tests/`: testes automatizados.
 
-## Sprint atual
+## Release atual
 
-Sprint 1 - Fundacao.
+`v0.2.0` - Produto Multi-Marca.
+
+Esta versao consolida o Phoenix Studio e a Phoenix API em um produto utilizavel para criar, editar,
+duplicar, arquivar, restaurar, importar, exportar e versionar marcas. O Studio tambem oferece historico
+de execucoes, analytics e visualizacao dos pacotes gerados.
+
+Release notes: `docs/releases/v0.2.0.md`.
 
 ## Documentos principais
 

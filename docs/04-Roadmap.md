@@ -49,6 +49,49 @@ Objetivo: escrever a primeira linha de codigo executavel da Phoenix AI.
 - Carregar pipeline por formato
 - Executar primeira task ponta a ponta
 
+## Fase Engine - Concluida
+
+Sprints 5 a 12 transformaram o Runtime em uma engine operacional:
+
+- agentes reais com LLM e fallback mock
+- Quality Gate com retry e score minimo
+- logs, tokens e estimativa de custo
+- persistencia local de execucoes
+- Analytics Engine v1
+- Knowledge Engine
+- Media Composer
+- Memory Engine v1
+
+## Fase Produto Multi-Marca - Concluida
+
+Sprints 13 a 25 entregaram:
+
+- Phoenix Studio
+- Phoenix API
+- historico de execucoes e Analytics Dashboard
+- Output Preview
+- Brand Manager e Brand Editor
+- criacao e duplicacao de marcas
+- arquivamento e restauracao de marcas
+- importacao e exportacao em YAML
+- historico e restauracao de versoes do Brand DNA
+
+## Sprint 26 - Release v0.2.0
+
+Status: concluida.
+
+Objetivo: consolidar o primeiro produto multi-marca da Phoenix AI.
+
+- atualizar documentacao e versao dos pacotes
+- publicar changelog e release notes
+- validar Studio, Runtime e Analytics
+- criar a tag `v0.2.0`
+
+## Proxima fase
+
+A partir da v0.3.0, o roadmap pode avancar para autenticacao, persistencia PostgreSQL/Supabase,
+Memory v2, Learning Engine e integracoes de publicacao.
+
 ## Epics
 
 ### Epic 1 - Fundacao
