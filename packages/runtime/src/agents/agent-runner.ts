@@ -9,10 +9,9 @@ import { defaultRetryPolicy, shouldRetry } from "../quality/retry-policy.ts";
 import { addCostUsage } from "../execution/cost-tracker.ts";
 import { recordAgentExecution } from "../execution/execution-log.ts";
 import { addTokenUsage } from "../execution/token-tracker.ts";
+import type { RetryPolicy } from "../quality/retry-policy.ts";
 
-function selectProvider(): LlmProvider {
-  const provider = process.env.PHOENIX_PROVIDER ?? "mock";
-
+function selectProvider(provider = process.env.PHOENIX_PROVIDER ?? "mock"): LlmProvider {
   if (provider === "openai") {
     return new OpenAIProvider();
   }
@@ -23,10 +22,16 @@ function selectProvider(): LlmProvider {
 export class AgentRunner {
   private readonly primaryProvider: LlmProvider;
   private readonly fallbackProvider: LlmProvider;
+  private readonly retryPolicy: RetryPolicy;
 
-  constructor(primaryProvider = selectProvider(), fallbackProvider = new MockProvider()) {
+  constructor(
+    options: { provider?: string; retryPolicy?: RetryPolicy } = {},
+    fallbackProvider = new MockProvider()
+  ) {
+    const primaryProvider = selectProvider(options.provider);
     this.primaryProvider = primaryProvider;
     this.fallbackProvider = fallbackProvider;
+    this.retryPolicy = options.retryPolicy ?? defaultRetryPolicy;
   }
 
   async run(step: PipelineStep, task: Task, brand: Brand, context: ExecutionContext): Promise<AgentOutput> {
@@ -36,7 +41,7 @@ export class AgentRunner {
     let agentAttempts = 0;
     let lastScore = 0;
 
-    for (let attempt = 1; attempt <= defaultRetryPolicy.maxAttempts; attempt += 1) {
+    for (let attempt = 1; attempt <= this.retryPolicy.maxAttempts; attempt += 1) {
       context.quality.attempts = Math.max(context.quality.attempts, attempt);
       agentAttempts = attempt;
 
@@ -46,7 +51,7 @@ export class AgentRunner {
           brand,
           context
         });
-        const gate = runQualityGate(agentId, rawOutput, defaultRetryPolicy.minScore);
+        const gate = runQualityGate(agentId, rawOutput, this.retryPolicy.minScore);
         lastScore = gate.score;
         addTokenUsage(context.execution.tokens, primaryAgent.lastUsage);
         addCostUsage(context.execution.cost, primaryAgent.lastCost);
@@ -67,10 +72,10 @@ export class AgentRunner {
           return gate.output;
         }
 
-        const reason = gate.reason ?? `Score below ${defaultRetryPolicy.minScore}.`;
+        const reason = gate.reason ?? `Score below ${this.retryPolicy.minScore}.`;
         logStep(context, agentId, "error", `Quality gate failed on attempt ${attempt}: ${reason}`);
 
-        if (!shouldRetry(attempt, gate.score)) {
+        if (!shouldRetry(attempt, gate.score, this.retryPolicy)) {
           context.quality.failed_agents.push({
             agent: agentId,
             reason
@@ -81,7 +86,7 @@ export class AgentRunner {
         const message = error instanceof Error ? error.message : "Unknown provider error.";
         logStep(context, agentId, "error", `Provider ${this.primaryProvider.id} failed on attempt ${attempt}. ${message}`);
 
-        if (!shouldRetry(attempt, 0)) {
+        if (!shouldRetry(attempt, 0, this.retryPolicy)) {
           context.quality.failed_agents.push({
             agent: agentId,
             reason: message

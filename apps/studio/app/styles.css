@@ -301,6 +301,11 @@ select {
   margin: 40px auto;
 }
 
+.settings-shell {
+  width: min(1120px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -847,6 +852,31 @@ select {
   white-space: pre-wrap;
 }
 
+.settings-form {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 980px;
+}
+
+.settings-form section {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.settings-form h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.settings-actions {
+  grid-column: 1 / -1;
+}
+
 .brand-detail > header,
 .brand-purpose,
 .brand-dna-section,
@@ -1062,7 +1092,8 @@ select {
   .history-shell,
   .output-shell,
   .brands-shell,
-  .analytics-shell {
+  .analytics-shell,
+  .settings-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
   }
@@ -1070,7 +1101,8 @@ select {
   .metric-grid,
   .analytics-lists,
   .output-summary,
-  .brand-dna-grid {
+  .brand-dna-grid,
+  .settings-form {
     grid-template-columns: 1fr;
   }
 

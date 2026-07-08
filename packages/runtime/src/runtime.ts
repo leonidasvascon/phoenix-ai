@@ -1,4 +1,4 @@
-import type { RuntimeResponse, Task } from "./types.ts";
+import type { RuntimeOptions, RuntimeResponse, Task } from "./types.ts";
 import { loadBrand } from "./loaders/brand-loader.ts";
 import { loadKnowledge } from "./loaders/knowledge-loader.ts";
 import { loadPipeline } from "./loaders/pipeline-loader.ts";
@@ -36,8 +36,13 @@ function getStorytellingIds(context: { knowledge?: { by_category: Record<string,
 }
 
 export class Runtime {
-  static async execute(task: Task, persistence: PersistenceAdapter = new FilePersistenceAdapter()): Promise<RuntimeResponse> {
+  static async execute(
+    task: Task,
+    persistence: PersistenceAdapter = new FilePersistenceAdapter(),
+    options: RuntimeOptions = {}
+  ): Promise<RuntimeResponse> {
     const context = createExecutionContext(task);
+    const provider = options.provider ?? process.env.PHOENIX_PROVIDER ?? "mock";
 
     try {
       validateTask(context.task);
@@ -57,7 +62,13 @@ export class Runtime {
       logStep(context, "pipeline_loader", "success", `Pipeline loaded: ${context.pipeline.name}.`);
 
       const agentSteps = context.pipeline.steps.filter((step) => step.type === "agent");
-      const runner = new AgentRunner();
+      const runner = new AgentRunner({
+        provider,
+        retryPolicy: {
+          maxAttempts: options.quality?.maxAttempts ?? 2,
+          minScore: options.quality?.minScore ?? 90
+        }
+      });
 
       for (const step of agentSteps) {
         const agentId = step.agent ?? step.id;
@@ -76,7 +87,7 @@ export class Runtime {
       context.quality.final_score = score || context.quality.final_score;
       context.quality.passed = context.quality.failed_agents.length === 0;
       context.execution.duration_ms = Math.round(performance.now() - context.startedAt);
-      context.execution.provider = process.env.PHOENIX_PROVIDER ?? "mock";
+      context.execution.provider = provider;
       context.execution.task = context.task;
       context.memory = await writeMemory(memoryStore, {
         memory: context.memory,

@@ -31,6 +31,7 @@ export type {
   Pipeline,
   PipelineStep,
   RuntimeResponse,
+  RuntimeOptions,
   Task
 } from "./types.ts";
 export type { PersistenceAdapter, PersistenceResult } from "./persistence/persistence-adapter.ts";

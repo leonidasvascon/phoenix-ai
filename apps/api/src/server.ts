@@ -5,6 +5,7 @@ import { sendJson } from "./http.ts";
 import { handleAnalyticsRoute } from "./routes/analytics.ts";
 import { handleBrandsRoute } from "./routes/brands.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
+import { handleSettingsRoute } from "./routes/settings.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
 
 const port = Number(process.env.PHOENIX_API_PORT ?? 4000);
@@ -28,7 +29,8 @@ const routes: Record<string, ApiHandler> = {
   "/tasks": handleTasksRoute,
   "/executions": handleExecutionsRoute,
   "/analytics": handleAnalyticsRoute,
-  "/brands": handleBrandsRoute
+  "/brands": handleBrandsRoute,
+  "/settings": handleSettingsRoute
 };
 
 function resolveRoute(pathname: string): ApiHandler | undefined {

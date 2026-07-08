@@ -259,6 +259,20 @@ usuario, sessoes e autorizacao granular ficam para uma evolucao posterior.
 Todas as rotas do Studio, exceto `/login`, sao protegidas por sessao local. Sem token salvo, o Studio
 redireciona automaticamente para o login. O botao `Sair` remove o token e encerra a sessao no navegador.
 
+## Runtime Settings
+
+Sprint 29 adiciona a tela `/settings` no Studio e os endpoints `GET /settings` e `PUT /settings` na API.
+As configuracoes ficam persistidas em `.storage/settings.json` e controlam:
+
+- `PHOENIX_PROVIDER`
+- `PHOENIX_API_URL`
+- score minimo do Quality Gate
+- maximo de tentativas
+- pasta de output dos pacotes gerados
+
+Ao gerar uma nova task via API, o Runtime usa o provider, score minimo e tentativas salvas. O Media Composer
+usa a pasta de output configurada.
+
 ## Execution History
 
 Sprint 15 adiciona historico operacional no Studio.

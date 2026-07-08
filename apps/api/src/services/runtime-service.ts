@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
+import { getRuntimeSettings } from "./settings-service.ts";
 
 type TaskRequest = Partial<Task>;
 type MediaPackageReference = {
@@ -68,8 +69,17 @@ function normalizeTask(input: TaskRequest): Task {
 
 export async function executeTask(input: TaskRequest) {
   const task = normalizeTask(input);
-  const runtimeResponse = await Runtime.execute(task);
-  const mediaPackage = await composeMediaPackage(runtimeResponse);
+  const settings = await getRuntimeSettings();
+  const runtimeResponse = await Runtime.execute(task, undefined, {
+    provider: settings.phoenix_provider,
+    quality: {
+      maxAttempts: settings.max_attempts,
+      minScore: settings.quality_min_score
+    }
+  });
+  const mediaPackage = await composeMediaPackage(runtimeResponse, {
+    outputRoot: settings.output_root
+  });
 
   return {
     ...runtimeResponse,

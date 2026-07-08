@@ -127,6 +127,14 @@ export type RuntimeResponse = {
   logs: ExecutionLog[];
 };
 
+export type RuntimeOptions = {
+  provider?: "mock" | "openai" | string;
+  quality?: {
+    minScore?: number;
+    maxAttempts?: number;
+  };
+};
+
 export type FailedAgent = {
   agent: string;
   reason: string;
