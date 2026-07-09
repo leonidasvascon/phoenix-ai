@@ -19,6 +19,9 @@ importers:
       '@phoenix-ai/media-composer':
         specifier: workspace:*
         version: link:../../packages/media-composer
+      '@phoenix-ai/prompt-optimizer':
+        specifier: workspace:*
+        version: link:../../packages/prompt-optimizer
       '@phoenix-ai/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
@@ -76,6 +79,8 @@ importers:
   packages/media-composer: {}
 
   packages/memory-engine: {}
+
+  packages/prompt-optimizer: {}
 
   packages/runtime: {}
 

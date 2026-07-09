@@ -2,6 +2,8 @@ import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
+import { getLearningReport } from "./learning-service.ts";
+import { listActivePromptOptimizations } from "./prompt-optimization-service.ts";
 import { getRuntimeSettings } from "./settings-service.ts";
 
 type TaskRequest = Partial<Task>;
@@ -73,12 +75,18 @@ function normalizeTask(input: TaskRequest): Task {
 export async function executeTask(input: TaskRequest) {
   const task = normalizeTask(input);
   const settings = await getRuntimeSettings();
+  const [learningReport, promptOptimizations] = await Promise.all([
+    getLearningReport(),
+    listActivePromptOptimizations(task.brand)
+  ]);
   const runtimeResponse = await Runtime.execute(task, undefined, {
     provider: settings.phoenix_provider,
     quality: {
       maxAttempts: settings.max_attempts,
       minScore: settings.quality_min_score
-    }
+    },
+    learningRecommendations: learningReport.recommendations,
+    promptOptimizations
   });
   const mediaPackage = await composeMediaPackage(runtimeResponse, {
     outputRoot: settings.output_root

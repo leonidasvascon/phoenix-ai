@@ -2,13 +2,17 @@ import type { Agent, AgentInput, AgentOutput, CostUsage, TokenUsage } from "../t
 import type { LlmProvider } from "../providers/llm-provider.ts";
 import { loadPrompt } from "../loaders/prompt-loader.ts";
 
-function buildUserPayload(input: AgentInput): string {
+function buildUserPayload(input: AgentInput, agentId: string): string {
   return JSON.stringify(
     {
       task: input.task,
       brand: input.brand,
       knowledge: input.context.knowledge,
       memory: input.context.memory,
+      learning_recommendations: input.context.learning_recommendations,
+      prompt_optimizations: input.context.prompt_optimizations.filter(
+        (optimization) => optimization.active && (optimization.agent === agentId || optimization.agent === "global")
+      ),
       previous_outputs: input.context.outputs
     },
     null,
@@ -47,7 +51,7 @@ export class PromptAgent implements Agent {
         },
         {
           role: "user",
-          content: buildUserPayload(input)
+          content: buildUserPayload(input, this.id)
         }
       ]
     });

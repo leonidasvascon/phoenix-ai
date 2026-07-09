@@ -47,6 +47,8 @@ export class Runtime {
     try {
       validateTask(context.task);
       logStep(context, "task_validator", "success", "Task validated.");
+      context.learning_recommendations = options.learningRecommendations ?? [];
+      context.prompt_optimizations = options.promptOptimizations ?? [];
 
       context.brand = await loadBrand(context.task.brand);
       logStep(context, "brand_loader", "success", `Brand loaded: ${context.brand.brand.id}.`);

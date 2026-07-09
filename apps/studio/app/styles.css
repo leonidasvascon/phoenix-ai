@@ -331,6 +331,11 @@ select {
   margin: 40px auto;
 }
 
+.optimizations-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -1494,6 +1499,55 @@ select {
   font-weight: 700;
 }
 
+.optimizations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.optimization-card {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.optimization-card header,
+.optimization-card footer {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.optimization-card header span,
+.optimization-card footer {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.optimization-card h2 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+
+.optimization-card p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.optimization-card strong {
+  color: var(--accent-strong);
+  font-size: 13px;
+  text-align: right;
+}
+
+.optimization-card time {
+  text-align: right;
+}
+
 .batch-table {
   display: grid;
   gap: 10px;
@@ -1872,7 +1926,8 @@ select {
   .batch-shell,
   .scheduler-shell,
   .learning-shell,
-  .feedback-shell {
+  .feedback-shell,
+  .optimizations-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
   }

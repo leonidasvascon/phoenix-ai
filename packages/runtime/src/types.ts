@@ -67,6 +67,22 @@ export type BrandMemory = {
   recent_outputs: RecentOutput[];
 };
 
+export type LearningRecommendation = {
+  type: string;
+  priority: "high" | "low" | "medium";
+  message: string;
+};
+
+export type PromptOptimization = {
+  id: string;
+  brand_id: string;
+  agent: string;
+  instruction: string;
+  source: string;
+  active: boolean;
+  created_at: string;
+};
+
 export type PipelineStep = {
   id: string;
   type: "system" | "agent";
@@ -96,6 +112,8 @@ export type ExecutionContext = {
   pipeline?: Pipeline;
   knowledge?: KnowledgeContext;
   memory?: BrandMemory;
+  learning_recommendations: LearningRecommendation[];
+  prompt_optimizations: PromptOptimization[];
   logs: ExecutionLog[];
   outputs: Record<string, unknown>;
   quality: QualitySummary;
@@ -133,6 +151,8 @@ export type RuntimeOptions = {
     minScore?: number;
     maxAttempts?: number;
   };
+  learningRecommendations?: LearningRecommendation[];
+  promptOptimizations?: PromptOptimization[];
 };
 
 export type FailedAgent = {

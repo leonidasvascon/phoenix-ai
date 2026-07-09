@@ -226,6 +226,8 @@ Endpoints v1:
 - `GET /feedback`
 - `POST /feedback`
 - `GET /feedback/:execution_id`
+- `GET /prompt-optimizations`
+- `POST /prompt-optimizations/generate`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -544,6 +546,37 @@ Formato:
 
 A tela `/feedback` permite lancar feedback manual e listar feedbacks cadastrados. O preview de execucao
 em `/executions/{execution_id}` tem o botao `Adicionar feedback`, preenchendo automaticamente o ID.
+
+## Prompt Optimizer
+
+Sprint 38 adiciona o pacote `@phoenix-ai/prompt-optimizer` para transformar recomendacoes do Learning Engine
+em instrucoes praticas para os agentes.
+
+Endpoints:
+
+- `GET /prompt-optimizations`
+- `POST /prompt-optimizations/generate`
+
+Persistencia:
+
+```text
+.storage/prompt-optimizations.json
+```
+
+Formato:
+
+```json
+{
+  "brand_id": "encanto-intenso",
+  "agent": "hook_specialist",
+  "instruction": "Priorize hooks do tipo pergunta, pois conteudos com esse padrao tiveram maior taxa de compartilhamento.",
+  "source": "feedback_analytics",
+  "active": true
+}
+```
+
+O Runtime injeta `learning_recommendations` e `prompt_optimizations` no payload enviado aos agentes. A tela
+`/optimizations` lista otimizacoes ativas e permite gerar novas instrucoes a partir do Learning.
 
 ## Execution History
 

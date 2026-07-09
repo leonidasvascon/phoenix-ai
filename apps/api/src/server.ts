@@ -8,6 +8,7 @@ import { handleBrandsRoute } from "./routes/brands.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
 import { handleFeedbackRoute } from "./routes/feedback.ts";
 import { handleLearningRoute } from "./routes/learning.ts";
+import { handlePromptOptimizationsRoute } from "./routes/prompt-optimizations.ts";
 import { handleScheduledJobsRoute } from "./routes/scheduled-jobs.ts";
 import { handleSettingsRoute } from "./routes/settings.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
@@ -36,6 +37,7 @@ const routes: Record<string, ApiHandler> = {
   "/executions": handleExecutionsRoute,
   "/feedback": handleFeedbackRoute,
   "/learning": handleLearningRoute,
+  "/prompt-optimizations": handlePromptOptimizationsRoute,
   "/analytics": handleAnalyticsRoute,
   "/batch-templates": handleBatchTemplatesRoute,
   "/brands": handleBrandsRoute,
@@ -51,6 +53,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/executions/") ||
     pathname.startsWith("/feedback/") ||
     pathname.startsWith("/learning/") ||
+    pathname.startsWith("/prompt-optimizations/") ||
     pathname.startsWith("/brands/") ||
     pathname.startsWith("/scheduled-jobs/") ||
     pathname.startsWith("/task-templates/")

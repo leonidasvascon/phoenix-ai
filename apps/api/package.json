@@ -11,6 +11,7 @@
     "@phoenix-ai/feedback-engine": "workspace:*",
     "@phoenix-ai/learning-engine": "workspace:*",
     "@phoenix-ai/media-composer": "workspace:*",
+    "@phoenix-ai/prompt-optimizer": "workspace:*",
     "@phoenix-ai/runtime": "workspace:*"
   },
   "devDependencies": {

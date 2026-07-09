@@ -15,6 +15,8 @@ export function createExecutionContext(task: Task): ExecutionContext {
     },
     logs: [],
     outputs: {},
+    learning_recommendations: [],
+    prompt_optimizations: [],
     quality: {
       passed: true,
       attempts: 0,
