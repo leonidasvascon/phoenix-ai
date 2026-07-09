@@ -68,6 +68,7 @@ export async function deleteScheduledJob(jobId: string): Promise<boolean> {
 }
 
 export async function runDueScheduledJobs(now = new Date()): Promise<{
+  checked: number;
   executed: number;
   jobs: ScheduledJob[];
 }> {
@@ -116,6 +117,7 @@ export async function runDueScheduledJobs(now = new Date()): Promise<{
   }
 
   return {
+    checked: dueJobIndexes.length,
     executed: executedJobs.length,
     jobs: executedJobs
   };

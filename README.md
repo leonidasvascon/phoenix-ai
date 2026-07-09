@@ -383,6 +383,34 @@ Formato:
 A tela `/scheduler` permite criar, listar e excluir jobs. O endpoint `POST /scheduled-jobs/run-due`
 executa manualmente jobs vencidos e atualiza o status para `completed` ou `failed`.
 
+## Scheduler Worker
+
+Sprint 34 adiciona um worker opcional dentro da Phoenix API para executar jobs pendentes automaticamente.
+
+Variaveis:
+
+```env
+PHOENIX_SCHEDULER_WORKER=true
+PHOENIX_SCHEDULER_INTERVAL_MS=60000
+```
+
+Rodar API com worker:
+
+```bash
+PHOENIX_SCHEDULER_WORKER=true PHOENIX_SCHEDULER_INTERVAL_MS=60000 npm run api:dev:worker
+```
+
+No Windows PowerShell:
+
+```powershell
+$env:PHOENIX_SCHEDULER_WORKER="true"
+$env:PHOENIX_SCHEDULER_INTERVAL_MS="60000"
+npm run api:dev:worker
+```
+
+O worker usa a mesma logica de `POST /scheduled-jobs/run-due`, registra jobs verificados, jobs executados
+e erros, e ignora ciclos concorrentes quando uma execucao anterior ainda esta ativa.
+
 ## Execution History
 
 Sprint 15 adiciona historico operacional no Studio.

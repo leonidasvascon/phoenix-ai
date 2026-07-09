@@ -10,6 +10,7 @@ import { handleScheduledJobsRoute } from "./routes/scheduled-jobs.ts";
 import { handleSettingsRoute } from "./routes/settings.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
 import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
+import { startSchedulerWorker } from "./workers/scheduler-worker.ts";
 
 const port = Number(process.env.PHOENIX_API_PORT ?? 4000);
 
@@ -55,6 +56,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
 }
 
 ensureRepositoryRoot();
+startSchedulerWorker();
 
 const server = createServer(async (request, response) => {
   if (request.method === "OPTIONS") {
