@@ -1,6 +1,7 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { type FormEvent, useState } from "react";
 import { Navigation } from "../../components/navigation";
 import { apiFetch } from "../api-client";
@@ -53,6 +54,14 @@ type BatchResult = {
   results: BatchItemResult[];
 };
 
+type BatchTemplate = {
+  id: string;
+  name: string;
+  items: Array<Omit<BatchRow, "id">>;
+  created_at: string;
+  updated_at: string;
+};
+
 const defaultRows: BatchRow[] = [
   createRow("batch-row-1", "saudade", "viralizar"),
   createRow("batch-row-2", "reencontro", "engajar"),
@@ -71,7 +80,10 @@ function createRow(id: string, theme = "", objective = ""): BatchRow {
 }
 
 function BatchView() {
+  const queryClient = useQueryClient();
   const [rows, setRows] = useState<BatchRow[]>(defaultRows);
+  const [templateName, setTemplateName] = useState("");
+  const [selectedTemplateId, setSelectedTemplateId] = useState("");
   const brands = useQuery({
     queryKey: ["brands"],
     queryFn: async (): Promise<Brand[]> => {
@@ -79,6 +91,18 @@ function BatchView() {
 
       if (!response.ok) {
         throw new Error("Nao foi possivel carregar marcas.");
+      }
+
+      return response.json();
+    }
+  });
+  const batchTemplates = useQuery({
+    queryKey: ["batch-templates"],
+    queryFn: async (): Promise<BatchTemplate[]> => {
+      const response = await apiFetch("/batch-templates");
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel carregar templates de lote.");
       }
 
       return response.json();
@@ -103,6 +127,31 @@ function BatchView() {
       return response.json();
     }
   });
+  const saveTemplate = useMutation({
+    mutationFn: async (payload: { items: BatchRow[]; name: string }): Promise<BatchTemplate> => {
+      const response = await apiFetch("/batch-templates", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: payload.name,
+          items: payload.items.map(({ id: _id, ...task }) => task)
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel salvar o template de lote.");
+      }
+
+      return response.json();
+    },
+    onSuccess: (template) => {
+      setTemplateName("");
+      setSelectedTemplateId(template.id);
+      queryClient.invalidateQueries({ queryKey: ["batch-templates"] });
+    }
+  });
 
   function updateRow<K extends keyof BatchRow>(rowId: string, field: K, value: BatchRow[K]) {
     setRows((current) => current.map((row) => (row.id === rowId ? { ...row, [field]: value } : row)));
@@ -121,6 +170,34 @@ function BatchView() {
     mutation.mutate(rows);
   }
 
+  function handleSaveTemplate() {
+    if (!templateName.trim()) {
+      return;
+    }
+
+    saveTemplate.mutate({
+      name: templateName,
+      items: rows
+    });
+  }
+
+  function loadTemplate(templateId: string) {
+    setSelectedTemplateId(templateId);
+    const template = batchTemplates.data?.find((item) => item.id === templateId);
+
+    if (!template) {
+      return;
+    }
+
+    setRows(
+      template.items.map((item, index) => ({
+        id: `batch-template-${template.id}-${index}`,
+        ...item,
+        format: item.format as TaskFormat
+      }))
+    );
+  }
+
   return (
     <main className="batch-shell">
       <Navigation />
@@ -130,12 +207,47 @@ function BatchView() {
           <p>Phoenix Studio</p>
           <h1>Batch Task Runner</h1>
         </div>
-        <button className="secondary-action" onClick={addRow} type="button">
-          Adicionar linha
-        </button>
+        <div className="heading-actions">
+          <Link href="/batch/templates">Templates de lote</Link>
+          <button className="secondary-action" onClick={addRow} type="button">
+            Adicionar linha
+          </button>
+        </div>
       </section>
 
       {brands.error ? <p className="error">{brands.error.message}</p> : null}
+      {batchTemplates.error ? <p className="error">{batchTemplates.error.message}</p> : null}
+      {saveTemplate.error ? <p className="error">{saveTemplate.error.message}</p> : null}
+      {saveTemplate.data ? <p className="success">Template de lote salvo.</p> : null}
+
+      <section className="batch-template-panel">
+        <div>
+          <h2>Template de lote</h2>
+          <p>Salve esta grade ou carregue um lote pronto para executar novamente.</p>
+        </div>
+        <label>
+          Carregar template de lote
+          <select value={selectedTemplateId} onChange={(event) => loadTemplate(event.target.value)}>
+            <option value="">Selecionar template</option>
+            {batchTemplates.data?.map((template) => (
+              <option key={template.id} value={template.id}>
+                {template.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Salvar lote como template
+          <input
+            onChange={(event) => setTemplateName(event.target.value)}
+            placeholder="Semana Saudade"
+            value={templateName}
+          />
+        </label>
+        <button className="secondary-action" disabled={!templateName.trim() || saveTemplate.isPending} onClick={handleSaveTemplate} type="button">
+          {saveTemplate.isPending ? "Salvando..." : "Salvar lote como template"}
+        </button>
+      </section>
 
       <form className="batch-form" onSubmit={handleSubmit}>
         <div className="batch-table">

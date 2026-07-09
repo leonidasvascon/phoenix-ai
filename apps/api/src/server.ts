@@ -3,6 +3,7 @@ import { basename, dirname, resolve } from "node:path";
 import { authenticateApiKey } from "./auth/api-key-auth.ts";
 import { sendJson } from "./http.ts";
 import { handleAnalyticsRoute } from "./routes/analytics.ts";
+import { handleBatchTemplatesRoute } from "./routes/batch-templates.ts";
 import { handleBrandsRoute } from "./routes/brands.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
 import { handleSettingsRoute } from "./routes/settings.ts";
@@ -30,6 +31,7 @@ const routes: Record<string, ApiHandler> = {
   "/tasks": handleTasksRoute,
   "/executions": handleExecutionsRoute,
   "/analytics": handleAnalyticsRoute,
+  "/batch-templates": handleBatchTemplatesRoute,
   "/brands": handleBrandsRoute,
   "/settings": handleSettingsRoute,
   "/task-templates": handleTaskTemplatesRoute
@@ -38,6 +40,7 @@ const routes: Record<string, ApiHandler> = {
 function resolveRoute(pathname: string): ApiHandler | undefined {
   if (
     pathname.startsWith("/tasks/") ||
+    pathname.startsWith("/batch-templates/") ||
     pathname.startsWith("/executions/") ||
     pathname.startsWith("/brands/") ||
     pathname.startsWith("/task-templates/")

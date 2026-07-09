@@ -1006,6 +1006,108 @@ select {
   gap: 16px;
 }
 
+.batch-template-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 220px) minmax(220px, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.batch-template-panel h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.batch-template-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.batch-template-panel label,
+.batch-template-editor label,
+.batch-template-item label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.batch-template-panel input,
+.batch-template-panel select,
+.batch-template-editor input,
+.batch-template-item input,
+.batch-template-item select {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fffdfa;
+  color: var(--foreground);
+}
+
+.batch-templates-layout {
+  display: grid;
+  grid-template-columns: minmax(420px, 1.2fr) minmax(320px, 0.8fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.batch-template-editor {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.batch-template-editor h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.batch-template-items {
+  display: grid;
+  gap: 12px;
+}
+
+.batch-template-item {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.batch-template-item h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 16px;
+}
+
+.batch-template-item button {
+  align-self: end;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fffdfa;
+  color: var(--foreground);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.batch-template-item button:disabled {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
 .batch-table {
   display: grid;
   gap: 10px;
@@ -1429,6 +1531,9 @@ select {
   .brand-editor,
   .brand-duplicate-form,
   .brand-import-form,
+  .batch-template-panel,
+  .batch-templates-layout,
+  .batch-template-item,
   .batch-table-heading,
   .batch-row,
   .batch-result-card dl {

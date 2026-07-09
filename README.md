@@ -213,6 +213,10 @@ Endpoints v1:
 - `DELETE /brands/:id`
 - `POST /tasks`
 - `POST /tasks/batch`
+- `GET /batch-templates`
+- `POST /batch-templates`
+- `PUT /batch-templates/:id`
+- `DELETE /batch-templates/:id`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -315,6 +319,37 @@ Entrada:
 O Studio oferece a tela `/batch` para adicionar/remover linhas, escolher marca e formato, preencher tema
 e objetivo, executar o lote e visualizar o resultado individual de cada item. Cada task bem-sucedida gera
 uma execucao persistida e um pacote em `output/`.
+
+## Batch Templates
+
+Sprint 32 adiciona templates reutilizaveis de lotes persistidos em `.storage/batch-templates.json`.
+
+Endpoints:
+
+- `GET /batch-templates`
+- `POST /batch-templates`
+- `PUT /batch-templates/:id`
+- `DELETE /batch-templates/:id`
+
+Formato:
+
+```json
+{
+  "name": "Semana Saudade",
+  "items": [
+    {
+      "brand": "encanto-intenso",
+      "theme": "saudade",
+      "objective": "viralizar",
+      "platform": "instagram",
+      "format": "reel"
+    }
+  ]
+}
+```
+
+A tela `/batch` permite salvar o lote atual como template e carregar um template existente. A tela
+`/batch/templates` permite criar, editar e excluir modelos de lote.
 
 ## Execution History
 
