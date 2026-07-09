@@ -10,6 +10,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@phoenix-ai/asset-engine':
+        specifier: workspace:*
+        version: link:../../packages/asset-engine
       '@phoenix-ai/feedback-engine':
         specifier: workspace:*
         version: link:../../packages/feedback-engine
@@ -69,6 +72,8 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
+
+  packages/asset-engine: {}
 
   packages/feedback-engine: {}
 

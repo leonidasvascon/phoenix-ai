@@ -12,6 +12,7 @@ export function Navigation() {
       <Link href="/learning">Learning</Link>
       <Link href="/feedback">Feedback</Link>
       <Link href="/optimizations">Otimizacoes</Link>
+      <Link href="/providers">Providers</Link>
       <Link href="/brands">Marcas</Link>
       <Link href="/settings">Configuracoes</Link>
       <Link href="/templates">Templates</Link>

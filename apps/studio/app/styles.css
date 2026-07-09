@@ -336,6 +336,11 @@ select {
   margin: 40px auto;
 }
 
+.providers-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -1548,6 +1553,71 @@ select {
   text-align: right;
 }
 
+.providers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.provider-card {
+  display: grid;
+  gap: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.provider-card header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.provider-card header p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.provider-card h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.provider-card header span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #e7f1e8;
+  color: #1d6b3a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.provider-card header span[data-status="offline"] {
+  background: #f3dcdc;
+  color: var(--accent-dark);
+}
+
+.provider-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.provider-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.provider-card dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+}
+
 .batch-table {
   display: grid;
   gap: 10px;
@@ -1927,7 +1997,8 @@ select {
   .scheduler-shell,
   .learning-shell,
   .feedback-shell,
-  .optimizations-shell {
+  .optimizations-shell,
+  .providers-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
   }

@@ -228,6 +228,8 @@ Endpoints v1:
 - `GET /feedback/:execution_id`
 - `GET /prompt-optimizations`
 - `POST /prompt-optimizations/generate`
+- `GET /providers`
+- `GET /providers/status`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -577,6 +579,71 @@ Formato:
 
 O Runtime injeta `learning_recommendations` e `prompt_optimizations` no payload enviado aos agentes. A tela
 `/optimizations` lista otimizacoes ativas e permite gerar novas instrucoes a partir do Learning.
+
+## Asset Engine
+
+Epic 4 inicia o `Autonomous Content Pipeline`. A Sprint 39 adiciona o pacote `@phoenix-ai/asset-engine`
+para gerar ativos multimidia por meio de providers independentes.
+
+Fluxo:
+
+```text
+Task -> Runtime -> Media Composer -> Asset Engine -> Output
+```
+
+Provider Architecture:
+
+- `VideoProvider`
+- `ImageProvider`
+- `VoiceProvider`
+- `AssetRegistry`
+- `AssetService`
+
+Supported Providers v1:
+
+- Video: `mock`
+- Image: `mock`
+- Voice: `mock`
+
+Arquivos gerados:
+
+```text
+output/
+  2026-07-09/
+    reel_010/
+      roteiro.md
+      legenda.txt
+      hashtags.txt
+      thumbnail_prompt.txt
+      video_prompt.txt
+      metadata.json
+      assets/
+        thumbnail.png
+        narration.mp3
+        video.mp4
+        assets.json
+```
+
+Endpoints:
+
+- `GET /providers`
+- `GET /providers/status`
+
+A tela `/providers` mostra o provider de video, imagem e voz, incluindo modo `mock` e status `online`.
+
+Future Integrations:
+
+- OpenAI Images
+- GPT Image
+- Veo
+- Runway
+- Kling
+- Pika
+- ElevenLabs
+- Cartesia
+- Azure Speech
+- Flux
+- Ideogram
 
 ## Execution History
 

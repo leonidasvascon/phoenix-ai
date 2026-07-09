@@ -1,5 +1,6 @@
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { AssetService } from "@phoenix-ai/asset-engine";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
 import { getLearningReport } from "./learning-service.ts";
@@ -91,14 +92,50 @@ export async function executeTask(input: TaskRequest) {
   const mediaPackage = await composeMediaPackage(runtimeResponse, {
     outputRoot: settings.output_root
   });
+  const assetService = new AssetService();
+  const generatedAssets = await assetService.generate({
+    outputDirectory: mediaPackage.directory,
+    thumbnailPrompt: getOutputString(runtimeResponse.output, "thumbnail_prompt"),
+    videoPrompt: getOutputString(runtimeResponse.output, "video_prompt"),
+    narrationText: buildNarrationText(runtimeResponse.output)
+  });
 
   return {
     ...runtimeResponse,
     media_package: {
       directory: mediaPackage.directory,
-      files: Object.keys(mediaPackage.files)
+      files: [
+        ...Object.keys(mediaPackage.files),
+        "assets/thumbnail.png",
+        "assets/narration.mp3",
+        "assets/video.mp4",
+        "assets/assets.json"
+      ],
+      assets: {
+        directory: generatedAssets.directory,
+        image: generatedAssets.image.path,
+        voice: generatedAssets.voice.path,
+        video: generatedAssets.video.path
+      }
     }
   };
+}
+
+function getOutputString(output: Record<string, unknown>, key: string): string {
+  const value = output[key];
+
+  return typeof value === "string" ? value : "";
+}
+
+function buildNarrationText(output: Record<string, unknown>): string {
+  return [
+    getOutputString(output, "hook"),
+    getOutputString(output, "story"),
+    getOutputString(output, "ending"),
+    getOutputString(output, "cta")
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 export async function executeBatchTasks(input: unknown) {
