@@ -326,6 +326,11 @@ select {
   margin: 40px auto;
 }
 
+.feedback-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -490,6 +495,27 @@ select {
   border-radius: 8px;
   background: var(--panel);
   padding: 18px;
+}
+
+.output-preview-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.output-preview-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: var(--accent);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .output-preview header p {
@@ -1341,6 +1367,101 @@ select {
   line-height: 1.5;
 }
 
+.feedback-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.feedback-form,
+.feedback-card {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.feedback-form h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.feedback-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.feedback-form input {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fffdfa;
+  color: var(--foreground);
+}
+
+.feedback-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.feedback-list {
+  display: grid;
+  gap: 14px;
+}
+
+.feedback-card header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.feedback-card header p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.feedback-card h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 18px;
+}
+
+.feedback-card header span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #ece7dd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.feedback-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.feedback-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.feedback-card dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+}
+
 .batch-table {
   display: grid;
   gap: 10px;
@@ -1718,7 +1839,8 @@ select {
   .templates-shell,
   .batch-shell,
   .scheduler-shell,
-  .learning-shell {
+  .learning-shell,
+  .feedback-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
   }
@@ -1731,6 +1853,9 @@ select {
   .templates-layout,
   .scheduler-layout,
   .learning-layout,
+  .feedback-layout,
+  .feedback-card dl,
+  .feedback-metrics-grid,
   .template-card dl {
     grid-template-columns: 1fr;
   }
@@ -1749,6 +1874,12 @@ select {
   }
 
   .scheduled-job-card header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .feedback-card header,
+  .output-preview-actions {
     align-items: flex-start;
     flex-direction: column;
   }

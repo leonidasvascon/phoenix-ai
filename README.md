@@ -223,6 +223,9 @@ Endpoints v1:
 - `POST /scheduled-jobs/run-due`
 - `GET /learning`
 - `POST /learning/analyze`
+- `GET /feedback`
+- `POST /feedback`
+- `GET /feedback/:execution_id`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -453,6 +456,41 @@ Saida:
 ```
 
 A tela `/learning` mostra resumo, rankings de aprendizado e recomendacoes acionaveis para os proximos conteudos.
+
+## Feedback Engine
+
+Sprint 36 adiciona o pacote `@phoenix-ai/feedback-engine` para registrar performance real de conteudos publicados.
+
+Endpoints:
+
+- `GET /feedback`
+- `POST /feedback`
+- `GET /feedback/:execution_id`
+
+Persistencia:
+
+```text
+.storage/feedback.json
+```
+
+Formato:
+
+```json
+{
+  "execution_id": "uuid",
+  "platform": "instagram",
+  "views": 0,
+  "likes": 0,
+  "comments": 0,
+  "shares": 0,
+  "saves": 0,
+  "followers_gained": 0,
+  "posted_at": "2026-07-09T00:00:00-03:00"
+}
+```
+
+A tela `/feedback` permite lancar feedback manual e listar feedbacks cadastrados. O preview de execucao
+em `/executions/{execution_id}` tem o botao `Adicionar feedback`, preenchendo automaticamente o ID.
 
 ## Execution History
 

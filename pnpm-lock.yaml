@@ -10,6 +10,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@phoenix-ai/feedback-engine':
+        specifier: workspace:*
+        version: link:../../packages/feedback-engine
       '@phoenix-ai/learning-engine':
         specifier: workspace:*
         version: link:../../packages/learning-engine
@@ -63,6 +66,8 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
+
+  packages/feedback-engine: {}
 
   packages/knowledge-engine: {}
 

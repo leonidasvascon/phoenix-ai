@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ExecutionCardData } from "./execution-card";
 
 export type OutputPackage = {
@@ -30,7 +31,10 @@ export function OutputPreview({ outputPackage }: Readonly<{ outputPackage: Outpu
           <p>Pacote gerado</p>
           <h2>{execution.execution.task?.theme ?? execution.execution_id}</h2>
         </div>
-        <span data-status={execution.status}>{execution.status}</span>
+        <div className="output-preview-actions">
+          <Link href={`/feedback?execution_id=${execution.execution_id}`}>Adicionar feedback</Link>
+          <span data-status={execution.status}>{execution.status}</span>
+        </div>
       </header>
 
       <dl className="output-summary">

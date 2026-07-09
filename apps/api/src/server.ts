@@ -6,6 +6,7 @@ import { handleAnalyticsRoute } from "./routes/analytics.ts";
 import { handleBatchTemplatesRoute } from "./routes/batch-templates.ts";
 import { handleBrandsRoute } from "./routes/brands.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
+import { handleFeedbackRoute } from "./routes/feedback.ts";
 import { handleLearningRoute } from "./routes/learning.ts";
 import { handleScheduledJobsRoute } from "./routes/scheduled-jobs.ts";
 import { handleSettingsRoute } from "./routes/settings.ts";
@@ -33,6 +34,7 @@ function notFound(response: ServerResponse): void {
 const routes: Record<string, ApiHandler> = {
   "/tasks": handleTasksRoute,
   "/executions": handleExecutionsRoute,
+  "/feedback": handleFeedbackRoute,
   "/learning": handleLearningRoute,
   "/analytics": handleAnalyticsRoute,
   "/batch-templates": handleBatchTemplatesRoute,
@@ -47,6 +49,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/tasks/") ||
     pathname.startsWith("/batch-templates/") ||
     pathname.startsWith("/executions/") ||
+    pathname.startsWith("/feedback/") ||
     pathname.startsWith("/learning/") ||
     pathname.startsWith("/brands/") ||
     pathname.startsWith("/scheduled-jobs/") ||
