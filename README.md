@@ -212,6 +212,7 @@ Endpoints v1:
 
 - `DELETE /brands/:id`
 - `POST /tasks`
+- `POST /tasks/batch`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -286,6 +287,34 @@ Endpoints:
 
 O Studio oferece a tela `/templates` para criar, editar, excluir e usar modelos. O comando `Usar template`
 abre a Nova Task com marca, tema, objetivo, plataforma e formato preenchidos.
+
+## Batch Task Runner
+
+Sprint 31 adiciona geracao de multiplas tasks em sequencia pela API e pelo Studio.
+
+Endpoint:
+
+- `POST /tasks/batch`
+
+Entrada:
+
+```json
+{
+  "items": [
+    {
+      "brand": "encanto-intenso",
+      "theme": "saudade",
+      "objective": "viralizar",
+      "platform": "instagram",
+      "format": "reel"
+    }
+  ]
+}
+```
+
+O Studio oferece a tela `/batch` para adicionar/remover linhas, escolher marca e formato, preencher tema
+e objetivo, executar o lote e visualizar o resultado individual de cada item. Cada task bem-sucedida gera
+uma execucao persistida e um pacote em `output/`.
 
 ## Execution History
 

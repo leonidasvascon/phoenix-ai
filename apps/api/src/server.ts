@@ -36,7 +36,12 @@ const routes: Record<string, ApiHandler> = {
 };
 
 function resolveRoute(pathname: string): ApiHandler | undefined {
-  if (pathname.startsWith("/executions/") || pathname.startsWith("/brands/") || pathname.startsWith("/task-templates/")) {
+  if (
+    pathname.startsWith("/tasks/") ||
+    pathname.startsWith("/executions/") ||
+    pathname.startsWith("/brands/") ||
+    pathname.startsWith("/task-templates/")
+  ) {
     return routes[`/${pathname.split("/")[1]}`];
   }
 

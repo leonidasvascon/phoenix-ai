@@ -5,6 +5,9 @@ import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runti
 import { getRuntimeSettings } from "./settings-service.ts";
 
 type TaskRequest = Partial<Task>;
+type BatchTaskRequest = {
+  items?: unknown;
+};
 type MediaPackageReference = {
   directory: string;
   files: string[];
@@ -87,6 +90,43 @@ export async function executeTask(input: TaskRequest) {
       directory: mediaPackage.directory,
       files: Object.keys(mediaPackage.files)
     }
+  };
+}
+
+export async function executeBatchTasks(input: unknown) {
+  const payload = input as BatchTaskRequest;
+
+  if (!payload || !Array.isArray(payload.items) || payload.items.length === 0) {
+    throw new Error("Batch items are required.");
+  }
+
+  const results = [];
+
+  for (const [index, item] of payload.items.entries()) {
+    try {
+      const result = await executeTask(item as TaskRequest);
+      results.push({
+        index,
+        status: "success",
+        result
+      });
+    } catch (error) {
+      results.push({
+        index,
+        status: "error",
+        error: error instanceof Error ? error.message : "Invalid batch item."
+      });
+    }
+  }
+
+  const success = results.filter((item) => item.status === "success").length;
+
+  return {
+    status: success === results.length ? "success" : "partial_success",
+    total: results.length,
+    success,
+    failed: results.length - success,
+    results
   };
 }
 
