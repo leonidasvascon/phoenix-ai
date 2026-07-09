@@ -1,12 +1,12 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AssetGenerationInput, GeneratedAssets } from "../types/assets.ts";
-import { AssetRegistry } from "../registry/provider-registry.ts";
+import { AssetRegistry, createDefaultAssetRegistry } from "../registry/provider-registry.ts";
 
 export class AssetService {
   private readonly registry: AssetRegistry;
 
-  constructor(registry = new AssetRegistry()) {
+  constructor(registry = createDefaultAssetRegistry()) {
     this.registry = registry;
   }
 
@@ -17,7 +17,9 @@ export class AssetService {
 
     const [image, voice, video] = await Promise.all([
       this.registry.image.generate(input.thumbnailPrompt, {
-        outputPath: join(assetsDirectory, "thumbnail.png")
+        outputPath: join(assetsDirectory, "thumbnail.png"),
+        requestedProvider: this.registry.image.id,
+        size: process.env.PHOENIX_IMAGE_SIZE ?? "1024x1024"
       }),
       this.registry.voice.synthesize(input.narrationText, {
         outputPath: join(assetsDirectory, "narration.mp3")

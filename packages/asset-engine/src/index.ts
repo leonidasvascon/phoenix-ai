@@ -3,6 +3,7 @@ export { AssetService } from "./services/asset-service.ts";
 export type { ImageProvider } from "./providers/image-provider.ts";
 export type { VideoProvider } from "./providers/video-provider.ts";
 export type { VoiceProvider } from "./providers/voice-provider.ts";
+export { OpenAIImageProvider } from "./providers/image/openai-image-provider.ts";
 export { MockImageProvider } from "./providers/mock-image-provider.ts";
 export { MockVideoProvider } from "./providers/mock-video-provider.ts";
 export { MockVoiceProvider } from "./providers/mock-voice-provider.ts";

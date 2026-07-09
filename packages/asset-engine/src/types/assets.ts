@@ -9,6 +9,8 @@ export type AssetProviderStatus = {
 
 export type ImageGenerationOptions = {
   outputPath?: string;
+  requestedProvider?: string;
+  size?: string;
   width?: number;
   height?: number;
 };
@@ -28,10 +30,14 @@ export type VoiceGenerationOptions = {
 
 export type GeneratedImage = {
   provider_id: string;
+  requested_provider?: string;
   path: string;
   mime_type: "image/png";
   prompt: string;
   placeholder: boolean;
+  fallback?: boolean;
+  model?: string;
+  size?: string;
 };
 
 export type GeneratedVideo = {

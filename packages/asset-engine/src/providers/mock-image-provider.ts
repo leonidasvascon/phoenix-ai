@@ -19,10 +19,13 @@ export class MockImageProvider implements ImageProvider {
 
     return {
       provider_id: this.id,
+      requested_provider: options.requestedProvider,
       path: outputPath,
       mime_type: "image/png",
       prompt,
-      placeholder: true
+      placeholder: true,
+      fallback: options.requestedProvider !== undefined && options.requestedProvider !== this.id,
+      size: options.size
     };
   }
 }

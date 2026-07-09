@@ -599,11 +599,27 @@ Provider Architecture:
 - `AssetRegistry`
 - `AssetService`
 
-Supported Providers v1:
+Supported Providers:
 
 - Video: `mock`
-- Image: `mock`
+- Image: `mock`, `openai`
 - Voice: `mock`
+
+Image Provider v1:
+
+```env
+PHOENIX_IMAGE_PROVIDER=mock
+OPENAI_API_KEY=
+PHOENIX_IMAGE_SIZE=1024x1024
+PHOENIX_IMAGE_MODEL=gpt-image-1
+```
+
+Regras:
+
+- `PHOENIX_IMAGE_PROVIDER=mock` gera `assets/thumbnail.png` placeholder.
+- `PHOENIX_IMAGE_PROVIDER=openai` usa OpenAI Images API para gerar `assets/thumbnail.png`.
+- se `PHOENIX_IMAGE_PROVIDER=openai` estiver sem `OPENAI_API_KEY`, o Asset Engine cai para `mock`.
+- `assets/assets.json` registra `requested_provider`, `provider_id`, `fallback`, `model` e `size`.
 
 Arquivos gerados:
 
@@ -633,8 +649,6 @@ A tela `/providers` mostra o provider de video, imagem e voz, incluindo modo `mo
 
 Future Integrations:
 
-- OpenAI Images
-- GPT Image
 - Veo
 - Runway
 - Kling

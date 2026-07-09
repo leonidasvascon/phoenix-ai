@@ -1,5 +1,6 @@
 import type { AssetProviderStatus } from "../types/assets.ts";
 import type { ImageProvider } from "../providers/image-provider.ts";
+import { OpenAIImageProvider } from "../providers/image/openai-image-provider.ts";
 import { MockImageProvider } from "../providers/mock-image-provider.ts";
 import { MockVideoProvider } from "../providers/mock-video-provider.ts";
 import { MockVoiceProvider } from "../providers/mock-voice-provider.ts";
@@ -18,6 +19,8 @@ export class AssetRegistry {
   }
 
   listProviders(): AssetProviderStatus[] {
+    const imageProviderId = this.image.id === "openai" && !process.env.OPENAI_API_KEY ? "mock" : this.image.id;
+
     return [
       {
         id: this.video.id,
@@ -26,10 +29,10 @@ export class AssetRegistry {
         mode: this.video.id === "mock" ? "mock" : "production"
       },
       {
-        id: this.image.id,
+        id: imageProviderId,
         kind: "image",
         status: "online",
-        mode: this.image.id === "mock" ? "mock" : "production"
+        mode: imageProviderId === "mock" ? "mock" : "production"
       },
       {
         id: this.voice.id,
@@ -41,6 +44,18 @@ export class AssetRegistry {
   }
 }
 
+function createImageProvider(): ImageProvider {
+  const provider = process.env.PHOENIX_IMAGE_PROVIDER ?? "mock";
+
+  if (provider === "openai") {
+    return new OpenAIImageProvider();
+  }
+
+  return new MockImageProvider();
+}
+
 export function createDefaultAssetRegistry(): AssetRegistry {
-  return new AssetRegistry();
+  return new AssetRegistry({
+    image: createImageProvider()
+  });
 }
