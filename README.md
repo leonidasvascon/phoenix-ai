@@ -217,6 +217,10 @@ Endpoints v1:
 - `POST /batch-templates`
 - `PUT /batch-templates/:id`
 - `DELETE /batch-templates/:id`
+- `GET /scheduled-jobs`
+- `POST /scheduled-jobs`
+- `DELETE /scheduled-jobs/:id`
+- `POST /scheduled-jobs/run-due`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -350,6 +354,34 @@ Formato:
 
 A tela `/batch` permite salvar o lote atual como template e carregar um template existente. A tela
 `/batch/templates` permite criar, editar e excluir modelos de lote.
+
+## Scheduler
+
+Sprint 33 adiciona agendamento local de tasks e batches em `.storage/scheduled-jobs.json`.
+
+Endpoints:
+
+- `GET /scheduled-jobs`
+- `POST /scheduled-jobs`
+- `DELETE /scheduled-jobs/:id`
+- `POST /scheduled-jobs/run-due`
+
+Formato:
+
+```json
+{
+  "name": "Semana Saudade",
+  "type": "batch",
+  "run_at": "2026-07-10T08:00:00-03:00",
+  "payload": {
+    "items": []
+  },
+  "status": "pending"
+}
+```
+
+A tela `/scheduler` permite criar, listar e excluir jobs. O endpoint `POST /scheduled-jobs/run-due`
+executa manualmente jobs vencidos e atualiza o status para `completed` ou `failed`.
 
 ## Execution History
 

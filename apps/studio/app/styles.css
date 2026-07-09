@@ -316,6 +316,11 @@ select {
   margin: 40px auto;
 }
 
+.scheduler-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -1108,6 +1113,145 @@ select {
   cursor: not-allowed;
 }
 
+.scheduler-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.scheduler-form,
+.scheduled-job-card {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.scheduler-form h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.scheduler-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.scheduler-form input,
+.scheduler-form select,
+.scheduler-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fffdfa;
+  color: var(--foreground);
+}
+
+.scheduler-form input,
+.scheduler-form select {
+  height: 42px;
+}
+
+.scheduler-form textarea {
+  min-height: 260px;
+  padding: 12px;
+  font-family: "Courier New", monospace;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.scheduled-job-list {
+  display: grid;
+  gap: 14px;
+}
+
+.scheduled-job-card header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scheduled-job-card header p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.scheduled-job-card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.scheduled-job-card span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #ece7dd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.scheduled-job-card span[data-status="completed"] {
+  background: #dfeee2;
+  color: #245c33;
+}
+
+.scheduled-job-card span[data-status="failed"] {
+  background: #f3dcdc;
+  color: var(--accent-dark);
+}
+
+.scheduled-job-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.scheduled-job-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.scheduled-job-card dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.scheduled-job-card pre {
+  max-height: 220px;
+  overflow: auto;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px;
+  background: #fffdfa;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.scheduled-job-card .danger-action {
+  justify-self: start;
+  min-height: 38px;
+  border: 1px solid #d9a6a6;
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #fffdfa;
+  color: var(--accent-dark);
+  cursor: pointer;
+  font-weight: 700;
+}
+
 .batch-table {
   display: grid;
   gap: 10px;
@@ -1483,7 +1627,8 @@ select {
   .analytics-shell,
   .settings-shell,
   .templates-shell,
-  .batch-shell {
+  .batch-shell,
+  .scheduler-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
   }
@@ -1494,6 +1639,7 @@ select {
   .brand-dna-grid,
   .settings-form,
   .templates-layout,
+  .scheduler-layout,
   .template-card dl {
     grid-template-columns: 1fr;
   }
@@ -1507,6 +1653,11 @@ select {
   .archived-brand-card header,
   .brand-detail > header,
   .template-card header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .scheduled-job-card header {
     align-items: flex-start;
     flex-direction: column;
   }
@@ -1536,7 +1687,8 @@ select {
   .batch-template-item,
   .batch-table-heading,
   .batch-row,
-  .batch-result-card dl {
+  .batch-result-card dl,
+  .scheduled-job-card dl {
     grid-template-columns: 1fr;
   }
 
