@@ -1,7 +1,9 @@
 export type LearningExecution = {
+  execution_id?: string;
   status: string;
   score: number;
   execution?: {
+    id?: string;
     duration_ms?: number;
     provider?: string;
     task?: Record<string, unknown>;

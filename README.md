@@ -436,6 +436,20 @@ O Learning v1 analisa:
 - marcas mais usadas
 - tempo medio por formato
 
+Sprint 37 integra feedbacks reais ao Learning Engine e adiciona:
+
+- views por tema
+- likes por tema
+- shares por tema
+- saves por tema
+- seguidores ganhos por tema
+- engagement rate
+- save rate
+- share rate
+- melhor execucao real
+- piores execucoes reais
+- recomendacoes baseadas em performance publicada
+
 Saida:
 
 ```json
@@ -444,6 +458,44 @@ Saida:
     "total_executions": 24,
     "average_score": 95,
     "success_rate": 100
+  },
+  "real_performance": {
+    "total_feedbacks": 6,
+    "matched_feedbacks": 6,
+    "feedback_coverage_rate": 25,
+    "performance_by_theme": [
+      {
+        "name": "saudade",
+        "count": 3,
+        "views": 4200,
+        "likes": 510,
+        "shares": 96,
+        "saves": 128,
+        "followers_gained": 22,
+        "engagement_rate": 17.48,
+        "save_rate": 3.05,
+        "share_rate": 2.29
+      }
+    ],
+    "best_execution": {
+      "execution_id": "uuid",
+      "theme": "saudade",
+      "brand": "encanto-intenso",
+      "format": "reel",
+      "platform": "instagram",
+      "views": 1800,
+      "likes": 240,
+      "comments": 18,
+      "shares": 42,
+      "saves": 55,
+      "followers_gained": 10,
+      "engagement_rate": 19.72,
+      "save_rate": 3.06,
+      "share_rate": 2.33,
+      "internal_score": 95,
+      "posted_at": "2026-07-09T00:00:00-03:00"
+    },
+    "worst_executions": []
   },
   "recommendations": [
     {
@@ -455,7 +507,8 @@ Saida:
 }
 ```
 
-A tela `/learning` mostra resumo, rankings de aprendizado e recomendacoes acionaveis para os proximos conteudos.
+A tela `/learning` mostra resumo, rankings de aprendizado, performance real por tema, melhores execucoes, piores
+execucoes e recomendacoes acionaveis para os proximos conteudos.
 
 ## Feedback Engine
 

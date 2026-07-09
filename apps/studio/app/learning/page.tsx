@@ -23,6 +23,38 @@ type LearningRecommendation = {
   message: string;
 };
 
+type ThemePerformanceMetric = {
+  name: string;
+  count: number;
+  views: number;
+  likes: number;
+  shares: number;
+  saves: number;
+  followers_gained: number;
+  engagement_rate: number;
+  save_rate: number;
+  share_rate: number;
+};
+
+type ExecutionPerformanceMetric = {
+  execution_id: string;
+  theme: string;
+  brand: string;
+  format: string;
+  platform: string;
+  views: number;
+  likes: number;
+  comments: number;
+  shares: number;
+  saves: number;
+  followers_gained: number;
+  engagement_rate: number;
+  save_rate: number;
+  share_rate: number;
+  internal_score: number;
+  posted_at: string;
+};
+
 type LearningReport = {
   summary: {
     total_executions: number;
@@ -37,6 +69,14 @@ type LearningReport = {
     top_themes: CountMetric[];
     top_brands: CountMetric[];
     average_duration_by_format: AverageMetric[];
+  };
+  real_performance: {
+    total_feedbacks: number;
+    matched_feedbacks: number;
+    feedback_coverage_rate: number;
+    performance_by_theme: ThemePerformanceMetric[];
+    best_execution: ExecutionPerformanceMetric | null;
+    worst_executions: ExecutionPerformanceMetric[];
   };
   recommendations: LearningRecommendation[];
 };
@@ -96,6 +136,9 @@ function LearningView() {
             <MetricCard label="Execucoes" value={report.summary.total_executions} />
             <MetricCard label="Score medio" value={report.summary.average_score} />
             <MetricCard label="Sucesso" value={`${report.summary.success_rate}%`} />
+            <MetricCard label="Feedbacks reais" value={report.real_performance.total_feedbacks} />
+            <MetricCard label="Feedbacks ligados" value={report.real_performance.matched_feedbacks} />
+            <MetricCard label="Cobertura real" value={`${report.real_performance.feedback_coverage_rate}%`} />
           </section>
 
           <section className="learning-layout">
@@ -118,10 +161,81 @@ function LearningView() {
             <LearningCountList title="Fallbacks por agente" items={report.analysis.fallback_agents} empty="Nenhum fallback registrado." />
             <LearningCountList title="Temas mais usados" items={report.analysis.top_themes} />
             <LearningCountList title="Marcas mais usadas" items={report.analysis.top_brands} />
+            <ThemePerformanceList items={report.real_performance.performance_by_theme} />
+            <BestExecutionCard execution={report.real_performance.best_execution} />
+            <WorstExecutionsList items={report.real_performance.worst_executions} />
           </section>
         </>
       ) : null}
     </main>
+  );
+}
+
+function ThemePerformanceList({ items }: { items: ThemePerformanceMetric[] }) {
+  return (
+    <article className="learning-panel real-performance-panel">
+      <h2>Performance real por tema</h2>
+      {items.length > 0 ? (
+        <ul>
+          {items.map((item) => (
+            <li key={item.name}>
+              <span>{item.name}</span>
+              <strong>{item.engagement_rate}%</strong>
+              <small>
+                {item.views} views | {item.likes} likes | {item.shares} shares | {item.saves} saves | {item.followers_gained} seguidores
+              </small>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="muted">Cadastre feedbacks para medir performance real por tema.</p>
+      )}
+    </article>
+  );
+}
+
+function BestExecutionCard({ execution }: { execution: ExecutionPerformanceMetric | null }) {
+  return (
+    <article className="learning-panel real-performance-panel">
+      <h2>Melhor execucao real</h2>
+      {execution ? (
+        <div className="execution-performance-card">
+          <span>{execution.execution_id}</span>
+          <strong>{execution.engagement_rate}% de engajamento</strong>
+          <p>
+            {execution.theme} | {execution.brand} | {execution.format}
+          </p>
+          <small>
+            {execution.views} views | {execution.likes} likes | {execution.comments} comentarios | {execution.shares} shares | {execution.saves} saves
+          </small>
+        </div>
+      ) : (
+        <p className="muted">Ainda nao ha execucao com feedback real vinculado.</p>
+      )}
+    </article>
+  );
+}
+
+function WorstExecutionsList({ items }: { items: ExecutionPerformanceMetric[] }) {
+  return (
+    <article className="learning-panel real-performance-panel">
+      <h2>Piores execucoes reais</h2>
+      {items.length > 0 ? (
+        <ul>
+          {items.map((item) => (
+            <li key={item.execution_id}>
+              <span>{item.theme}</span>
+              <strong>{item.engagement_rate}%</strong>
+              <small>
+                {item.execution_id} | {item.views} views | {item.save_rate}% save rate | {item.share_rate}% share rate
+              </small>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="muted">Sem feedbacks suficientes para apontar execucoes fracas.</p>
+      )}
+    </article>
   );
 }
 

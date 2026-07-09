@@ -1,4 +1,5 @@
 import type { LearningAnalysis } from "./execution-analyzer.ts";
+import type { RealPerformanceAnalysis } from "./feedback-performance-analyzer.ts";
 
 export type LearningRecommendation = {
   type: "brand" | "fallback" | "format" | "performance" | "theme";
@@ -10,13 +11,15 @@ function best<T extends { average_score: number; count: number; name: string }>(
   return items.find((item) => item.count >= 1);
 }
 
-export function generateRecommendations(analysis: LearningAnalysis): LearningRecommendation[] {
+export function generateRecommendations(analysis: LearningAnalysis, realPerformance?: RealPerformanceAnalysis): LearningRecommendation[] {
   const recommendations: LearningRecommendation[] = [];
   const bestTheme = best(analysis.score_by_theme);
   const bestBrand = best(analysis.score_by_brand);
   const bestFormat = best(analysis.score_by_format);
   const slowestFormat = [...analysis.average_duration_by_format].sort((a, b) => b.average_score - a.average_score)[0];
   const topFallback = analysis.fallback_agents[0];
+  const bestRealTheme = realPerformance?.performance_by_theme[0];
+  const bestRealExecution = realPerformance?.best_execution;
 
   if (bestTheme && bestTheme.average_score >= 90) {
     recommendations.push({
@@ -63,6 +66,30 @@ export function generateRecommendations(analysis: LearningAnalysis): LearningRec
       type: "format",
       priority: "low",
       message: `O formato ${slowestFormat.name} tem maior tempo medio de execucao. Avalie simplificar pipeline ou prompts.`
+    });
+  }
+
+  if (bestRealTheme && bestRealTheme.engagement_rate > 0) {
+    recommendations.push({
+      type: "theme",
+      priority: "high",
+      message: `No feedback real, o tema ${bestRealTheme.name} lidera com ${bestRealTheme.engagement_rate}% de engajamento. Priorize novas variacoes desse tema.`
+    });
+  }
+
+  if (bestRealExecution) {
+    recommendations.push({
+      type: "performance",
+      priority: "medium",
+      message: `A execucao ${bestRealExecution.execution_id} teve o melhor desempenho real, com ${bestRealExecution.views} visualizacoes e ${bestRealExecution.engagement_rate}% de engajamento. Use esse pacote como referencia criativa.`
+    });
+  }
+
+  if (realPerformance && realPerformance.total_feedbacks > 0 && realPerformance.matched_feedbacks === 0) {
+    recommendations.push({
+      type: "performance",
+      priority: "medium",
+      message: "Ha feedbacks salvos, mas nenhum corresponde a execucoes atuais. Confira se os execution_id foram cadastrados corretamente."
     });
   }
 

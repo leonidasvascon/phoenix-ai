@@ -1,4 +1,5 @@
 import { analyzeExecutions, type LearningAnalysis, type LearningExecution } from "./execution-analyzer.ts";
+import { analyzeRealPerformance, type LearningFeedback, type RealPerformanceAnalysis } from "./feedback-performance-analyzer.ts";
 import { generateRecommendations, type LearningRecommendation } from "./recommendation-engine.ts";
 
 export type LearningReport = {
@@ -8,11 +9,13 @@ export type LearningReport = {
     success_rate: number;
   };
   analysis: LearningAnalysis;
+  real_performance: RealPerformanceAnalysis;
   recommendations: LearningRecommendation[];
 };
 
-export function createLearningReport(executions: LearningExecution[]): LearningReport {
+export function createLearningReport(executions: LearningExecution[], feedbacks: LearningFeedback[] = []): LearningReport {
   const analysis = analyzeExecutions(executions);
+  const realPerformance = analyzeRealPerformance(executions, feedbacks);
 
   return {
     summary: {
@@ -21,6 +24,7 @@ export function createLearningReport(executions: LearningExecution[]): LearningR
       success_rate: analysis.success_rate
     },
     analysis,
-    recommendations: generateRecommendations(analysis)
+    real_performance: realPerformance,
+    recommendations: generateRecommendations(analysis, realPerformance)
   };
 }

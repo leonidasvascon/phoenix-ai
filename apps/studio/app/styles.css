@@ -1333,6 +1333,38 @@ select {
   color: var(--muted);
 }
 
+.real-performance-panel li small {
+  line-height: 1.5;
+  text-align: right;
+}
+
+.execution-performance-card {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.execution-performance-card span {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  word-break: break-all;
+}
+
+.execution-performance-card strong {
+  color: var(--accent-strong);
+  font-size: 1.05rem;
+}
+
+.execution-performance-card p,
+.execution-performance-card small {
+  color: var(--muted);
+  margin: 0;
+}
+
+.execution-performance-card small {
+  line-height: 1.5;
+}
+
 .recommendation-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
