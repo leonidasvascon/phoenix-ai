@@ -10,6 +10,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@phoenix-ai/learning-engine':
+        specifier: workspace:*
+        version: link:../../packages/learning-engine
       '@phoenix-ai/media-composer':
         specifier: workspace:*
         version: link:../../packages/media-composer
@@ -62,6 +65,8 @@ importers:
         version: 5.9.3
 
   packages/knowledge-engine: {}
+
+  packages/learning-engine: {}
 
   packages/media-composer: {}
 

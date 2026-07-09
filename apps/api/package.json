@@ -8,6 +8,7 @@
     "dev:worker": "node --experimental-strip-types src/server.ts"
   },
   "dependencies": {
+    "@phoenix-ai/learning-engine": "workspace:*",
     "@phoenix-ai/media-composer": "workspace:*",
     "@phoenix-ai/runtime": "workspace:*"
   },

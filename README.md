@@ -221,6 +221,8 @@ Endpoints v1:
 - `POST /scheduled-jobs`
 - `DELETE /scheduled-jobs/:id`
 - `POST /scheduled-jobs/run-due`
+- `GET /learning`
+- `POST /learning/analyze`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -410,6 +412,47 @@ npm run api:dev:worker
 
 O worker usa a mesma logica de `POST /scheduled-jobs/run-due`, registra jobs verificados, jobs executados
 e erros, e ignora ciclos concorrentes quando uma execucao anterior ainda esta ativa.
+
+## Learning Engine
+
+Sprint 35 adiciona o pacote `@phoenix-ai/learning-engine` para transformar execucoes salvas em aprendizado
+operacional.
+
+Endpoints:
+
+- `GET /learning`
+- `POST /learning/analyze`
+
+O Learning v1 analisa:
+
+- score medio por tema
+- score medio por marca
+- score medio por formato
+- fallbacks por agente
+- temas mais usados
+- marcas mais usadas
+- tempo medio por formato
+
+Saida:
+
+```json
+{
+  "summary": {
+    "total_executions": 24,
+    "average_score": 95,
+    "success_rate": 100
+  },
+  "recommendations": [
+    {
+      "type": "theme",
+      "priority": "high",
+      "message": "O tema saudade apresenta score medio alto. Priorize variacoes desse tema."
+    }
+  ]
+}
+```
+
+A tela `/learning` mostra resumo, rankings de aprendizado e recomendacoes acionaveis para os proximos conteudos.
 
 ## Execution History
 

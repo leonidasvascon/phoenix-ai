@@ -9,6 +9,7 @@ export function Navigation() {
       <Link href="/scheduler">Scheduler</Link>
       <Link href="/history">Historico</Link>
       <Link href="/analytics">Analytics</Link>
+      <Link href="/learning">Learning</Link>
       <Link href="/brands">Marcas</Link>
       <Link href="/settings">Configuracoes</Link>
       <Link href="/templates">Templates</Link>

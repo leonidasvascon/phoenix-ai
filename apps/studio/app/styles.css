@@ -321,6 +321,11 @@ select {
   margin: 40px auto;
 }
 
+.learning-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .history-heading {
   margin: 24px 0;
 }
@@ -1252,6 +1257,90 @@ select {
   font-weight: 700;
 }
 
+.learning-layout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.learning-panel {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.recommendations-panel {
+  grid-column: 1 / -1;
+}
+
+.learning-panel h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.learning-panel ul,
+.recommendation-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.learning-panel li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.learning-panel li span {
+  overflow-wrap: anywhere;
+}
+
+.learning-panel li small {
+  color: var(--muted);
+}
+
+.recommendation-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: #fffdfa;
+}
+
+.recommendation-card span {
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #ece7dd;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.recommendation-card[data-priority="high"] span {
+  background: #f3dcdc;
+  color: var(--accent-dark);
+}
+
+.recommendation-card[data-priority="medium"] span {
+  background: #eee4c7;
+  color: #6a4c00;
+}
+
+.recommendation-card p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .batch-table {
   display: grid;
   gap: 10px;
@@ -1628,7 +1717,8 @@ select {
   .settings-shell,
   .templates-shell,
   .batch-shell,
-  .scheduler-shell {
+  .scheduler-shell,
+  .learning-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
   }
@@ -1640,6 +1730,7 @@ select {
   .settings-form,
   .templates-layout,
   .scheduler-layout,
+  .learning-layout,
   .template-card dl {
     grid-template-columns: 1fr;
   }
