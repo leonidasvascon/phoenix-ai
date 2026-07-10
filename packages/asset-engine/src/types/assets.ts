@@ -10,6 +10,8 @@ export type AssetProviderStatus = {
   fallback?: boolean;
   model?: string | null;
   voice?: string | null;
+  size?: string;
+  duration_seconds?: number;
   format?: string;
   speed?: number;
 };
@@ -24,9 +26,15 @@ export type ImageGenerationOptions = {
 
 export type VideoGenerationOptions = {
   outputPath?: string;
+  executionId?: string;
+  requestedProvider?: string;
+  model?: string | null;
+  size?: string;
   durationSeconds?: number;
   width?: number;
   height?: number;
+  pollIntervalMs?: number;
+  timeoutMs?: number;
 };
 
 export type VoiceGenerationOptions = {
@@ -52,10 +60,18 @@ export type GeneratedImage = {
 
 export type GeneratedVideo = {
   provider_id: string;
+  requested_provider?: string;
+  provider_job_id?: string | null;
+  status?: VideoJobStatus;
   path: string;
   mime_type: "video/mp4";
   prompt: string;
   placeholder: boolean;
+  fallback?: boolean;
+  model?: string | null;
+  size?: string;
+  duration_seconds?: number;
+  failure_reason?: string;
 };
 
 export type GeneratedAudio = {
@@ -80,8 +96,42 @@ export type GeneratedAssets = {
 };
 
 export type AssetGenerationInput = {
+  executionId: string;
   outputDirectory: string;
   thumbnailPrompt: string;
   videoPrompt: string;
   narrationText: string;
+};
+
+export type VideoJobStatus = "cancelled" | "completed" | "failed" | "processing" | "queued";
+
+export type VideoJob = {
+  id: string;
+  provider_id: string;
+  requested_provider: string;
+  status: VideoJobStatus;
+  prompt: string;
+  model: string | null;
+  size: string;
+  duration_seconds: number;
+  created_at: string;
+  completed_at?: string;
+  failure_reason?: string;
+  result_url?: string;
+  fallback?: boolean;
+};
+
+export type PersistedVideoJob = {
+  execution_id: string;
+  requested_provider: string;
+  provider_id: string;
+  provider_job_id: string | null;
+  status: VideoJobStatus;
+  fallback: boolean;
+  model: string | null;
+  size: string;
+  duration_seconds: number;
+  failure_reason?: string;
+  created_at: string;
+  completed_at?: string;
 };

@@ -51,7 +51,8 @@ const mediaPackageFiles = [
   "legenda.txt",
   "hashtags.txt",
   "video_prompt.txt",
-  "thumbnail_prompt.txt"
+  "thumbnail_prompt.txt",
+  "assets/assets.json"
 ] as const;
 
 function isValidFormat(format: unknown): format is Task["format"] {
@@ -94,6 +95,7 @@ export async function executeTask(input: TaskRequest) {
   });
   const assetService = new AssetService();
   const generatedAssets = await assetService.generate({
+    executionId: runtimeResponse.execution_id,
     outputDirectory: mediaPackage.directory,
     thumbnailPrompt: getOutputString(runtimeResponse.output, "thumbnail_prompt"),
     videoPrompt: getOutputString(runtimeResponse.output, "video_prompt"),
@@ -240,6 +242,20 @@ export async function getExecutionPackage(executionId: string) {
     execution,
     files: Object.fromEntries(files)
   };
+}
+
+export async function getExecutionVideoAsset(executionId: string): Promise<Buffer | null> {
+  const executionPackage = await getExecutionPackage(executionId);
+
+  if (!executionPackage?.execution.media_package) {
+    return null;
+  }
+
+  try {
+    return await readFile(resolve(process.cwd(), executionPackage.execution.media_package.directory, "assets", "video.mp4"));
+  } catch {
+    return null;
+  }
 }
 
 export async function getAnalytics() {

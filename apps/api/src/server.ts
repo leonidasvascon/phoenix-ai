@@ -14,6 +14,7 @@ import { handleScheduledJobsRoute } from "./routes/scheduled-jobs.ts";
 import { handleSettingsRoute } from "./routes/settings.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
 import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
+import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
 import { startSchedulerWorker } from "./workers/scheduler-worker.ts";
 
 const port = Number(process.env.PHOENIX_API_PORT ?? 4000);
@@ -45,7 +46,8 @@ const routes: Record<string, ApiHandler> = {
   "/brands": handleBrandsRoute,
   "/scheduled-jobs": handleScheduledJobsRoute,
   "/settings": handleSettingsRoute,
-  "/task-templates": handleTaskTemplatesRoute
+  "/task-templates": handleTaskTemplatesRoute,
+  "/video-jobs": handleVideoJobsRoute
 };
 
 function resolveRoute(pathname: string): ApiHandler | undefined {
@@ -59,7 +61,8 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/providers/") ||
     pathname.startsWith("/brands/") ||
     pathname.startsWith("/scheduled-jobs/") ||
-    pathname.startsWith("/task-templates/")
+    pathname.startsWith("/task-templates/") ||
+    pathname.startsWith("/video-jobs/")
   ) {
     return routes[`/${pathname.split("/")[1]}`];
   }

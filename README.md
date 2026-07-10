@@ -230,6 +230,8 @@ Endpoints v1:
 - `POST /prompt-optimizations/generate`
 - `GET /providers`
 - `GET /providers/status`
+- `GET /video-jobs`
+- `GET /video-jobs/:execution_id`
 - `GET /executions`
 - `GET /executions/:id`
 - `GET /analytics`
@@ -640,6 +642,27 @@ Regras:
 - `assets/assets.json` registra `requested_provider`, `provider_id`, `fallback`, `model`, `voice`, `format` e `speed`.
 - a narração usa `output.narration` quando existir, depois `story`, e por fim o roteiro completo.
 
+Video Provider v1:
+
+```env
+PHOENIX_VIDEO_PROVIDER=mock
+OPENAI_API_KEY=
+PHOENIX_VIDEO_MODEL=
+PHOENIX_VIDEO_SIZE=1080x1920
+PHOENIX_VIDEO_DURATION_SECONDS=8
+PHOENIX_VIDEO_POLL_INTERVAL_MS=5000
+PHOENIX_VIDEO_TIMEOUT_MS=600000
+```
+
+Regras:
+
+- `PHOENIX_VIDEO_PROVIDER=mock` gera `assets/video.mp4` placeholder.
+- `PHOENIX_VIDEO_PROVIDER=openai` usa um provider assíncrono com criação de job, polling e download.
+- sem `OPENAI_API_KEY` ou modelo configurado, o provider cai para `mock`.
+- jobs temporários são persistidos em `.storage/video-jobs/{execution_id}.json`.
+- `assets/assets.json` registra `requested_provider`, `provider_id`, `fallback`, `status`, `model`, `size` e `duration_seconds`.
+- o preview de execução mostra status de vídeo e exibe player HTML5 quando houver MP4 real concluído.
+
 Arquivos gerados:
 
 ```text
@@ -663,6 +686,8 @@ Endpoints:
 
 - `GET /providers`
 - `GET /providers/status`
+- `GET /video-jobs`
+- `GET /video-jobs/:execution_id`
 
 A tela `/providers` mostra o provider de video, imagem e voz, incluindo modo `mock` e status `online`.
 

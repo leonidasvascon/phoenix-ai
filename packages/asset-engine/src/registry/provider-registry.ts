@@ -2,19 +2,20 @@ import type { AssetProviderStatus } from "../types/assets.ts";
 import type { ImageProvider } from "../providers/image-provider.ts";
 import { OpenAIImageProvider } from "../providers/image/openai-image-provider.ts";
 import { MockImageProvider } from "../providers/mock-image-provider.ts";
-import { MockVideoProvider } from "../providers/mock-video-provider.ts";
 import { MockVoiceProvider } from "../providers/mock-voice-provider.ts";
 import { OpenAIVoiceProvider } from "../providers/voice/openai-voice-provider.ts";
-import type { VideoProvider } from "../providers/video-provider.ts";
+import { MockVideoJobProvider } from "../providers/video/mock-video-provider.ts";
+import { OpenAIVideoProvider } from "../providers/video/openai-video-provider.ts";
+import type { VideoJobProvider } from "../providers/video/video-job-provider.ts";
 import type { VoiceProvider } from "../providers/voice-provider.ts";
 
 export class AssetRegistry {
-  readonly video: VideoProvider;
+  readonly video: VideoJobProvider;
   readonly image: ImageProvider;
   readonly voice: VoiceProvider;
 
-  constructor(options: { image?: ImageProvider; video?: VideoProvider; voice?: VoiceProvider } = {}) {
-    this.video = options.video ?? new MockVideoProvider();
+  constructor(options: { image?: ImageProvider; video?: VideoJobProvider; voice?: VoiceProvider } = {}) {
+    this.video = options.video ?? new MockVideoJobProvider();
     this.image = options.image ?? new MockImageProvider();
     this.voice = options.voice ?? new MockVoiceProvider();
   }
@@ -30,13 +31,23 @@ export class AssetRegistry {
     const voiceProviderId = this.voice.id === "openai" && !voiceCanUseOpenAI ? "mock" : this.voice.id;
     const voiceFormat = process.env.PHOENIX_VOICE_FORMAT ?? "mp3";
     const voiceSpeed = Number(process.env.PHOENIX_VOICE_SPEED ?? 1);
+    const requestedVideoProvider = process.env.PHOENIX_VIDEO_PROVIDER ?? "mock";
+    const videoCanUseOpenAI = Boolean(process.env.OPENAI_API_KEY && process.env.PHOENIX_VIDEO_MODEL?.trim());
+    const videoProviderId = this.video.id === "openai" && !videoCanUseOpenAI ? "mock" : this.video.id;
+    const videoDuration = Number(process.env.PHOENIX_VIDEO_DURATION_SECONDS ?? 8);
 
     return [
       {
-        id: this.video.id,
+        id: videoProviderId,
         kind: "video",
         status: "online",
-        mode: this.video.id === "mock" ? "mock" : "production"
+        mode: videoProviderId === "mock" ? "mock" : "production",
+        requested_provider: requestedVideoProvider,
+        effective_provider: videoProviderId,
+        fallback: requestedVideoProvider !== videoProviderId,
+        model: videoProviderId === "openai" ? process.env.PHOENIX_VIDEO_MODEL ?? null : null,
+        size: process.env.PHOENIX_VIDEO_SIZE ?? "1080x1920",
+        duration_seconds: Number.isFinite(videoDuration) ? videoDuration : 8
       },
       {
         id: imageProviderId,
@@ -61,6 +72,16 @@ export class AssetRegistry {
   }
 }
 
+function createVideoProvider(): VideoJobProvider {
+  const provider = process.env.PHOENIX_VIDEO_PROVIDER ?? "mock";
+
+  if (provider === "openai") {
+    return new OpenAIVideoProvider();
+  }
+
+  return new MockVideoJobProvider();
+}
+
 function createImageProvider(): ImageProvider {
   const provider = process.env.PHOENIX_IMAGE_PROVIDER ?? "mock";
 
@@ -83,6 +104,7 @@ function createVoiceProvider(): VoiceProvider {
 
 export function createDefaultAssetRegistry(): AssetRegistry {
   return new AssetRegistry({
+    video: createVideoProvider(),
     image: createImageProvider(),
     voice: createVoiceProvider()
   });

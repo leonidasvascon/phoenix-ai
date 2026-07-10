@@ -13,6 +13,7 @@ const response = await Runtime.execute({
 const mediaPackage = await composeMediaPackage(response);
 const assetService = new AssetService();
 const assets = await assetService.generate({
+  executionId: response.execution_id,
   outputDirectory: mediaPackage.directory,
   thumbnailPrompt: String(response.output.thumbnail_prompt ?? ""),
   videoPrompt: String(response.output.video_prompt ?? ""),

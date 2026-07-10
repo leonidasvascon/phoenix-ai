@@ -15,6 +15,8 @@ type ProviderStatus = {
   fallback?: boolean;
   model?: string | null;
   voice?: string | null;
+  size?: string;
+  duration_seconds?: number;
   format?: string;
   speed?: number;
 };
@@ -70,7 +72,7 @@ function ProvidersView() {
                 <dt>Tipo</dt>
                 <dd>{provider.kind}</dd>
               </div>
-              {provider.kind === "voice" ? (
+              {provider.kind === "voice" || provider.kind === "video" ? (
                 <>
                   <div>
                     <dt>Solicitado</dt>
@@ -84,18 +86,34 @@ function ProvidersView() {
                     <dt>Modelo</dt>
                     <dd>{provider.model ?? "-"}</dd>
                   </div>
-                  <div>
-                    <dt>Voz</dt>
-                    <dd>{provider.voice ?? "-"}</dd>
-                  </div>
-                  <div>
-                    <dt>Formato</dt>
-                    <dd>{provider.format ?? "-"}</dd>
-                  </div>
-                  <div>
-                    <dt>Velocidade</dt>
-                    <dd>{provider.speed ?? "-"}</dd>
-                  </div>
+                  {provider.kind === "voice" ? (
+                    <>
+                      <div>
+                        <dt>Voz</dt>
+                        <dd>{provider.voice ?? "-"}</dd>
+                      </div>
+                      <div>
+                        <dt>Formato</dt>
+                        <dd>{provider.format ?? "-"}</dd>
+                      </div>
+                      <div>
+                        <dt>Velocidade</dt>
+                        <dd>{provider.speed ?? "-"}</dd>
+                      </div>
+                    </>
+                  ) : null}
+                  {provider.kind === "video" ? (
+                    <>
+                      <div>
+                        <dt>Resolucao</dt>
+                        <dd>{provider.size ?? "-"}</dd>
+                      </div>
+                      <div>
+                        <dt>Duracao</dt>
+                        <dd>{provider.duration_seconds ? `${provider.duration_seconds}s` : "-"}</dd>
+                      </div>
+                    </>
+                  ) : null}
                 </>
               ) : null}
             </dl>

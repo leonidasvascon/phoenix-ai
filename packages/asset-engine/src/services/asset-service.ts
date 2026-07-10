@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { AssetGenerationInput, GeneratedAssets } from "../types/assets.ts";
 import { AssetRegistry, createDefaultAssetRegistry } from "../registry/provider-registry.ts";
+import { VideoGenerationService } from "./video-generation-service.ts";
 
 export class AssetService {
   private readonly registry: AssetRegistry;
@@ -29,8 +30,14 @@ export class AssetService {
         format: process.env.PHOENIX_VOICE_FORMAT ?? "mp3",
         speed: Number(process.env.PHOENIX_VOICE_SPEED ?? 1)
       }),
-      this.registry.video.generate(input.videoPrompt, {
-        outputPath: join(assetsDirectory, "video.mp4")
+      new VideoGenerationService(this.registry.video).generate(input.videoPrompt, join(assetsDirectory, "video.mp4"), {
+        executionId: input.executionId,
+        requestedProvider: this.registry.video.id,
+        model: process.env.PHOENIX_VIDEO_MODEL ?? null,
+        size: process.env.PHOENIX_VIDEO_SIZE ?? "1080x1920",
+        durationSeconds: Number(process.env.PHOENIX_VIDEO_DURATION_SECONDS ?? 8),
+        pollIntervalMs: Number(process.env.PHOENIX_VIDEO_POLL_INTERVAL_MS ?? 5000),
+        timeoutMs: Number(process.env.PHOENIX_VIDEO_TIMEOUT_MS ?? 600000)
       })
     ]);
 
