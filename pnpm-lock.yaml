@@ -25,6 +25,9 @@ importers:
       '@phoenix-ai/prompt-optimizer':
         specifier: workspace:*
         version: link:../../packages/prompt-optimizer
+      '@phoenix-ai/publishing-engine':
+        specifier: workspace:*
+        version: link:../../packages/publishing-engine
       '@phoenix-ai/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
@@ -86,6 +89,8 @@ importers:
   packages/memory-engine: {}
 
   packages/prompt-optimizer: {}
+
+  packages/publishing-engine: {}
 
   packages/runtime: {}
 

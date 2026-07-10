@@ -975,3 +975,44 @@ Campos da tela:
 - storytelling preferido
 - CTA preferido
 - padroes proibidos
+
+## Publishing Engine
+
+Sprint 43 adiciona uma camada segura de publicacao desacoplada do Runtime.
+
+O fluxo passa a ser:
+
+```text
+Execution Package -> Publication Draft -> Validation -> Publish
+```
+
+Endpoints:
+
+- `GET /publications`
+- `POST /publications`
+- `GET /publications/:id`
+- `POST /publications/:id/publish`
+- `POST /publications/:id/cancel`
+
+As publicacoes sao persistidas em:
+
+```text
+.storage/publications/{publication_id}.json
+```
+
+Regras v1:
+
+- provider inicial `mock`
+- `dry_run=true` por padrao
+- bloqueio de duplicidade por `execution_id + platform`
+- validacao de video, thumbnail, legenda e metadata
+- bloqueio de assets mock/fallback quando `PHOENIX_ALLOW_FALLBACK_ASSETS=false`
+- publicacao efetiva somente via `POST /publications/:id/publish`
+
+Variaveis:
+
+```text
+PHOENIX_PUBLISHING_PROVIDER=mock
+PHOENIX_ALLOW_FALLBACK_ASSETS=false
+PHOENIX_PUBLISHING_DRY_RUN=true
+```

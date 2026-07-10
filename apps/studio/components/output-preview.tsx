@@ -36,6 +36,7 @@ export function OutputPreview({ outputPackage }: Readonly<{ outputPackage: Outpu
           <h2>{execution.execution.task?.theme ?? execution.execution_id}</h2>
         </div>
         <div className="output-preview-actions">
+          <Link href={`/publications?execution_id=${execution.execution_id}`}>Preparar publicacao</Link>
           <Link href={`/feedback?execution_id=${execution.execution_id}`}>Adicionar feedback</Link>
           <span data-status={execution.status}>{execution.status}</span>
         </div>

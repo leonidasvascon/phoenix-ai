@@ -7,7 +7,7 @@ import { QueryProvider } from "../query-provider";
 
 type ProviderStatus = {
   id: string;
-  kind: "image" | "video" | "voice";
+  kind: "image" | "video" | "voice" | "publishing";
   status: "offline" | "online";
   mode: "mock" | "production";
   requested_provider?: string;
@@ -19,12 +19,15 @@ type ProviderStatus = {
   duration_seconds?: number;
   format?: string;
   speed?: number;
+  dry_run?: boolean;
+  allow_fallback_assets?: boolean;
 };
 
 const labels: Record<ProviderStatus["kind"], string> = {
   video: "Video",
   image: "Image",
-  voice: "Voice"
+  voice: "Voice",
+  publishing: "Publishing"
 };
 
 function ProvidersView() {
@@ -114,6 +117,26 @@ function ProvidersView() {
                       </div>
                     </>
                   ) : null}
+                </>
+              ) : null}
+              {provider.kind === "publishing" ? (
+                <>
+                  <div>
+                    <dt>Solicitado</dt>
+                    <dd>{provider.requested_provider ?? provider.id}</dd>
+                  </div>
+                  <div>
+                    <dt>Efetivo</dt>
+                    <dd>{provider.effective_provider ?? provider.id}</dd>
+                  </div>
+                  <div>
+                    <dt>Dry-run</dt>
+                    <dd>{provider.dry_run ? "sim" : "nao"}</dd>
+                  </div>
+                  <div>
+                    <dt>Fallback assets</dt>
+                    <dd>{provider.allow_fallback_assets ? "permitido" : "bloqueado"}</dd>
+                  </div>
                 </>
               ) : null}
             </dl>
