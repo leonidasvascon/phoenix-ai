@@ -1,4 +1,4 @@
-import type { InstagramContainer, InstagramContainerStatusResponse, InstagramPublishResponse } from "./instagram-types.ts";
+import type { InstagramAccountResponse, InstagramContainer, InstagramContainerStatusResponse, InstagramPublishResponse } from "./instagram-types.ts";
 
 export class InstagramApiClient {
   private readonly baseUrl: string;
@@ -48,6 +48,10 @@ export class InstagramApiClient {
     return this.get<unknown>(`/${this.accountId}/content_publishing_limit?fields=quota_usage,config`);
   }
 
+  async validateAccount(): Promise<InstagramAccountResponse> {
+    return this.get<InstagramAccountResponse>(`/${this.accountId}?fields=id,username`);
+  }
+
   private async get<T>(path: string): Promise<T> {
     const separator = path.includes("?") ? "&" : "?";
     const response = await fetch(`${this.baseUrl}${path}${separator}access_token=${encodeURIComponent(this.accessToken)}`);
@@ -67,12 +71,27 @@ export class InstagramApiClient {
 
 async function parseGraphResponse<T>(response: Response): Promise<T> {
   const text = await response.text();
-  const payload = text ? JSON.parse(text) as T & { error?: { message?: string; code?: string | number; type?: string } } : {} as T;
+  let payload: T & { error?: { message?: string; code?: string | number; type?: string } };
+
+  try {
+    payload = text ? JSON.parse(text) as T & { error?: { message?: string; code?: string | number; type?: string } } : {} as T;
+  } catch {
+    payload = {} as T;
+  }
 
   if (!response.ok) {
-    const message = payload.error?.message ?? `Meta Graph API request failed with status ${response.status}.`;
+    const rawMessage = payload.error?.message ?? (text || `Meta Graph API request failed with status ${response.status}.`);
+    const message = sanitizeMetaError(rawMessage);
     throw new Error(message);
   }
 
   return payload;
+}
+
+export function sanitizeMetaError(message: string): string {
+  return message
+    .replace(/access_token=([^&\s"]+)/gi, "access_token=[redacted]")
+    .replace(/"access_token"\s*:\s*"[^"]+"/gi, "\"access_token\":\"[redacted]\"")
+    .replace(/EA[A-Za-z0-9_-]{20,}/g, "[redacted-token]")
+    .replace(/Bearer\s+[A-Za-z0-9._-]+/gi, "Bearer [redacted]");
 }

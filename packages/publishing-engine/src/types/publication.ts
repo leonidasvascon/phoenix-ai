@@ -22,6 +22,8 @@ export type PublishingLimit = {
   used: number;
   remaining: number;
   checked_at: string;
+  available?: boolean;
+  error?: string | null;
 };
 
 export type PublicationUpdate = Partial<PublicationResult>;

@@ -3,7 +3,7 @@ import { PublicUrlMediaResolver } from "../../media/public-url-media-resolver.ts
 import { PublicationValidator } from "../../services/publication-validator.ts";
 import type { PublishingProvider } from "../publishing-provider.ts";
 import type { PublicationRequest, PublicationResult, PublicationValidation } from "../../types/publication.ts";
-import { InstagramApiClient } from "./instagram-api-client.ts";
+import { InstagramApiClient, sanitizeMetaError } from "./instagram-api-client.ts";
 import { InstagramContainerPoller } from "./instagram-container-poller.ts";
 import { InstagramPublishingLimit } from "./instagram-publishing-limit.ts";
 import type { InstagramProviderConfig, InstagramProviderStatus } from "./instagram-types.ts";
@@ -127,8 +127,21 @@ export class InstagramPublishingProvider implements PublishingProvider {
       accessToken: config.accessToken ?? "",
       instagramAccountId: config.instagramAccountId ?? ""
     });
+
+    if (providerData.container_id && isFailedContainerStatus(providerData.container_status)) {
+      throw new Error(`Persisted Instagram container cannot be reused because it is ${providerData.container_status}.`);
+    }
+
     const limit = await new InstagramPublishingLimit(client).check();
     await request.onStatusUpdate?.({ publishing_limit: limit });
+
+    if (!limit.available) {
+      throw new Error(`Instagram publishing limit unavailable: ${limit.error ?? "unknown reason"}.`);
+    }
+
+    if (limit.remaining <= 0) {
+      throw new Error("Instagram publishing limit reached for the current rolling window.");
+    }
 
     if (!providerData.container_id) {
       const container = await client.createReelContainer({
@@ -202,20 +215,56 @@ export class InstagramPublishingProvider implements PublishingProvider {
   }
 }
 
+export async function validateInstagramProviderCredentials(): Promise<InstagramProviderStatus> {
+  const status = getInstagramProviderStatus();
+
+  if (!status.configured) {
+    return status;
+  }
+
+  const config = readConfig();
+
+  try {
+    const client = new InstagramApiClient({
+      graphApiVersion: config.graphApiVersion ?? "",
+      accessToken: config.accessToken ?? "",
+      instagramAccountId: config.instagramAccountId ?? ""
+    });
+    await client.validateAccount();
+
+    return {
+      ...status,
+      credentials_valid: true,
+      ready: true,
+      error: null
+    };
+  } catch (error) {
+    return {
+      ...status,
+      credentials_valid: false,
+      ready: false,
+      error: error instanceof Error ? sanitizeMetaError(error.message) : "Instagram credentials validation failed."
+    };
+  }
+}
+
 export function getInstagramProviderStatus(): InstagramProviderStatus {
   const config = readConfig();
   const publicMediaBaseUrl = process.env.PHOENIX_PUBLIC_MEDIA_BASE_URL ?? "";
-  const configured = Boolean(config.instagramAccountId && config.accessToken && config.graphApiVersion && publicMediaBaseUrl);
+  const publicBaseUrlValid = isValidPublicHttpsUrl(publicMediaBaseUrl);
+  const configured = Boolean(config.instagramAccountId && config.accessToken && config.graphApiVersion && publicBaseUrlValid);
 
   return {
     provider: "instagram",
     configured,
+    credentials_valid: false,
     account_id_present: Boolean(config.instagramAccountId),
     access_token_present: Boolean(config.accessToken),
     graph_api_version_present: Boolean(config.graphApiVersion),
-    public_media_base_url_present: Boolean(publicMediaBaseUrl),
+    public_media_base_url_present: publicBaseUrlValid,
     dry_run: config.dryRun,
-    ready: configured
+    ready: false,
+    error: configured ? null : "Instagram provider is not fully configured."
   };
 }
 
@@ -242,6 +291,20 @@ async function resolvePublicMedia(resolver: PublishableMediaResolver, localPath:
 function formatCaption(request: PublicationRequest): string {
   const hashtags = request.hashtags.map((tag) => tag.startsWith("#") ? tag : `#${tag}`);
   return [request.caption, hashtags.join(" ")].filter(Boolean).join("\n\n");
+}
+
+function isFailedContainerStatus(status: string | null | undefined): boolean {
+  return status === "ERROR" || status === "EXPIRED" || status === "FAILED";
+}
+
+function isValidPublicHttpsUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+
+    return url.protocol === "https:" && !["localhost", "127.0.0.1", "::1"].includes(url.hostname);
+  } catch {
+    return false;
+  }
 }
 
 function buildResult(

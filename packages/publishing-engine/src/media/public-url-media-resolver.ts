@@ -17,13 +17,29 @@ export class PublicUrlMediaResolver implements PublishableMediaResolver {
       throw new Error("PHOENIX_PUBLIC_MEDIA_BASE_URL must use HTTPS.");
     }
 
+    const parsed = new URL(this.baseUrl);
+
+    if (["localhost", "127.0.0.1", "::1"].includes(parsed.hostname)) {
+      throw new Error("PHOENIX_PUBLIC_MEDIA_BASE_URL cannot point to localhost.");
+    }
+
+    if (this.baseUrl.startsWith("file://")) {
+      throw new Error("PHOENIX_PUBLIC_MEDIA_BASE_URL cannot use file://.");
+    }
+
     const normalized = relative(process.cwd(), localPath).replace(/\\/g, "/");
     const outputIndex = normalized.indexOf("output/");
     const publicPath = outputIndex >= 0 ? normalized.slice(outputIndex + "output/".length) : normalized;
 
+    const publicUrl = `${this.baseUrl}/${publicPath.replace(/^\/+/, "")}`;
+
+    if (!publicUrl.startsWith("https://")) {
+      throw new Error("Public media URL must use HTTPS.");
+    }
+
     return {
       localPath,
-      publicUrl: `${this.baseUrl}/${publicPath.replace(/^\/+/, "")}`
+      publicUrl
     };
   }
 }

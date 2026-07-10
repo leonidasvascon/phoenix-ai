@@ -22,13 +22,20 @@ export type InstagramPublishResponse = {
   id: string;
 };
 
+export type InstagramAccountResponse = {
+  id: string;
+  username?: string;
+};
+
 export type InstagramProviderStatus = {
   provider: "instagram";
   configured: boolean;
+  credentials_valid: boolean;
   account_id_present: boolean;
   access_token_present: boolean;
   graph_api_version_present: boolean;
   public_media_base_url_present: boolean;
   dry_run: boolean;
   ready: boolean;
+  error?: string | null;
 };

@@ -1053,6 +1053,7 @@ Resposta:
 {
   "provider": "instagram",
   "configured": false,
+  "credentials_valid": false,
   "account_id_present": false,
   "access_token_present": false,
   "public_media_base_url_present": false,

@@ -16,7 +16,7 @@ export async function handleProvidersRoute(request: IncomingMessage, response: S
   }
 
   if (request.method === "POST" && url.pathname === "/providers/instagram/validate") {
-    sendJson(response, 200, validateInstagramProvider());
+    sendJson(response, 200, await validateInstagramProvider());
     return;
   }
 

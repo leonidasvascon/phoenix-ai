@@ -103,6 +103,7 @@ function PublicationDetailView() {
 
       return response.json() as Promise<{
         ready: boolean;
+        credentials_valid: boolean;
         account_id_present: boolean;
         access_token_present: boolean;
         public_media_base_url_present: boolean;
@@ -192,6 +193,7 @@ function PublicationDetailView() {
               {validateInstagram.data ? (
                 <p className={validateInstagram.data.ready ? "success" : "error"}>
                   Instagram {validateInstagram.data.ready ? "pronto" : "incompleto"}: conta {validateInstagram.data.account_id_present ? "ok" : "ausente"}, token {validateInstagram.data.access_token_present ? "ok" : "ausente"}, URL publica {validateInstagram.data.public_media_base_url_present ? "ok" : "ausente"}.
+                  Credenciais {validateInstagram.data.credentials_valid ? "validas" : "nao validadas"}.
                 </p>
               ) : null}
               {validateInstagram.error ? <p className="error">{validateInstagram.error.message}</p> : null}

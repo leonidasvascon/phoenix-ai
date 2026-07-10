@@ -22,6 +22,7 @@ type ProviderStatus = {
   dry_run?: boolean;
   allow_fallback_assets?: boolean;
   configured?: boolean;
+  credentials_valid?: boolean;
   account_id_present?: boolean;
   access_token_present?: boolean;
   graph_api_version_present?: boolean;
@@ -151,6 +152,10 @@ function ProvidersView() {
                   <div>
                     <dt>Configurado</dt>
                     <dd>{provider.configured ? "sim" : "nao"}</dd>
+                  </div>
+                  <div>
+                    <dt>Credenciais</dt>
+                    <dd>{provider.credentials_valid ? "validas" : "nao validadas"}</dd>
                   </div>
                   <div>
                     <dt>Conta</dt>

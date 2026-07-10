@@ -17,16 +17,30 @@ export class InstagramPublishingLimit {
       const used = Number(first?.quota_usage ?? 0);
       const total = Number(first?.config?.quota_total ?? 0);
 
+      if (!first || total <= 0) {
+        return {
+          used,
+          remaining: 0,
+          checked_at: checkedAt,
+          available: false,
+          error: "Instagram publishing limit response did not include quota_total."
+        };
+      }
+
       return {
         used,
         remaining: total > 0 ? Math.max(total - used, 0) : 0,
-        checked_at: checkedAt
+        checked_at: checkedAt,
+        available: true,
+        error: null
       };
-    } catch {
+    } catch (error) {
       return {
         used: 0,
         remaining: 0,
-        checked_at: checkedAt
+        checked_at: checkedAt,
+        available: false,
+        error: error instanceof Error ? error.message : "Instagram publishing limit unavailable."
       };
     }
   }

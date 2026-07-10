@@ -1,5 +1,5 @@
 import { createDefaultAssetRegistry } from "@phoenix-ai/asset-engine";
-import { getInstagramProviderStatus } from "@phoenix-ai/publishing-engine";
+import { getInstagramProviderStatus, validateInstagramProviderCredentials } from "@phoenix-ai/publishing-engine";
 
 export function listProviders() {
   return [
@@ -25,7 +25,7 @@ export function listProviders() {
 }
 
 export function validateInstagramProvider() {
-  return getInstagramProviderStatus();
+  return validateInstagramProviderCredentials();
 }
 
 export function getProviderStatus() {
