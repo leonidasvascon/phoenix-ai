@@ -44,6 +44,7 @@ export type VoiceGenerationOptions = {
   format?: string;
   voice?: string;
   speed?: number;
+  failureReason?: string;
 };
 
 export type GeneratedImage = {
@@ -86,6 +87,7 @@ export type GeneratedAudio = {
   voice?: string | null;
   format?: string;
   speed?: number;
+  failure_reason?: string;
 };
 
 export type GeneratedAssets = {

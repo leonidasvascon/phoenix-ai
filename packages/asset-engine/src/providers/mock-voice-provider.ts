@@ -29,7 +29,8 @@ export class MockVoiceProvider implements VoiceProvider {
       model: options.model ?? null,
       voice: options.voice ?? null,
       format: options.format ?? "mp3",
-      speed: options.speed ?? 1
+      speed: options.speed ?? 1,
+      failure_reason: options.failureReason
     };
   }
 }

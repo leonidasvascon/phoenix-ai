@@ -21,7 +21,7 @@ export class OpenAIVoiceProvider implements VoiceProvider {
     const validation = this.validateConfig(config);
 
     if (validation) {
-      return this.generateFallback(text, config);
+      return this.generateFallback(text, config, validation);
     }
 
     const outputPath = resolve(options.outputPath ?? `narration.${config.format}`);
@@ -68,8 +68,9 @@ export class OpenAIVoiceProvider implements VoiceProvider {
         format: config.format,
         speed: config.speed
       };
-    } catch {
-      return this.generateFallback(text, config);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : "Unknown OpenAI voice generation error.";
+      return this.generateFallback(text, config, reason);
     }
   }
 
@@ -98,7 +99,8 @@ export class OpenAIVoiceProvider implements VoiceProvider {
 
   private generateFallback(
     text: string,
-    config: ReturnType<OpenAIVoiceProvider["readConfig"]>
+    config: ReturnType<OpenAIVoiceProvider["readConfig"]>,
+    reason: string
   ): Promise<GeneratedAudio> {
     return this.fallback.synthesize(text, {
       outputPath: config.outputPath,
@@ -106,7 +108,8 @@ export class OpenAIVoiceProvider implements VoiceProvider {
       model: null,
       voice: null,
       format: config.format,
-      speed: config.speed
+      speed: config.speed,
+      failureReason: reason
     });
   }
 }
