@@ -5,6 +5,13 @@ export type AssetProviderStatus = {
   kind: AssetProviderKind;
   status: "offline" | "online";
   mode: "mock" | "production";
+  requested_provider?: string;
+  effective_provider?: string;
+  fallback?: boolean;
+  model?: string | null;
+  voice?: string | null;
+  format?: string;
+  speed?: number;
 };
 
 export type ImageGenerationOptions = {
@@ -24,6 +31,9 @@ export type VideoGenerationOptions = {
 
 export type VoiceGenerationOptions = {
   outputPath?: string;
+  requestedProvider?: string;
+  model?: string | null;
+  format?: string;
   voice?: string;
   speed?: number;
 };
@@ -50,10 +60,16 @@ export type GeneratedVideo = {
 
 export type GeneratedAudio = {
   provider_id: string;
+  requested_provider?: string;
   path: string;
   mime_type: "audio/mpeg";
   text: string;
   placeholder: boolean;
+  fallback?: boolean;
+  model?: string | null;
+  voice?: string | null;
+  format?: string;
+  speed?: number;
 };
 
 export type GeneratedAssets = {

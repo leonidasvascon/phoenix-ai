@@ -20,10 +20,16 @@ export class MockVoiceProvider implements VoiceProvider {
 
     return {
       provider_id: this.id,
+      requested_provider: options.requestedProvider,
       path: outputPath,
       mime_type: "audio/mpeg",
       text,
-      placeholder: true
+      placeholder: true,
+      fallback: options.requestedProvider !== undefined && options.requestedProvider !== this.id,
+      model: options.model ?? null,
+      voice: options.voice ?? null,
+      format: options.format ?? "mp3",
+      speed: options.speed ?? 1
     };
   }
 }

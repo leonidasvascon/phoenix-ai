@@ -603,7 +603,7 @@ Supported Providers:
 
 - Video: `mock`
 - Image: `mock`, `openai`
-- Voice: `mock`
+- Voice: `mock`, `openai`
 
 Image Provider v1:
 
@@ -620,6 +620,25 @@ Regras:
 - `PHOENIX_IMAGE_PROVIDER=openai` usa OpenAI Images API para gerar `assets/thumbnail.png`.
 - se `PHOENIX_IMAGE_PROVIDER=openai` estiver sem `OPENAI_API_KEY`, o Asset Engine cai para `mock`.
 - `assets/assets.json` registra `requested_provider`, `provider_id`, `fallback`, `model` e `size`.
+
+Voice Provider v1:
+
+```env
+PHOENIX_VOICE_PROVIDER=mock
+OPENAI_API_KEY=
+PHOENIX_VOICE_MODEL=
+PHOENIX_VOICE_NAME=
+PHOENIX_VOICE_FORMAT=mp3
+PHOENIX_VOICE_SPEED=1
+```
+
+Regras:
+
+- `PHOENIX_VOICE_PROVIDER=mock` gera `assets/narration.mp3` placeholder.
+- `PHOENIX_VOICE_PROVIDER=openai` usa OpenAI Audio Speech API para gerar `assets/narration.mp3`.
+- sem `OPENAI_API_KEY`, modelo ou voz, o provider cai para `mock`.
+- `assets/assets.json` registra `requested_provider`, `provider_id`, `fallback`, `model`, `voice`, `format` e `speed`.
+- a narração usa `output.narration` quando existir, depois `story`, e por fim o roteiro completo.
 
 Arquivos gerados:
 

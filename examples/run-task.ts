@@ -16,9 +16,14 @@ const assets = await assetService.generate({
   outputDirectory: mediaPackage.directory,
   thumbnailPrompt: String(response.output.thumbnail_prompt ?? ""),
   videoPrompt: String(response.output.video_prompt ?? ""),
-  narrationText: [response.output.hook, response.output.story, response.output.ending, response.output.cta]
-    .filter((item) => typeof item === "string" && item.trim())
-    .join("\n\n")
+  narrationText:
+    typeof response.output.narration === "string" && response.output.narration.trim()
+      ? response.output.narration
+      : typeof response.output.story === "string" && response.output.story.trim()
+        ? response.output.story
+        : [response.output.hook, response.output.ending, response.output.cta]
+          .filter((item) => typeof item === "string" && item.trim())
+          .join("\n\n")
 });
 
 console.log(

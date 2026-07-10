@@ -128,9 +128,14 @@ function getOutputString(output: Record<string, unknown>, key: string): string {
 }
 
 function buildNarrationText(output: Record<string, unknown>): string {
+  const narration = getOutputString(output, "narration");
+  const story = getOutputString(output, "story");
+
+  if (narration) return narration;
+  if (story) return story;
+
   return [
     getOutputString(output, "hook"),
-    getOutputString(output, "story"),
     getOutputString(output, "ending"),
     getOutputString(output, "cta")
   ]

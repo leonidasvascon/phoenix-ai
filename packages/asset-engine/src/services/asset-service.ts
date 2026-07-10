@@ -22,7 +22,12 @@ export class AssetService {
         size: process.env.PHOENIX_IMAGE_SIZE ?? "1024x1024"
       }),
       this.registry.voice.synthesize(input.narrationText, {
-        outputPath: join(assetsDirectory, "narration.mp3")
+        outputPath: join(assetsDirectory, "narration.mp3"),
+        requestedProvider: this.registry.voice.id,
+        model: process.env.PHOENIX_VOICE_MODEL ?? null,
+        voice: process.env.PHOENIX_VOICE_NAME,
+        format: process.env.PHOENIX_VOICE_FORMAT ?? "mp3",
+        speed: Number(process.env.PHOENIX_VOICE_SPEED ?? 1)
       }),
       this.registry.video.generate(input.videoPrompt, {
         outputPath: join(assetsDirectory, "video.mp4")

@@ -1601,6 +1601,17 @@ select {
   color: var(--accent-dark);
 }
 
+.provider-fallback {
+  border: 1px solid #e6c875;
+  border-radius: 8px;
+  background: #fff7d8;
+  color: #7a5a00;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0;
+  padding: 8px 10px;
+}
+
 .provider-card dl {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
