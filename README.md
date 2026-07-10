@@ -1015,4 +1015,49 @@ Variaveis:
 PHOENIX_PUBLISHING_PROVIDER=mock
 PHOENIX_ALLOW_FALLBACK_ASSETS=false
 PHOENIX_PUBLISHING_DRY_RUN=true
+META_GRAPH_API_VERSION=
+META_ACCESS_TOKEN=
+META_INSTAGRAM_ACCOUNT_ID=
+PHOENIX_PUBLIC_MEDIA_BASE_URL=
+PHOENIX_INSTAGRAM_POLL_INTERVAL_MS=5000
+PHOENIX_INSTAGRAM_TIMEOUT_MS=300000
 ```
+
+## Instagram Publishing Provider
+
+Sprint 44 adiciona o primeiro provider real de publicacao, usando a API oficial da Meta em duas etapas:
+
+```text
+Publication Draft -> Media Container -> Processing Poll -> media_publish
+```
+
+O provider `instagram` implementa:
+
+- validacao de conta profissional configurada
+- validacao de token sem expor o segredo na API ou no Studio
+- resolucao de midia local para URL publica HTTPS via `PHOENIX_PUBLIC_MEDIA_BASE_URL`
+- criacao de container de Reel
+- polling de processamento do container
+- publicacao final via `media_publish`
+- persistencia de `provider_data.container_id` antes do polling
+- registro de `publishing_limit`
+- modo `dry-run` por padrao
+
+Endpoint adicional:
+
+- `POST /providers/instagram/validate`
+
+Resposta:
+
+```json
+{
+  "provider": "instagram",
+  "configured": false,
+  "account_id_present": false,
+  "access_token_present": false,
+  "public_media_base_url_present": false,
+  "ready": false
+}
+```
+
+Sem URL publica HTTPS, a publicacao real e bloqueada. O caminho local `output/.../assets/video.mp4` nunca e enviado diretamente para a Meta.

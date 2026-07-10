@@ -63,6 +63,7 @@ export class PublishingService {
       updated_at: now,
       published_at: null,
       external_id: null,
+      provider_data: {},
       validation,
       error: null
     };
@@ -85,24 +86,55 @@ export class PublishingService {
       throw new Error("Publication is cancelled.");
     }
 
-    await this.store.save({
+    let current = await this.store.save({
       ...publication,
       status: "publishing",
       updated_at: new Date().toISOString()
     });
 
     const provider = this.registry.get(publication.platform, publication.requested_provider);
-    const published = await provider.publish({
-      ...publication,
-      allow_fallback_assets: publication.allow_fallback_assets
-    });
+    let published: PublicationResult;
+
+    try {
+      published = await provider.publish({
+        ...current,
+        publication_id: current.id,
+        provider_data: current.provider_data,
+        allow_fallback_assets: publication.allow_fallback_assets,
+        onStatusUpdate: async (update) => {
+          current = await this.store.save({
+            ...current,
+            ...update,
+            provider_data: {
+              ...current.provider_data,
+              ...update.provider_data
+            },
+            updated_at: new Date().toISOString()
+          });
+        }
+      });
+    } catch (error) {
+      const failed = await this.store.save({
+        ...current,
+        status: "failed",
+        updated_at: new Date().toISOString(),
+        error: error instanceof Error ? error.message : "Publication failed."
+      });
+
+      return failed;
+    }
     const result: PublicationResult = {
-      ...publication,
+      ...current,
       effective_provider: published.effective_provider,
       status: published.status,
       updated_at: new Date().toISOString(),
       published_at: published.published_at,
       external_id: published.external_id,
+      provider_data: {
+        ...current.provider_data,
+        ...published.provider_data
+      },
+      publishing_limit: published.publishing_limit ?? current.publishing_limit,
       validation: published.validation,
       fallback_assets: published.fallback_assets,
       error: published.error

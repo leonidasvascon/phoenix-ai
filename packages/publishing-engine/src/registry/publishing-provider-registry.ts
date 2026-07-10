@@ -1,4 +1,5 @@
 import { MockPublishingProvider } from "../providers/mock-publishing-provider.ts";
+import { InstagramPublishingProvider } from "../providers/instagram/instagram-publishing-provider.ts";
 import type { PublishingProvider } from "../providers/publishing-provider.ts";
 
 export class PublishingProviderRegistry {
@@ -26,5 +27,6 @@ export class PublishingProviderRegistry {
 export function createDefaultPublishingProviderRegistry(): PublishingProviderRegistry {
   const registry = new PublishingProviderRegistry();
   registry.register(new MockPublishingProvider("instagram"));
+  registry.register(new InstagramPublishingProvider());
   return registry;
 }

@@ -1730,9 +1730,17 @@ select {
 }
 
 .publication-status[data-status="published"],
-.publication-status[data-status="validated"] {
+.publication-status[data-status="validated"],
+.publication-status[data-status="ready"] {
   background: #dfeee2;
   color: #245c33;
+}
+
+.publication-status[data-status="container_created"],
+.publication-status[data-status="processing"],
+.publication-status[data-status="publishing"] {
+  background: #eee4c7;
+  color: #6a4c00;
 }
 
 .publication-status[data-status="failed"],

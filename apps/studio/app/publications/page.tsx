@@ -67,6 +67,7 @@ function PublicationsView() {
   });
   const [caption, setCaption] = useState("");
   const [hashtags, setHashtags] = useState("");
+  const [provider, setProvider] = useState("mock");
   const [dryRun, setDryRun] = useState(true);
   const assets = useMemo(() => parseAssets(executionPackage.data?.files["assets/assets.json"]), [executionPackage.data]);
   const suggestedCaption = executionPackage.data?.files["legenda.txt"]?.trim() ?? "";
@@ -81,6 +82,7 @@ function PublicationsView() {
         body: JSON.stringify({
           execution_id: executionId,
           platform: executionPackage.data?.execution.execution.task?.platform ?? "instagram",
+          provider,
           format: executionPackage.data?.execution.execution.task?.format ?? "reel",
           caption: caption || suggestedCaption,
           hashtags: (hashtags || suggestedHashtags).split(/\s+/).map((item) => item.replace(/^#/, "")).filter(Boolean),
@@ -125,6 +127,13 @@ function PublicationsView() {
           <label>
             Plataforma
             <select value={executionPackage.data?.execution.execution.task?.platform ?? "instagram"} disabled>
+              <option value="instagram">instagram</option>
+            </select>
+          </label>
+          <label>
+            Provider
+            <select value={provider} onChange={(event) => setProvider(event.target.value)}>
+              <option value="mock">mock</option>
               <option value="instagram">instagram</option>
             </select>
           </label>

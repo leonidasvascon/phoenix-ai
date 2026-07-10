@@ -26,6 +26,18 @@ type Publication = {
   published_at?: string | null;
   external_id?: string | null;
   error?: string | null;
+  provider_data?: {
+    container_id?: string | null;
+    container_status?: string | null;
+    public_video_url?: string | null;
+    public_thumbnail_url?: string | null;
+    instagram_media_id?: string | null;
+  };
+  publishing_limit?: {
+    used: number;
+    remaining: number;
+    checked_at: string;
+  };
   validation: {
     valid: boolean;
     checks: Array<{ name: string; passed: boolean; message: string }>;
@@ -81,6 +93,22 @@ function PublicationDetailView() {
       await queryClient.invalidateQueries({ queryKey: ["publications"] });
     }
   });
+  const validateInstagram = useMutation({
+    mutationFn: async () => {
+      const response = await apiFetch("/providers/instagram/validate", { method: "POST" });
+
+      if (!response.ok) {
+        throw new Error("Nao foi possivel validar configuracao do Instagram.");
+      }
+
+      return response.json() as Promise<{
+        ready: boolean;
+        account_id_present: boolean;
+        access_token_present: boolean;
+        public_media_base_url_present: boolean;
+      }>;
+    }
+  });
   const data = publication.data;
 
   return (
@@ -129,6 +157,47 @@ function PublicationDetailView() {
             </div>
           </dl>
 
+          {data.requested_provider === "instagram" || data.effective_provider === "instagram" ? (
+            <section>
+              <h3>Instagram</h3>
+              <dl>
+                <div>
+                  <dt>URL publica video</dt>
+                  <dd>{data.provider_data?.public_video_url ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt>URL publica thumbnail</dt>
+                  <dd>{data.provider_data?.public_thumbnail_url ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt>Container ID</dt>
+                  <dd>{data.provider_data?.container_id ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt>Status container</dt>
+                  <dd>{data.provider_data?.container_status ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt>Media ID</dt>
+                  <dd>{data.provider_data?.instagram_media_id ?? "-"}</dd>
+                </div>
+                <div>
+                  <dt>Limite</dt>
+                  <dd>{data.publishing_limit ? `${data.publishing_limit.used} usados / ${data.publishing_limit.remaining} restantes` : "-"}</dd>
+                </div>
+              </dl>
+              <button className="secondary-action" type="button" onClick={() => validateInstagram.mutate()} disabled={validateInstagram.isPending}>
+                {validateInstagram.isPending ? "Validando..." : "Validar configuracao"}
+              </button>
+              {validateInstagram.data ? (
+                <p className={validateInstagram.data.ready ? "success" : "error"}>
+                  Instagram {validateInstagram.data.ready ? "pronto" : "incompleto"}: conta {validateInstagram.data.account_id_present ? "ok" : "ausente"}, token {validateInstagram.data.access_token_present ? "ok" : "ausente"}, URL publica {validateInstagram.data.public_media_base_url_present ? "ok" : "ausente"}.
+                </p>
+              ) : null}
+              {validateInstagram.error ? <p className="error">{validateInstagram.error.message}</p> : null}
+            </section>
+          ) : null}
+
           <section>
             <h3>Arquivos utilizados</h3>
             <ul>
@@ -158,7 +227,15 @@ function PublicationDetailView() {
           </section>
 
           <div className="publication-actions">
-            <button className="primary-action" type="button" disabled={data.status === "published" || data.status === "cancelled" || publish.isPending} onClick={() => publish.mutate()}>
+            <button
+              className="primary-action"
+              type="button"
+              disabled={data.status === "published" || data.status === "cancelled" || publish.isPending}
+              onClick={() => {
+                if (!data.dry_run && !window.confirm("Confirmar publicacao real?")) return;
+                publish.mutate();
+              }}
+            >
               {publish.isPending ? "Publicando..." : "Publicar"}
             </button>
             <button className="secondary-action" type="button" disabled={data.status === "published" || data.status === "cancelled" || cancel.isPending} onClick={() => cancel.mutate()}>

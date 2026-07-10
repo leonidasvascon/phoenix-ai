@@ -1,4 +1,30 @@
-export type PublicationStatus = "draft" | "validated" | "queued" | "publishing" | "published" | "failed" | "cancelled";
+export type PublicationStatus =
+  | "draft"
+  | "validated"
+  | "queued"
+  | "container_created"
+  | "processing"
+  | "ready"
+  | "publishing"
+  | "published"
+  | "failed"
+  | "cancelled";
+
+export type PublicationProviderData = {
+  container_id?: string | null;
+  container_status?: string | null;
+  public_video_url?: string | null;
+  public_thumbnail_url?: string | null;
+  instagram_media_id?: string | null;
+};
+
+export type PublishingLimit = {
+  used: number;
+  remaining: number;
+  checked_at: string;
+};
+
+export type PublicationUpdate = Partial<PublicationResult>;
 
 export type PublicationRequest = {
   execution_id: string;
@@ -14,6 +40,10 @@ export type PublicationRequest = {
   scheduled_at?: string | null;
   dry_run?: boolean;
   allow_fallback_assets?: boolean;
+  publication_id?: string;
+  provider_data?: PublicationProviderData;
+  publishing_limit?: PublishingLimit;
+  onStatusUpdate?: (update: PublicationUpdate) => Promise<void>;
 };
 
 export type PublicationValidation = {
@@ -50,6 +80,8 @@ export type PublicationResult = {
   published_at?: string | null;
   cancelled_at?: string | null;
   external_id?: string | null;
+  provider_data?: PublicationProviderData;
+  publishing_limit?: PublishingLimit;
   validation: PublicationValidation;
   error?: string | null;
 };

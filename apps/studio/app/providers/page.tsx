@@ -7,7 +7,7 @@ import { QueryProvider } from "../query-provider";
 
 type ProviderStatus = {
   id: string;
-  kind: "image" | "video" | "voice" | "publishing";
+  kind: "image" | "video" | "voice" | "publishing" | "instagram";
   status: "offline" | "online";
   mode: "mock" | "production";
   requested_provider?: string;
@@ -21,13 +21,20 @@ type ProviderStatus = {
   speed?: number;
   dry_run?: boolean;
   allow_fallback_assets?: boolean;
+  configured?: boolean;
+  account_id_present?: boolean;
+  access_token_present?: boolean;
+  graph_api_version_present?: boolean;
+  public_media_base_url_present?: boolean;
+  ready?: boolean;
 };
 
 const labels: Record<ProviderStatus["kind"], string> = {
   video: "Video",
   image: "Image",
   voice: "Voice",
-  publishing: "Publishing"
+  publishing: "Publishing",
+  instagram: "Instagram"
 };
 
 function ProvidersView() {
@@ -136,6 +143,34 @@ function ProvidersView() {
                   <div>
                     <dt>Fallback assets</dt>
                     <dd>{provider.allow_fallback_assets ? "permitido" : "bloqueado"}</dd>
+                  </div>
+                </>
+              ) : null}
+              {provider.kind === "instagram" ? (
+                <>
+                  <div>
+                    <dt>Configurado</dt>
+                    <dd>{provider.configured ? "sim" : "nao"}</dd>
+                  </div>
+                  <div>
+                    <dt>Conta</dt>
+                    <dd>{provider.account_id_present ? "ok" : "ausente"}</dd>
+                  </div>
+                  <div>
+                    <dt>Token</dt>
+                    <dd>{provider.access_token_present ? "ok" : "ausente"}</dd>
+                  </div>
+                  <div>
+                    <dt>Graph API</dt>
+                    <dd>{provider.graph_api_version_present ? "ok" : "ausente"}</dd>
+                  </div>
+                  <div>
+                    <dt>URL publica</dt>
+                    <dd>{provider.public_media_base_url_present ? "ok" : "ausente"}</dd>
+                  </div>
+                  <div>
+                    <dt>Pronto</dt>
+                    <dd>{provider.ready ? "sim" : "nao"}</dd>
                   </div>
                 </>
               ) : null}
