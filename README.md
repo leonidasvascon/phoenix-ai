@@ -1190,3 +1190,76 @@ Tela:
 ```text
 http://127.0.0.1:3000/evaluation/history
 ```
+
+## Observability
+
+Sprint 48 adiciona Observability v1 para rastrear API, Runtime, agentes, providers, scheduler e publicacao.
+
+Pacote:
+
+```text
+packages/observability
+```
+
+Configuracao:
+
+```bash
+PHOENIX_OBSERVABILITY_ENABLED=true
+PHOENIX_SERVICE_NAME=phoenix-api
+PHOENIX_LOG_LEVEL=info
+PHOENIX_TRACE_CONTENT=false
+OTEL_TRACES_EXPORTER=console
+OTEL_METRICS_EXPORTER=console
+```
+
+`PHOENIX_TRACE_CONTENT=false` permanece como padrao para evitar envio de prompts, roteiros, legendas, tokens ou credenciais para logs e traces.
+
+Spans principais:
+
+- `phoenix.http.request`
+- `phoenix.runtime.execute`
+- `phoenix.brand.load`
+- `phoenix.knowledge.retrieve`
+- `phoenix.memory.load`
+- `phoenix.agent.execute`
+- `phoenix.quality.evaluate`
+- `phoenix.media.compose`
+- `phoenix.asset.generate`
+- `phoenix.execution.persist`
+- `phoenix.publication.publish`
+- `phoenix.scheduler.run_due`
+
+Metricas v1:
+
+- `phoenix_http_requests_total`
+- `phoenix_http_request_duration_ms`
+- `phoenix_runtime_executions_total`
+- `phoenix_runtime_duration_ms`
+- `phoenix_agent_executions_total`
+- `phoenix_agent_failures_total`
+- `phoenix_provider_fallbacks_total`
+- `phoenix_quality_score`
+- `phoenix_publications_total`
+- `phoenix_scheduler_jobs_total`
+
+Endpoints:
+
+- `GET /health`
+- `GET /health/live`
+- `GET /health/ready`
+- `GET /observability/status`
+- `GET /metrics`
+
+`/metrics` continua protegido pela chave da API. Health checks ficam disponiveis para probes locais.
+
+Tela:
+
+```text
+http://127.0.0.1:3000/operations
+```
+
+Teste local:
+
+```bash
+pnpm run observability:test
+```

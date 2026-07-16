@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { executeBatchTasks, executeTask } from "./runtime-service.ts";
+import { incrementCounter, logStructured, withSpan } from "@phoenix-ai/observability";
 
 type ScheduledJobType = "batch" | "task";
 type ScheduledJobStatus = "pending" | "running" | "completed" | "failed";
@@ -72,6 +73,14 @@ export async function runDueScheduledJobs(now = new Date()): Promise<{
   executed: number;
   jobs: ScheduledJob[];
 }> {
+  return withSpan("phoenix.scheduler.run_due", {}, async () => runDueScheduledJobsWithSpan(now));
+}
+
+async function runDueScheduledJobsWithSpan(now = new Date()): Promise<{
+  checked: number;
+  executed: number;
+  jobs: ScheduledJob[];
+}> {
   const jobs = await readJobs();
   const dueJobIndexes = jobs
     .map((job, index) => ({ job, index }))
@@ -100,6 +109,13 @@ export async function runDueScheduledJobs(now = new Date()): Promise<{
 
       jobs[index] = completedJob;
       executedJobs.push(completedJob);
+      incrementCounter("phoenix_scheduler_jobs_total", {
+        result: "completed"
+      });
+      logStructured("info", "scheduler.job.completed", {
+        scheduled_job_id: job.id,
+        status: "completed"
+      });
     } catch (error) {
       const failedJob: ScheduledJob = {
         ...jobs[index],
@@ -111,6 +127,14 @@ export async function runDueScheduledJobs(now = new Date()): Promise<{
 
       jobs[index] = failedJob;
       executedJobs.push(failedJob);
+      incrementCounter("phoenix_scheduler_jobs_total", {
+        result: "failed"
+      });
+      logStructured("error", "scheduler.job.completed", {
+        scheduled_job_id: job.id,
+        status: "failed",
+        error: failedJob.last_error
+      });
     }
 
     await writeJobs(jobs);

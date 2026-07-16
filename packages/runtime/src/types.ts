@@ -106,6 +106,7 @@ export type ExecutionLog = {
 
 export type ExecutionContext = {
   executionId: string;
+  trace_id?: string;
   startedAt: number;
   task: Task;
   brand?: Brand;
@@ -192,6 +193,7 @@ export type ExecutionAgentReport = {
 
 export type ExecutionReport = {
   id: string;
+  trace_id?: string;
   provider: string;
   duration_ms: number;
   agents: ExecutionAgentReport[];

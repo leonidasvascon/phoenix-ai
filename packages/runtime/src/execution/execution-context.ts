@@ -1,13 +1,16 @@
 import { randomUUID } from "node:crypto";
+import { getTraceId } from "@phoenix-ai/observability";
 import type { ExecutionContext, Task } from "../types.ts";
 import { emptyCostUsage } from "./cost-tracker.ts";
 import { emptyTokenUsage } from "./token-tracker.ts";
 
 export function createExecutionContext(task: Task): ExecutionContext {
   const executionId = randomUUID();
+  const traceId = getTraceId();
 
   return {
     executionId,
+    trace_id: traceId,
     startedAt: performance.now(),
     task: {
       language: "pt-BR",
@@ -25,6 +28,7 @@ export function createExecutionContext(task: Task): ExecutionContext {
     },
     execution: {
       id: executionId,
+      trace_id: traceId,
       provider: process.env.PHOENIX_PROVIDER ?? "mock",
       duration_ms: 0,
       agents: [],

@@ -6,6 +6,7 @@ import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runti
 import { getLearningReport } from "./learning-service.ts";
 import { listActivePromptOptimizations } from "./prompt-optimization-service.ts";
 import { getRuntimeSettings } from "./settings-service.ts";
+import { withSpan } from "@phoenix-ai/observability";
 
 type TaskRequest = Partial<Task>;
 type BatchTaskRequest = {
@@ -90,9 +91,14 @@ export async function executeTask(input: TaskRequest) {
     learningRecommendations: learningReport.recommendations,
     promptOptimizations
   });
-  const mediaPackage = await composeMediaPackage(runtimeResponse, {
+  const mediaPackage = await withSpan("phoenix.media.compose", {
+    "phoenix.execution.id": runtimeResponse.execution_id,
+    "phoenix.brand.id": task.brand,
+    "phoenix.task.format": task.format,
+    "phoenix.task.platform": task.platform
+  }, () => composeMediaPackage(runtimeResponse, {
     outputRoot: settings.output_root
-  });
+  }));
   const assetService = new AssetService();
   const generatedAssets = await assetService.generate({
     executionId: runtimeResponse.execution_id,

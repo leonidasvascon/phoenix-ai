@@ -8,6 +8,7 @@ import { createExecutionContext } from "./execution/execution-context.ts";
 import { FilePersistenceAdapter } from "./persistence/file-persistence-adapter.ts";
 import type { PersistenceAdapter } from "./persistence/persistence-adapter.ts";
 import { FileMemoryStore, retrieveMemory, writeMemory } from "../../memory-engine/src/index.ts";
+import { incrementCounter, logStructured, recordDuration, recordGauge, withObservabilityContext, withSpan } from "@phoenix-ai/observability";
 
 function validateTask(task: Task): void {
   const required: Array<keyof Task> = ["brand", "objective", "platform", "format", "theme"];
@@ -41,23 +42,44 @@ export class Runtime {
     persistence: PersistenceAdapter = new FilePersistenceAdapter(),
     options: RuntimeOptions = {}
   ): Promise<RuntimeResponse> {
-    const context = createExecutionContext(task);
-    const provider = options.provider ?? process.env.PHOENIX_PROVIDER ?? "mock";
+    return withSpan("phoenix.runtime.execute", {
+      "phoenix.brand.id": task.brand,
+      "phoenix.task.format": task.format,
+      "phoenix.task.platform": task.platform
+    }, async () => {
+      const context = createExecutionContext(task);
+      const provider = options.provider ?? process.env.PHOENIX_PROVIDER ?? "mock";
 
-    try {
+      return withObservabilityContext({ execution_id: context.executionId }, async () => {
+        try {
+          logStructured("info", "runtime.execution.started", {
+            execution_id: context.executionId,
+            brand_id: context.task.brand,
+            format: context.task.format,
+            platform: context.task.platform
+          });
       validateTask(context.task);
       logStep(context, "task_validator", "success", "Task validated.");
       context.learning_recommendations = options.learningRecommendations ?? [];
       context.prompt_optimizations = options.promptOptimizations ?? [];
 
-      context.brand = await loadBrand(context.task.brand);
+      context.brand = await withSpan("phoenix.brand.load", {
+        "phoenix.execution.id": context.executionId,
+        "phoenix.brand.id": context.task.brand
+      }, () => loadBrand(context.task.brand));
       logStep(context, "brand_loader", "success", `Brand loaded: ${context.brand.brand.id}.`);
 
-      context.knowledge = await loadKnowledge(context.task, context.brand);
+      context.knowledge = await withSpan("phoenix.knowledge.retrieve", {
+        "phoenix.execution.id": context.executionId,
+        "phoenix.brand.id": context.brand.brand.id
+      }, () => loadKnowledge(context.task, context.brand!));
       logStep(context, "knowledge_loader", "success", `Knowledge loaded: ${context.knowledge.documents.length} documents.`);
 
       const memoryStore = new FileMemoryStore();
-      context.memory = await retrieveMemory(memoryStore, context.brand.brand.id);
+      context.memory = await withSpan("phoenix.memory.load", {
+        "phoenix.execution.id": context.executionId,
+        "phoenix.brand.id": context.brand.brand.id
+      }, () => retrieveMemory(memoryStore, context.brand!.brand.id));
       logStep(context, "memory_loader", "success", `Memory loaded for brand: ${context.memory.brand_id}.`);
 
       context.pipeline = await loadPipeline(context.task.format);
@@ -86,8 +108,24 @@ export class Runtime {
 
       const executionTime = Number(((performance.now() - context.startedAt) / 1000).toFixed(3));
       const score = typeof context.outputs.score === "number" ? context.outputs.score : 0;
-      context.quality.final_score = score || context.quality.final_score;
-      context.quality.passed = context.quality.failed_agents.length === 0;
+      await withSpan("phoenix.quality.evaluate", {
+        "phoenix.execution.id": context.executionId,
+        "phoenix.quality.score": score || context.quality.final_score
+      }, async () => {
+        context.quality.final_score = score || context.quality.final_score;
+        context.quality.passed = context.quality.failed_agents.length === 0;
+        recordGauge("phoenix_quality_score", context.quality.final_score, {
+          format: context.task.format,
+          platform: context.task.platform
+        });
+        if (!context.quality.passed) {
+          logStructured("warn", "quality.gate.failed", {
+            execution_id: context.executionId,
+            score: context.quality.final_score,
+            failed_agents: context.quality.failed_agents.length
+          });
+        }
+      });
       context.execution.duration_ms = Math.round(performance.now() - context.startedAt);
       context.execution.provider = provider;
       context.execution.task = context.task;
@@ -114,9 +152,25 @@ export class Runtime {
         logs: context.logs
       };
 
-      const persistenceResult = await persistence.saveExecution(response);
+      const persistenceResult = await withSpan("phoenix.execution.persist", {
+        "phoenix.execution.id": context.executionId
+      }, () => persistence.saveExecution(response));
       response.execution.persisted = persistenceResult.persisted;
       response.execution.storage = persistenceResult.storage;
+      incrementCounter("phoenix_runtime_executions_total", {
+        format: context.task.format,
+        platform: context.task.platform,
+        result: "success"
+      });
+      recordDuration("phoenix_runtime_duration_ms", context.execution.duration_ms, {
+        format: context.task.format,
+        platform: context.task.platform
+      });
+      logStructured("info", "runtime.execution.completed", {
+        execution_id: context.executionId,
+        duration_ms: context.execution.duration_ms,
+        status: "success"
+      });
 
       return response;
     } catch (error) {
@@ -145,8 +199,21 @@ export class Runtime {
       const persistenceResult = await persistence.saveExecution(response);
       response.execution.persisted = persistenceResult.persisted;
       response.execution.storage = persistenceResult.storage;
+      incrementCounter("phoenix_runtime_executions_total", {
+        format: context.task.format,
+        platform: context.task.platform,
+        result: "error"
+      });
+      logStructured("error", "runtime.execution.completed", {
+        execution_id: context.executionId,
+        duration_ms: context.execution.duration_ms,
+        status: "error",
+        error: message
+      });
 
       return response;
     }
+      });
+    });
   }
 }

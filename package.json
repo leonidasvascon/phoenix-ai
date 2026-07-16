@@ -11,6 +11,7 @@
     "quality:benchmarks": "node --experimental-strip-types scripts/run-benchmarks.ts",
     "quality:regressions": "node --experimental-strip-types scripts/run-regressions.ts",
     "quality:report": "node --experimental-strip-types scripts/generate-quality-report.ts",
+    "observability:test": "node --experimental-strip-types scripts/test-sanitization.ts",
     "studio:dev": "pnpm --filter @phoenix-ai/studio dev",
     "studio:build": "pnpm --filter @phoenix-ai/studio build"
   },

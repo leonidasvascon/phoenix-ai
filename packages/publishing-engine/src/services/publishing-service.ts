@@ -3,6 +3,7 @@ import { createDefaultPublishingProviderRegistry, type PublishingProviderRegistr
 import { FilePublicationStore } from "../stores/file-publication-store.ts";
 import type { PublicationStore } from "../stores/publication-store.ts";
 import type { PublicationRequest, PublicationResult } from "../types/publication.ts";
+import { incrementCounter, logStructured, withSpan } from "@phoenix-ai/observability";
 
 export class PublishingService {
   private readonly registry: PublishingProviderRegistry;
@@ -72,6 +73,12 @@ export class PublishingService {
   }
 
   async publish(id: string): Promise<PublicationResult> {
+    return withSpan("phoenix.publication.publish", {
+      "phoenix.publication.id": id
+    }, async () => this.publishWithSpan(id));
+  }
+
+  private async publishWithSpan(id: string): Promise<PublicationResult> {
     const publication = await this.store.get(id);
 
     if (!publication) {
@@ -120,6 +127,17 @@ export class PublishingService {
         updated_at: new Date().toISOString(),
         error: error instanceof Error ? error.message : "Publication failed."
       });
+      incrementCounter("phoenix_publications_total", {
+        platform: current.platform,
+        provider: current.requested_provider,
+        result: "failed"
+      });
+      logStructured("error", "publication.failed", {
+        publication_id: current.id,
+        platform: current.platform,
+        provider: current.requested_provider,
+        error: failed.error
+      });
 
       return failed;
     }
@@ -139,6 +157,12 @@ export class PublishingService {
       fallback_assets: published.fallback_assets,
       error: published.error
     };
+
+    incrementCounter("phoenix_publications_total", {
+      platform: result.platform,
+      provider: result.effective_provider,
+      result: result.status
+    });
 
     return this.store.save(result);
   }

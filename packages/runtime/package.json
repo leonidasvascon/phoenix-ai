@@ -7,8 +7,10 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "dependencies": {
+    "@phoenix-ai/observability": "workspace:*"
+  },
   "scripts": {
     "example:task": "node --experimental-strip-types ../../examples/run-task.ts"
   }
 }
-

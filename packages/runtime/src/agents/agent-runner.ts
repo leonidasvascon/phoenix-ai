@@ -10,6 +10,7 @@ import { addCostUsage } from "../execution/cost-tracker.ts";
 import { recordAgentExecution } from "../execution/execution-log.ts";
 import { addTokenUsage } from "../execution/token-tracker.ts";
 import type { RetryPolicy } from "../quality/retry-policy.ts";
+import { incrementCounter, logStructured, recordGauge, withSpan } from "@phoenix-ai/observability";
 
 function selectProvider(provider = process.env.PHOENIX_PROVIDER ?? "mock"): LlmProvider {
   if (provider === "openai") {
@@ -36,6 +37,17 @@ export class AgentRunner {
 
   async run(step: PipelineStep, task: Task, brand: Brand, context: ExecutionContext): Promise<AgentOutput> {
     const agentId = step.agent ?? step.id;
+    return withSpan("phoenix.agent.execute", {
+      "phoenix.execution.id": context.executionId,
+      "phoenix.brand.id": brand.brand.id,
+      "phoenix.task.format": task.format,
+      "phoenix.task.platform": task.platform,
+      "phoenix.agent.name": agentId,
+      "phoenix.provider.requested": this.primaryProvider.id
+    }, async () => this.runWithSpan(agentId, task, brand, context));
+  }
+
+  private async runWithSpan(agentId: string, task: Task, brand: Brand, context: ExecutionContext): Promise<AgentOutput> {
     const primaryAgent = new PromptAgent(agentId, this.primaryProvider);
     const startedAt = performance.now();
     let agentAttempts = 0;
@@ -69,6 +81,16 @@ export class AgentRunner {
             tokens: primaryAgent.lastUsage,
             cost: primaryAgent.lastCost
           });
+          incrementCounter("phoenix_agent_executions_total", {
+            agent: agentId,
+            provider: this.primaryProvider.id,
+            result: "success"
+          });
+          recordGauge("phoenix_quality_score", gate.score, {
+            agent: agentId,
+            format: task.format,
+            platform: task.platform
+          });
           return gate.output;
         }
 
@@ -79,6 +101,11 @@ export class AgentRunner {
           context.quality.failed_agents.push({
             agent: agentId,
             reason
+          });
+          incrementCounter("phoenix_agent_failures_total", {
+            agent: agentId,
+            provider: this.primaryProvider.id,
+            result: "quality_failed"
           });
           break;
         }
@@ -91,6 +118,11 @@ export class AgentRunner {
             agent: agentId,
             reason: message
           });
+          incrementCounter("phoenix_agent_failures_total", {
+            agent: agentId,
+            provider: this.primaryProvider.id,
+            result: "provider_failed"
+          });
           break;
         }
       }
@@ -102,6 +134,17 @@ export class AgentRunner {
       "error",
       `Falling back to ${this.fallbackProvider.id} after quality/provider failure.`
     );
+    incrementCounter("phoenix_provider_fallbacks_total", {
+      agent: agentId,
+      provider: this.primaryProvider.id,
+      result: "fallback"
+    });
+    logStructured("warn", "provider.fallback.activated", {
+      execution_id: context.executionId,
+      agent: agentId,
+      requested_provider: this.primaryProvider.id,
+      effective_provider: this.fallbackProvider.id
+    });
 
     const fallbackAgent = new PromptAgent(agentId, this.fallbackProvider);
     const fallbackOutput = await fallbackAgent.execute({
@@ -128,6 +171,11 @@ export class AgentRunner {
       score: fallbackGate.score || lastScore,
       tokens: fallbackAgent.lastUsage,
       cost: fallbackAgent.lastCost
+    });
+    incrementCounter("phoenix_agent_executions_total", {
+      agent: agentId,
+      provider: this.fallbackProvider.id,
+      result: "fallback_success"
     });
 
     return fallbackGate.output;

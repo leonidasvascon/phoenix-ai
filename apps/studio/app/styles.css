@@ -2080,6 +2080,88 @@ select {
   font-size: 20px;
 }
 
+.operations-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.health-status-card,
+.operational-metric-card,
+.operations-panel {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.health-status-card[data-status="ok"],
+.health-status-card[data-status="ready"],
+.health-status-card[data-status="enabled"] {
+  border-color: #b9d8bf;
+  background: #f5fbf6;
+}
+
+.health-status-card[data-status="not_ready"],
+.health-status-card[data-status="disabled"] {
+  border-color: #e6b7b7;
+  background: #fff5f5;
+}
+
+.health-status-card p,
+.operational-metric-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.health-status-card strong,
+.operational-metric-card strong {
+  overflow-wrap: anywhere;
+  font-size: 28px;
+}
+
+.health-status-card span {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.operations-panel h2 {
+  margin: 0;
+}
+
+.operations-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.operations-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.operations-list span,
+.operations-list small {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 .strategy-layout {
   display: grid;
   grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
@@ -2594,6 +2676,7 @@ select {
   .providers-shell,
   .strategy-shell,
   .evaluation-shell,
+  .operations-shell,
   .publications-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
@@ -2678,6 +2761,8 @@ select {
   .evaluation-layout,
   .evaluation-card dl,
   .quality-timeline-item,
+  .operations-grid,
+  .operations-list li,
   .strategy-layout,
   .strategy-insights,
   .strategy-calendar-card dl {

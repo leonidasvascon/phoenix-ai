@@ -3,6 +3,7 @@ import { join } from "node:path";
 import type { AssetGenerationInput, GeneratedAssets } from "../types/assets.ts";
 import { AssetRegistry, createDefaultAssetRegistry } from "../registry/provider-registry.ts";
 import { VideoGenerationService } from "./video-generation-service.ts";
+import { incrementCounter, withSpan } from "@phoenix-ai/observability";
 
 export class AssetService {
   private readonly registry: AssetRegistry;
@@ -12,6 +13,13 @@ export class AssetService {
   }
 
   async generate(input: AssetGenerationInput): Promise<GeneratedAssets> {
+    return withSpan("phoenix.asset.generate", {
+      "phoenix.execution.id": input.executionId,
+      "phoenix.provider.requested": `${this.registry.image.id},${this.registry.voice.id},${this.registry.video.id}`
+    }, async () => this.generateWithSpan(input));
+  }
+
+  private async generateWithSpan(input: AssetGenerationInput): Promise<GeneratedAssets> {
     const assetsDirectory = join(input.outputDirectory, "assets");
 
     await mkdir(assetsDirectory, { recursive: true });
@@ -47,6 +55,16 @@ export class AssetService {
       voice,
       video
     };
+
+    for (const [kind, asset] of Object.entries({ image, voice, video })) {
+      if (asset.fallback) {
+        incrementCounter("phoenix_provider_fallbacks_total", {
+          provider: asset.requested_provider ?? asset.provider_id,
+          kind,
+          result: "fallback"
+        });
+      }
+    }
 
     await writeFile(join(assetsDirectory, "assets.json"), JSON.stringify(generatedAssets, null, 2), "utf8");
 

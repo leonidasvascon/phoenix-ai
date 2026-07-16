@@ -8,7 +8,9 @@ import { handleBrandsRoute } from "./routes/brands.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
 import { handleEvaluationRoute } from "./routes/evaluation.ts";
 import { handleFeedbackRoute } from "./routes/feedback.ts";
+import { handleHealthRoute } from "./routes/health.ts";
 import { handleLearningRoute } from "./routes/learning.ts";
+import { handleObservabilityRoute } from "./routes/observability.ts";
 import { handlePromptOptimizationsRoute } from "./routes/prompt-optimizations.ts";
 import { handlePublicationsRoute } from "./routes/publications.ts";
 import { handleQualityRoute } from "./routes/quality.ts";
@@ -20,6 +22,7 @@ import { handleTasksRoute } from "./routes/tasks.ts";
 import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
 import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
 import { startSchedulerWorker } from "./workers/scheduler-worker.ts";
+import { incrementCounter, logStructured, recordDuration, withSpan } from "@phoenix-ai/observability";
 
 const port = Number(process.env.PHOENIX_API_PORT ?? 4000);
 
@@ -43,7 +46,10 @@ const routes: Record<string, ApiHandler> = {
   "/executions": handleExecutionsRoute,
   "/evaluation": handleEvaluationRoute,
   "/feedback": handleFeedbackRoute,
+  "/health": handleHealthRoute,
   "/learning": handleLearningRoute,
+  "/metrics": handleObservabilityRoute,
+  "/observability": handleObservabilityRoute,
   "/prompt-optimizations": handlePromptOptimizationsRoute,
   "/publications": handlePublicationsRoute,
   "/quality": handleQualityRoute,
@@ -65,7 +71,9 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/executions/") ||
     pathname.startsWith("/evaluation/") ||
     pathname.startsWith("/feedback/") ||
+    pathname.startsWith("/health/") ||
     pathname.startsWith("/learning/") ||
+    pathname.startsWith("/observability/") ||
     pathname.startsWith("/prompt-optimizations/") ||
     pathname.startsWith("/publications/") ||
     pathname.startsWith("/quality/") ||
@@ -86,14 +94,25 @@ ensureRepositoryRoot();
 startSchedulerWorker();
 
 const server = createServer(async (request, response) => {
+  const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
+  const route = resolveRoute(url.pathname);
+  const startedAt = performance.now();
+  let statusCode = 200;
+  const originalWriteHead = response.writeHead.bind(response);
+  response.writeHead = ((status: number, ...args: Parameters<ServerResponse["writeHead"]> extends [number, ...infer Rest] ? Rest : never) => {
+    statusCode = status;
+    return originalWriteHead(status, ...args);
+  }) as ServerResponse["writeHead"];
+
   if (request.method === "OPTIONS") {
     sendJson(response, 204, {});
     return;
   }
 
+  const publicHealth = url.pathname === "/health" || url.pathname === "/health/live" || url.pathname === "/health/ready";
   const auth = authenticateApiKey(request);
 
-  if (!auth.authenticated) {
+  if (!publicHealth && !auth.authenticated) {
     sendJson(response, auth.status, {
       status: "error",
       message: auth.message
@@ -101,23 +120,48 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
-  const route = resolveRoute(url.pathname);
-
   if (!route) {
     notFound(response);
     return;
   }
 
-  try {
-    await route(request, response);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown API error.";
-    sendJson(response, 500, {
-      status: "error",
-      message
+  await withSpan("phoenix.http.request", {
+    "http.request.method": request.method ?? "GET",
+    "url.path": url.pathname,
+    route: url.pathname
+  }, async () => {
+    logStructured("info", "api.request.started", {
+      method: request.method,
+      route: url.pathname
     });
-  }
+    try {
+      await route(request, response);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown API error.";
+      sendJson(response, 500, {
+        status: "error",
+        message
+      });
+    } finally {
+      const durationMs = Math.round(performance.now() - startedAt);
+      incrementCounter("phoenix_http_requests_total", {
+        method: request.method ?? "GET",
+        route: url.pathname,
+        status_code: statusCode
+      });
+      recordDuration("phoenix_http_request_duration_ms", durationMs, {
+        method: request.method ?? "GET",
+        route: url.pathname,
+        status_code: statusCode
+      });
+      logStructured("info", "api.request.completed", {
+        method: request.method,
+        route: url.pathname,
+        status_code: statusCode,
+        duration_ms: durationMs
+      });
+    }
+  });
 });
 
 server.listen(port, "127.0.0.1", () => {
