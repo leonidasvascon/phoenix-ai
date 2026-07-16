@@ -341,6 +341,11 @@ select {
   margin: 40px auto;
 }
 
+.strategy-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
 .publications-shell {
   width: min(1180px, calc(100vw - 40px));
   margin: 40px auto;
@@ -1904,6 +1909,137 @@ select {
   flex-wrap: wrap;
 }
 
+.strategy-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.strategy-form,
+.strategy-panel,
+.strategy-calendar {
+  display: grid;
+  gap: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.strategy-form h2,
+.strategy-panel h2,
+.strategy-calendar h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.strategy-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.strategy-form input,
+.strategy-form select {
+  width: 100%;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: #fffdfa;
+  color: var(--foreground);
+}
+
+.strategy-result,
+.strategy-plan {
+  display: grid;
+  gap: 18px;
+}
+
+.strategy-insights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.strategy-panel ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.strategy-panel li {
+  line-height: 1.45;
+}
+
+.strategy-calendar-list {
+  display: grid;
+  gap: 12px;
+}
+
+.strategy-calendar-card {
+  display: grid;
+  gap: 14px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.strategy-calendar-card header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.strategy-calendar-card header p {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.strategy-calendar-card h3,
+.strategy-calendar-card p {
+  margin: 0;
+}
+
+.strategy-calendar-card h3 {
+  font-size: 18px;
+}
+
+.strategy-calendar-card > p {
+  line-height: 1.5;
+}
+
+.strategy-calendar-card header span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #ece7dd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.strategy-calendar-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.strategy-calendar-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.strategy-calendar-card dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
 .batch-table {
   display: grid;
   gap: 10px;
@@ -2285,6 +2421,7 @@ select {
   .feedback-shell,
   .optimizations-shell,
   .providers-shell,
+  .strategy-shell,
   .publications-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
@@ -2365,8 +2502,15 @@ select {
   .publication-card dl,
   .publication-prep dl,
   .publication-detail dl,
-  .publication-checks li {
+  .publication-checks li,
+  .strategy-layout,
+  .strategy-insights,
+  .strategy-calendar-card dl {
     grid-template-columns: 1fr;
+  }
+
+  .strategy-calendar-card header {
+    flex-direction: column;
   }
 
   .batch-table-heading {

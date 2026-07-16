@@ -14,6 +14,7 @@
     "@phoenix-ai/media-composer": "workspace:*",
     "@phoenix-ai/publishing-engine": "workspace:*",
     "@phoenix-ai/prompt-optimizer": "workspace:*",
+    "@phoenix-ai/strategy-engine": "workspace:*",
     "@phoenix-ai/runtime": "workspace:*"
   },
   "devDependencies": {

@@ -10,6 +10,7 @@ export function Navigation() {
       <Link href="/history">Historico</Link>
       <Link href="/analytics">Analytics</Link>
       <Link href="/learning">Learning</Link>
+      <Link href="/strategy">Strategy</Link>
       <Link href="/feedback">Feedback</Link>
       <Link href="/optimizations">Otimizacoes</Link>
       <Link href="/providers">Providers</Link>

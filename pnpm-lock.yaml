@@ -31,6 +31,9 @@ importers:
       '@phoenix-ai/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
+      '@phoenix-ai/strategy-engine':
+        specifier: workspace:*
+        version: link:../../packages/strategy-engine
     devDependencies:
       '@types/node':
         specifier: ^24.0.10
@@ -93,6 +96,8 @@ importers:
   packages/publishing-engine: {}
 
   packages/runtime: {}
+
+  packages/strategy-engine: {}
 
 packages:
 

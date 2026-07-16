@@ -1062,3 +1062,42 @@ Resposta:
 ```
 
 Sem URL publica HTTPS, a publicacao real e bloqueada. O caminho local `output/.../assets/video.mp4` nunca e enviado diretamente para a Meta.
+
+## Strategy Engine
+
+Sprint 45 inicia o Epic 5, Phoenix Intelligence. A Phoenix passa a transformar aprendizado, analytics e feedback real em um plano editorial.
+
+Entrada:
+
+```json
+{
+  "goal": "grow_instagram",
+  "period_days": 30,
+  "posts_per_week": 7
+}
+```
+
+Endpoints:
+
+- `GET /strategy` retorna o ultimo plano salvo
+- `POST /strategy/generate` gera um novo plano
+
+O plano fica persistido em:
+
+```text
+.storage/strategy/latest.json
+```
+
+O Strategy Engine entrega:
+
+- prioridades estrategicas
+- oportunidades
+- gaps de conteudo
+- calendario editorial
+- tasks prontas para alimentar Batch, Scheduler e Runtime
+
+Tela:
+
+```text
+http://127.0.0.1:3000/strategy
+```

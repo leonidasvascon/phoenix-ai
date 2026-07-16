@@ -13,6 +13,7 @@ import { handlePublicationsRoute } from "./routes/publications.ts";
 import { handleProvidersRoute } from "./routes/providers.ts";
 import { handleScheduledJobsRoute } from "./routes/scheduled-jobs.ts";
 import { handleSettingsRoute } from "./routes/settings.ts";
+import { handleStrategyRoute } from "./routes/strategy.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
 import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
 import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
@@ -48,6 +49,7 @@ const routes: Record<string, ApiHandler> = {
   "/brands": handleBrandsRoute,
   "/scheduled-jobs": handleScheduledJobsRoute,
   "/settings": handleSettingsRoute,
+  "/strategy": handleStrategyRoute,
   "/task-templates": handleTaskTemplatesRoute,
   "/video-jobs": handleVideoJobsRoute
 };
@@ -64,6 +66,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/providers/") ||
     pathname.startsWith("/brands/") ||
     pathname.startsWith("/scheduled-jobs/") ||
+    pathname.startsWith("/strategy/") ||
     pathname.startsWith("/task-templates/") ||
     pathname.startsWith("/video-jobs/")
   ) {
