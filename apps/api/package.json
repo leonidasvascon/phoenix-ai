@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@phoenix-ai/asset-engine": "workspace:*",
+    "@phoenix-ai/evaluation-engine": "workspace:*",
     "@phoenix-ai/feedback-engine": "workspace:*",
     "@phoenix-ai/learning-engine": "workspace:*",
     "@phoenix-ai/media-composer": "workspace:*",

@@ -13,6 +13,9 @@ importers:
       '@phoenix-ai/asset-engine':
         specifier: workspace:*
         version: link:../../packages/asset-engine
+      '@phoenix-ai/evaluation-engine':
+        specifier: workspace:*
+        version: link:../../packages/evaluation-engine
       '@phoenix-ai/feedback-engine':
         specifier: workspace:*
         version: link:../../packages/feedback-engine
@@ -80,6 +83,8 @@ importers:
         version: 5.9.3
 
   packages/asset-engine: {}
+
+  packages/evaluation-engine: {}
 
   packages/feedback-engine: {}
 

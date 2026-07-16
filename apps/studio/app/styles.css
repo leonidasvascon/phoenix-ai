@@ -346,7 +346,8 @@ select {
   margin: 40px auto;
 }
 
-.publications-shell {
+.publications-shell,
+.evaluation-shell {
   width: min(1180px, calc(100vw - 40px));
   margin: 40px auto;
 }
@@ -1909,6 +1910,130 @@ select {
   flex-wrap: wrap;
 }
 
+.evaluation-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.evaluation-panel {
+  display: grid;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.evaluation-panel h2,
+.evaluation-card h3 {
+  margin: 0;
+}
+
+.evaluation-panel h2 {
+  font-size: 20px;
+}
+
+.evaluation-list,
+.evaluation-card-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.evaluation-list li {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.evaluation-list span,
+.evaluation-card header p,
+.evaluation-card dt {
+  color: var(--muted);
+}
+
+.evaluation-list span,
+.evaluation-list strong {
+  overflow-wrap: anywhere;
+}
+
+.evaluation-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdfa;
+  padding: 14px;
+}
+
+.evaluation-card[data-status="failed"] {
+  border-color: #e6b7b7;
+  background: #fff5f5;
+}
+
+.evaluation-card[data-status="passed"] {
+  border-color: #b9d8bf;
+  background: #f5fbf6;
+}
+
+.evaluation-card header {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.evaluation-card header p {
+  margin: 0 0 4px;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.evaluation-card header span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #ece7dd;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.evaluation-card[data-status="passed"] header span {
+  background: #dfeee2;
+  color: #245c33;
+}
+
+.evaluation-card[data-status="failed"] header span {
+  background: #f3dcdc;
+  color: var(--accent-dark);
+}
+
+.evaluation-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.evaluation-card dd {
+  margin: 4px 0 0;
+  font-weight: 700;
+}
+
+.evaluation-card ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .strategy-layout {
   display: grid;
   grid-template-columns: minmax(320px, 380px) minmax(0, 1fr);
@@ -2422,6 +2547,7 @@ select {
   .optimizations-shell,
   .providers-shell,
   .strategy-shell,
+  .evaluation-shell,
   .publications-shell {
     width: min(100% - 24px, 560px);
     margin: 24px auto;
@@ -2503,6 +2629,8 @@ select {
   .publication-prep dl,
   .publication-detail dl,
   .publication-checks li,
+  .evaluation-layout,
+  .evaluation-card dl,
   .strategy-layout,
   .strategy-insights,
   .strategy-calendar-card dl {

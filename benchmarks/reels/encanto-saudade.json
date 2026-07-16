@@ -1,0 +1,25 @@
+{
+  "id": "reel-encanto-saudade",
+  "category": "reels",
+  "input": {
+    "brand": {
+      "avoid": ["frases prontas", "linguagem vulgar", "pornografia", "violência"]
+    },
+    "task": {
+      "brand": "encanto-intenso",
+      "theme": "saudade",
+      "format": "reel"
+    },
+    "output": {
+      "hook": "Ela nao foi embora por falta de amor...",
+      "story": "Ela foi embora porque amar tambem cansava. Saudade virou silencio, e o silencio virou memoria.",
+      "ending": "No fim, algumas pessoas nao somem. Elas ficam onde a gente nao consegue apagar.",
+      "caption": "Nem toda ausencia significa fim. Algumas viram marca.",
+      "cta": "Salve se isso ja teve nome na sua vida."
+    }
+  },
+  "expected": {
+    "min_score": 90,
+    "passed": true
+  }
+}

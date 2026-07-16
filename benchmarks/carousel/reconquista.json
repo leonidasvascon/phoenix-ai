@@ -1,0 +1,22 @@
+{
+  "id": "carousel-reconquista",
+  "category": "carousel",
+  "input": {
+    "task": {
+      "brand": "encanto-intenso",
+      "theme": "reconquista",
+      "format": "carousel"
+    },
+    "output": {
+      "hook": "Nem todo reencontro começa com uma mensagem.",
+      "story": "Primeiro vem o silencio. Depois a memoria. Depois aquela vontade absurda de saber se o outro tambem sentiu.",
+      "ending": "Reconquistar as vezes e lembrar sem implorar.",
+      "caption": "Alguns retornos acontecem antes da primeira palavra.",
+      "cta": "Salve para lembrar com calma."
+    }
+  },
+  "expected": {
+    "min_score": 88,
+    "passed": true
+  }
+}

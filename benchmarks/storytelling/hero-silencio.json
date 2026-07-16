@@ -1,0 +1,22 @@
+{
+  "id": "storytelling-hero-silencio",
+  "category": "storytelling",
+  "input": {
+    "task": {
+      "brand": "encanto-intenso",
+      "theme": "silencio",
+      "format": "reel"
+    },
+    "output": {
+      "hook": "O silencio dele dizia mais do que qualquer desculpa.",
+      "story": "Ela percebeu que insistir tambem era uma forma de desaparecer. Naquela noite, escolheu nao responder. E foi ali que recuperou a propria voz.",
+      "ending": "As vezes o heroi da historia e quem para de pedir migalhas.",
+      "caption": "Silencio tambem pode ser amor proprio.",
+      "cta": "Compartilhe com quem precisa lembrar disso."
+    }
+  },
+  "expected": {
+    "min_score": 90,
+    "passed": true
+  }
+}

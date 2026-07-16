@@ -1101,3 +1101,47 @@ Tela:
 ```text
 http://127.0.0.1:3000/strategy
 ```
+
+## Evaluation Engine
+
+Sprint 46 inicia o Epic 6, AI Quality & Reliability. A Phoenix passa a avaliar automaticamente o conteudo com rubricas independentes antes de tratar uma geracao como confiavel.
+
+Rubrica v1:
+
+- originalidade
+- clareza
+- forca do hook
+- alinhamento com a marca
+- impacto emocional
+
+Pacote:
+
+```text
+packages/evaluation-engine
+```
+
+Entradas de benchmark:
+
+```text
+benchmarks/reels
+benchmarks/carousel
+benchmarks/storytelling
+benchmarks/hooks
+```
+
+Endpoints:
+
+- `GET /evaluation` retorna o ultimo relatorio salvo
+- `POST /evaluation/run` executa benchmarks e regressao sobre ate 100 execucoes persistidas
+
+O relatorio fica persistido em:
+
+```text
+.storage/evaluation/latest.json
+```
+
+Tela:
+
+```text
+http://127.0.0.1:3000/evaluation
+```

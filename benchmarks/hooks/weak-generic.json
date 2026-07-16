@@ -1,0 +1,22 @@
+{
+  "id": "hook-weak-generic",
+  "category": "hooks",
+  "input": {
+    "task": {
+      "brand": "encanto-intenso",
+      "theme": "amor",
+      "format": "reel"
+    },
+    "output": {
+      "hook": "Curta e compartilhe.",
+      "story": "Era uma vez uma pessoa apaixonada. Era uma vez uma pessoa apaixonada.",
+      "ending": "Link na bio.",
+      "caption": "",
+      "cta": "Curta e compartilhe."
+    }
+  },
+  "expected": {
+    "min_score": 90,
+    "passed": false
+  }
+}
