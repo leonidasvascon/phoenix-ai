@@ -3,6 +3,8 @@ dist/
 .next/
 .storage/
 output/
+reports/quality-report.json
+reports/quality-report.md
 .env
 .env.*
 !.env.example

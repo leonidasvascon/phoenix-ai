@@ -1,0 +1,51 @@
+name: Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "feature/**"
+      - "release/**"
+
+jobs:
+  quality:
+    name: Continuous Quality Pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.9.0 --activate
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Studio
+        run: pnpm run studio:build
+
+      - name: Benchmarks
+        run: pnpm run quality:benchmarks
+
+      - name: Regression Tests
+        run: pnpm run quality:regressions
+
+      - name: Evaluation Engine and Quality Report
+        run: pnpm run quality:report
+
+      - name: Upload Quality Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phoenix-quality-report
+          path: |
+            reports/quality-report.json
+            reports/quality-report.md

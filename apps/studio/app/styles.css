@@ -1910,6 +1910,13 @@ select {
   flex-wrap: wrap;
 }
 
+.evaluation-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .evaluation-layout {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1932,6 +1939,10 @@ select {
 
 .evaluation-panel h2 {
   font-size: 20px;
+}
+
+.evaluation-panel-wide {
+  grid-column: 1 / -1;
 }
 
 .evaluation-list,
@@ -2032,6 +2043,41 @@ select {
   padding-left: 18px;
   color: var(--muted);
   line-height: 1.45;
+}
+
+.quality-timeline {
+  display: grid;
+  gap: 10px;
+}
+
+.quality-timeline-item {
+  display: grid;
+  grid-template-columns: 140px 80px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fffdfa;
+}
+
+.quality-timeline-item[data-status="FAIL"] {
+  border-color: #e6b7b7;
+  background: #fff5f5;
+}
+
+.quality-timeline-item[data-status="PASS"] {
+  border-color: #b9d8bf;
+  background: #f5fbf6;
+}
+
+.quality-timeline-item span,
+.quality-timeline-item small {
+  color: var(--muted);
+}
+
+.quality-timeline-item strong {
+  font-size: 20px;
 }
 
 .strategy-layout {
@@ -2631,6 +2677,7 @@ select {
   .publication-checks li,
   .evaluation-layout,
   .evaluation-card dl,
+  .quality-timeline-item,
   .strategy-layout,
   .strategy-insights,
   .strategy-calendar-card dl {

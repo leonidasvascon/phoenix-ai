@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
 import { MetricCard } from "../../components/metric-card";
 import { Navigation } from "../../components/navigation";
 import { apiFetch } from "../api-client";
@@ -90,9 +91,14 @@ function EvaluationView() {
           <p>Phoenix Studio</p>
           <h1>Evaluation</h1>
         </div>
-        <button className="secondary-action" disabled={run.isPending} onClick={() => run.mutate()} type="button">
-          {run.isPending ? "Avaliando..." : "Rodar evaluation"}
-        </button>
+        <div className="evaluation-actions">
+          <Link className="secondary-action" href="/evaluation/history">
+            Historico
+          </Link>
+          <button className="secondary-action" disabled={run.isPending} onClick={() => run.mutate()} type="button">
+            {run.isPending ? "Avaliando..." : "Rodar evaluation"}
+          </button>
+        </div>
       </section>
 
       {evaluation.isLoading ? <p className="muted">Carregando avaliacoes...</p> : null}

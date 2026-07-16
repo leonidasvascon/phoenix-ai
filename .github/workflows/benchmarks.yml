@@ -1,0 +1,40 @@
+name: Benchmarks
+
+on:
+  pull_request:
+    paths:
+      - "benchmarks/**"
+      - "packages/evaluation-engine/**"
+      - "prompts/**"
+      - "packages/runtime/**"
+      - "scripts/run-benchmarks.ts"
+      - "scripts/run-regressions.ts"
+      - "scripts/generate-quality-report.ts"
+  workflow_dispatch:
+
+jobs:
+  benchmarks:
+    name: Benchmarks and Regressions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@11.9.0 --activate
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Benchmarks
+        run: pnpm run quality:benchmarks
+
+      - name: Run Regressions
+        run: pnpm run quality:regressions

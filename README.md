@@ -1,5 +1,7 @@
 # Phoenix AI
 
+[![Quality](https://github.com/leonidasvascon/phoenix-ai/actions/workflows/quality.yml/badge.svg)](https://github.com/leonidasvascon/phoenix-ai/actions/workflows/quality.yml)
+
 Versao: 0.2.0
 
 Phoenix AI e uma plataforma inteligente para criar, aprender, publicar e otimizar conteudo digital para diferentes marcas, nichos e canais usando Inteligencia Artificial.
@@ -1144,4 +1146,47 @@ Tela:
 
 ```text
 http://127.0.0.1:3000/evaluation
+```
+
+## Quality Pipeline
+
+Sprint 47 adiciona Continuous Quality Pipeline para impedir regressao de qualidade em PRs.
+
+Workflows:
+
+- `.github/workflows/quality.yml`
+- `.github/workflows/benchmarks.yml`
+
+Comandos locais:
+
+```bash
+pnpm run quality:benchmarks
+pnpm run quality:regressions
+pnpm run quality:report
+```
+
+O gate falha quando:
+
+- `average_score < 95`
+- `benchmark_pass_rate < 100%`
+- `regression_failures > 0`
+
+Relatorios gerados:
+
+```text
+reports/quality-report.json
+reports/quality-report.md
+.storage/quality/reports/latest.json
+.storage/quality/reports/YYYY-MM-DD.json
+```
+
+Endpoints:
+
+- `GET /quality` retorna o ultimo relatorio e o historico
+- `GET /quality/report` retorna o ultimo relatorio gerado
+
+Tela:
+
+```text
+http://127.0.0.1:3000/evaluation/history
 ```
