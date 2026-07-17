@@ -8,6 +8,7 @@ services:
       PHOENIX_ENV: production
       PHOENIX_API_KEY: ${PHOENIX_API_KEY:-change-me}
       PHOENIX_API_PORT: 4000
+      PHOENIX_API_HOST: 0.0.0.0
       PHOENIX_STUDIO_ORIGIN: http://127.0.0.1:3000
       PHOENIX_PROVIDER: ${PHOENIX_PROVIDER:-mock}
     ports:
@@ -38,6 +39,7 @@ services:
       PHOENIX_ENV: production
       PHOENIX_API_KEY: ${PHOENIX_API_KEY:-change-me}
       PHOENIX_API_PORT: 4001
+      PHOENIX_API_HOST: 0.0.0.0
       PHOENIX_SCHEDULER_WORKER: "true"
       PHOENIX_SCHEDULER_INTERVAL_MS: ${PHOENIX_SCHEDULER_INTERVAL_MS:-60000}
       PHOENIX_PROVIDER: ${PHOENIX_PROVIDER:-mock}
@@ -45,4 +47,3 @@ services:
       - ./.storage:/app/.storage
       - ./reports:/app/reports
       - ./output:/app/output
-

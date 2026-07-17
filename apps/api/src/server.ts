@@ -31,6 +31,7 @@ import { startSchedulerWorker } from "./workers/scheduler-worker.ts";
 import { incrementCounter, logStructured, recordDuration, withSpan } from "@phoenix-ai/observability";
 
 const port = Number(process.env.PHOENIX_API_PORT ?? 4000);
+const host = process.env.PHOENIX_API_HOST ?? "127.0.0.1";
 
 export type ApiHandler = (request: IncomingMessage, response: ServerResponse) => Promise<void>;
 
@@ -178,6 +179,6 @@ const server = createServer(async (request, response) => {
   });
 });
 
-server.listen(port, "127.0.0.1", () => {
-  console.log(`Phoenix API running at http://127.0.0.1:${port}`);
+server.listen(port, host, () => {
+  console.log(`Phoenix API running at http://${host}:${port}`);
 });

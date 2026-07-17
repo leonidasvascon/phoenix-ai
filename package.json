@@ -2,6 +2,7 @@
     "name":  "phoenix-ai",
     "version":  "1.0.0-beta",
     "private":  true,
+    "packageManager":  "pnpm@11.9.0",
     "type":  "module",
     "scripts":  {
                     "api:dev":  "pnpm --filter @phoenix-ai/api dev",

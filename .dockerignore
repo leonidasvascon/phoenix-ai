@@ -1,7 +1,10 @@
 .git
 .next
+**/.next
 node_modules
 **/node_modules
+dist
+**/dist
 .storage
 output
 reports

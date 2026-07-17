@@ -11,6 +11,7 @@ export type PhoenixEnvSpec = {
 export const phoenixEnvSchema: PhoenixEnvSpec[] = [
   { name: "PHOENIX_API_KEY", requiredIn: ["production"], sensitive: true, description: "API key required for protected API endpoints." },
   { name: "PHOENIX_API_PORT", requiredIn: [], defaultValue: "4000", description: "Phoenix API HTTP port." },
+  { name: "PHOENIX_API_HOST", requiredIn: [], defaultValue: "127.0.0.1", description: "Phoenix API bind host." },
   { name: "PHOENIX_STUDIO_ORIGIN", requiredIn: [], defaultValue: "http://127.0.0.1:3000", description: "Studio origin allowed by CORS." },
   { name: "PHOENIX_CORS_ORIGIN", requiredIn: [], description: "Explicit CORS origin override." },
   { name: "PHOENIX_PROVIDER", requiredIn: [], defaultValue: "mock", description: "Runtime LLM provider." },
