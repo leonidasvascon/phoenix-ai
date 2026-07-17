@@ -51,6 +51,11 @@ export const paths = {
   "/api-keys": { get: { ...secured, tags: ["Secrets"], summary: "List API key metadata", responses: { "200": ok("API keys"), ...errors } }, post: { ...secured, tags: ["Secrets"], summary: "Create API key", requestBody: json({ type: "object", properties: { scopes: { type: "array", items: { type: "string" } } } }), responses: { "201": ok("API key created once"), ...errors } } },
   "/api-keys/{id}/rotate": { post: { ...secured, tags: ["Secrets"], summary: "Rotate API key", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "200": ok("API key rotated once"), ...errors } } },
   "/api-keys/{id}/revoke": { post: { ...secured, tags: ["Secrets"], summary: "Revoke API key", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "200": ok("Revoked"), ...errors } } },
+  "/plugins": { get: { ...secured, tags: ["Plugins"], summary: "List installed and discovered plugins", responses: { "200": ok("Plugins"), ...errors } } },
+  "/plugins/{id}": { get: { ...secured, tags: ["Plugins"], summary: "Get plugin", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "200": ok("Plugin"), ...errors } }, delete: { ...secured, tags: ["Plugins"], summary: "Uninstall plugin", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "200": ok("Uninstalled"), ...errors } } },
+  "/plugins/install": { post: { ...secured, tags: ["Plugins"], summary: "Install plugin", requestBody: json({ type: "object", required: ["id"], properties: { id: { type: "string" } } }), responses: { "200": ok("Installed"), ...errors } } },
+  "/plugins/enable": { post: { ...secured, tags: ["Plugins"], summary: "Enable plugin", requestBody: json({ type: "object", required: ["id"], properties: { id: { type: "string" } } }), responses: { "200": ok("Enabled"), ...errors } } },
+  "/plugins/disable": { post: { ...secured, tags: ["Plugins"], summary: "Disable plugin", requestBody: json({ type: "object", required: ["id"], properties: { id: { type: "string" } } }), responses: { "200": ok("Disabled"), ...errors } } },
   "/tasks": {
     post: {
       ...secured,

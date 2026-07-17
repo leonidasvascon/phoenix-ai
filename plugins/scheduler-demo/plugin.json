@@ -1,0 +1,10 @@
+{
+  "id": "scheduler-demo",
+  "name": "Scheduler Demo",
+  "version": "1.0.0",
+  "engine": "^1.0.0",
+  "author": "Phoenix AI",
+  "capabilities": ["scheduler"],
+  "entry": "index.ts",
+  "description": "Example scheduler extension."
+}

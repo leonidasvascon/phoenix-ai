@@ -96,6 +96,59 @@ Roles iniciais:
 - Analyst
 - Viewer
 
+## Plugin SDK
+
+Sprint 54 adiciona a base de extensibilidade da Phoenix AI.
+
+- `packages/plugin-sdk/`: SDK para criar plugins com `definePlugin`.
+- `plugins/`: diretorio de descoberta local de plugins.
+- `.storage/plugins/`: registry, plugins habilitados e storage isolado por plugin.
+- `GET /plugins` e rotas de instalacao, habilitacao, desabilitacao e remocao.
+- `/plugins` no Studio para operar plugins sem mexer no codigo.
+
+Capabilities v1:
+
+- `agent`
+- `provider`
+- `tool`
+- `analytics`
+- `scheduler`
+- `publishing`
+- `strategy`
+- `evaluation`
+- `studio`
+
+Exemplo minimo:
+
+```ts
+import { definePlugin } from "@phoenix-ai/plugin-sdk";
+
+export default definePlugin({
+  manifest: {
+    id: "hello-world",
+    name: "Hello World",
+    version: "1.0.0",
+    engine: "^1.0.0",
+    author: "Phoenix AI",
+    capabilities: ["tool"]
+  },
+  hooks: {
+    beforeTask(payload, context) {
+      context.logger.info("beforeTask", { payload });
+    }
+  }
+});
+```
+
+Comandos:
+
+```bash
+pnpm run plugins:test
+pnpm run plugins:test:security
+```
+
+Os testes acima usam o mesmo `.storage/plugins` local e devem ser executados em sequencia. Para paralelizacao futura, cada suite deve apontar para um storage temporario isolado.
+
 ## Documentos principais
 
 - `docs/00-Vision.md`

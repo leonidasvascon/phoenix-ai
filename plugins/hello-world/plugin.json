@@ -1,0 +1,10 @@
+{
+  "id": "hello-world",
+  "name": "Hello World",
+  "version": "1.0.0",
+  "engine": "^1.0.0",
+  "author": "Phoenix AI",
+  "capabilities": ["tool"],
+  "entry": "index.ts",
+  "description": "Example plugin that logs task hooks."
+}

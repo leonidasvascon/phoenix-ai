@@ -14,6 +14,9 @@ importers:
       '@phoenix-ai/identity':
         specifier: workspace:*
         version: link:packages/identity
+      '@phoenix-ai/plugin-sdk':
+        specifier: workspace:*
+        version: link:packages/plugin-sdk
       '@phoenix-ai/secrets':
         specifier: workspace:*
         version: link:packages/secrets
@@ -50,6 +53,9 @@ importers:
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../../packages/observability
+      '@phoenix-ai/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
       '@phoenix-ai/prompt-optimizer':
         specifier: workspace:*
         version: link:../../packages/prompt-optimizer
@@ -151,6 +157,18 @@ importers:
   packages/observability: {}
 
   packages/phoenix-sdk: {}
+
+  packages/plugin-sdk:
+    dependencies:
+      '@phoenix-ai/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@phoenix-ai/secrets':
+        specifier: workspace:*
+        version: link:../secrets
+      '@phoenix-ai/version':
+        specifier: workspace:*
+        version: link:../version
 
   packages/prompt-optimizer: {}
 

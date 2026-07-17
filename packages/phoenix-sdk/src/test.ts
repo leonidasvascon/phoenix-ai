@@ -12,12 +12,17 @@ const mockFetch: typeof fetch = async (url, init) => {
   if (path === "/tasks") {
     return new Response(JSON.stringify({ status: "success", execution_id: "sdk-test", score: 95, execution: { id: "sdk-test", trace_id: "trace-ok" }, output: {} }), { status: 200 });
   }
+  if (path === "/plugins") {
+    return new Response(JSON.stringify([{ id: "hello-world", status: "enabled", manifest: { id: "hello-world", name: "Hello World", version: "1.0.0", engine: "^1.0.0", author: "Phoenix AI", capabilities: ["tool"] }, path: "plugins/hello-world", installedAt: "2026-07-17T00:00:00.000Z", logs: [] }]), { status: 200 });
+  }
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
 
 const phoenix = new PhoenixClient({ baseUrl: "http://127.0.0.1:4000", apiKey: "test", fetch: mockFetch });
 const result = await phoenix.tasks.create({ brand: "encanto-intenso", theme: "saudade", objective: "viralizar", platform: "instagram", format: "reel" });
 if (result.execution.trace_id !== "trace-ok") throw new Error("SDK did not preserve trace_id.");
+const plugins = await phoenix.plugins.list();
+if (plugins[0]?.id !== "hello-world") throw new Error("SDK plugins resource failed.");
 
 await expectError(new PhoenixClient({ baseUrl: "http://127.0.0.1:4000", fetch: mockFetch }).tasks.create({ brand: "encanto-intenso", theme: "saudade", objective: "viralizar", platform: "instagram", format: "reel" }), 401, "trace-401");
 await expectError(phoenix.request("/forbidden"), 403, "trace-403");

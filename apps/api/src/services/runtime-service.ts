@@ -2,6 +2,7 @@ import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { AssetService } from "@phoenix-ai/asset-engine";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
+import { executePluginHook } from "@phoenix-ai/plugin-sdk";
 import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
 import { defaultWorkspaceId } from "@phoenix-ai/workspace";
 import { getLearningReport } from "./learning-service.ts";
@@ -78,6 +79,7 @@ function normalizeTask(input: TaskRequest): Task {
 
 export async function executeTask(input: TaskRequest) {
   const task = normalizeTask(input);
+  await executePluginHook("beforeTask", { task }, defaultWorkspaceId);
   const settings = await getRuntimeSettings();
   const [learningReport, promptOptimizations] = await Promise.all([
     getLearningReport(),
@@ -109,7 +111,7 @@ export async function executeTask(input: TaskRequest) {
     narrationText: buildNarrationText(runtimeResponse.output)
   });
 
-  return {
+  const result = {
     ...runtimeResponse,
     media_package: {
       directory: mediaPackage.directory,
@@ -128,6 +130,10 @@ export async function executeTask(input: TaskRequest) {
       }
     }
   };
+
+  await executePluginHook("afterTask", { task, result }, defaultWorkspaceId);
+
+  return result;
 }
 
 function getOutputString(output: Record<string, unknown>, key: string): string {

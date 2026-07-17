@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { assertPhoenixEnv } from "@phoenix-ai/config";
 import { ensureIdentityStorage } from "@phoenix-ai/identity";
+import { discoverPlugins, ensurePluginStorage } from "@phoenix-ai/plugin-sdk";
 import { ensureSecretsStorage } from "@phoenix-ai/secrets";
 import { ensureDefaultWorkspaceMigration, resolveWorkspaceContext } from "@phoenix-ai/workspace";
 import { basename, dirname, resolve } from "node:path";
@@ -21,6 +22,7 @@ import { handleOpenApiRoute } from "./routes/openapi.ts";
 import { ApiError } from "./errors/api-error.ts";
 import { sendApiError } from "./errors/error-handler.ts";
 import { handlePromptOptimizationsRoute } from "./routes/prompt-optimizations.ts";
+import { handlePluginsRoute } from "./routes/plugins.ts";
 import { handlePublicationsRoute } from "./routes/publications.ts";
 import { handleQualityRoute } from "./routes/quality.ts";
 import { handleProvidersRoute } from "./routes/providers.ts";
@@ -72,6 +74,7 @@ const routes: Record<string, ApiHandler> = {
   "/openapi.yaml": handleOpenApiRoute,
   "/docs": handleOpenApiRoute,
   "/prompt-optimizations": handlePromptOptimizationsRoute,
+  "/plugins": handlePluginsRoute,
   "/publications": handlePublicationsRoute,
   "/quality": handleQualityRoute,
   "/providers": handleProvidersRoute,
@@ -104,6 +107,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/observability/") ||
     pathname.startsWith("/openapi.") ||
     pathname.startsWith("/prompt-optimizations/") ||
+    pathname.startsWith("/plugins/") ||
     pathname.startsWith("/publications/") ||
     pathname.startsWith("/quality/") ||
     pathname.startsWith("/providers/") ||
@@ -128,6 +132,8 @@ assertPhoenixEnv();
 await ensureDefaultWorkspaceMigration();
 await ensureIdentityStorage();
 await ensureSecretsStorage();
+await ensurePluginStorage();
+await discoverPlugins();
 startSchedulerWorker();
 
 const server = createServer(async (request, response) => {

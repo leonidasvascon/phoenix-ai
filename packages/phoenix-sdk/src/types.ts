@@ -79,6 +79,29 @@ export type PhoenixApiKeyMetadata = {
   expires_at?: string;
   last_used_at?: string;
 };
+export type PhoenixPluginCapability = "agent" | "provider" | "tool" | "analytics" | "scheduler" | "publishing" | "strategy" | "evaluation" | "studio";
+export type PhoenixPluginManifest = {
+  id: string;
+  name: string;
+  version: string;
+  engine: string;
+  author: string;
+  capabilities: PhoenixPluginCapability[];
+  entry?: string;
+  description?: string;
+  permissions?: string[];
+};
+export type PhoenixPluginRecord = {
+  id: string;
+  manifest: PhoenixPluginManifest;
+  path: string;
+  status: "installed" | "enabled" | "disabled" | "invalid";
+  installedAt: string;
+  enabledAt?: string;
+  disabledAt?: string;
+  error?: string;
+  logs: Array<{ timestamp: string; level: "info" | "warn" | "error"; message: string; metadata?: Record<string, unknown> }>;
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };

@@ -33,6 +33,8 @@
                     ,"api-keys:test":  "node --experimental-strip-types scripts/test-api-keys.ts"
                     ,"backup:secrets":  "node --experimental-strip-types scripts/backup-secrets.ts"
                     ,"restore:secrets":  "node --experimental-strip-types scripts/restore-secrets.ts"
+                    ,"plugins:test":  "node --experimental-strip-types scripts/test-plugins.ts"
+                    ,"plugins:test:security":  "node --experimental-strip-types scripts/test-plugins-security.ts"
                 },
     "workspaces":  [
                        "apps/*",
@@ -41,6 +43,7 @@
     "dependencies":  {
                        "@phoenix-ai/config":  "workspace:*",
                        "@phoenix-ai/identity":  "workspace:*",
+                       "@phoenix-ai/plugin-sdk":  "workspace:*",
                        "@phoenix-ai/secrets":  "workspace:*",
                        "@phoenix-ai/version":  "workspace:*",
                        "@phoenix-ai/workspace":  "workspace:*"
