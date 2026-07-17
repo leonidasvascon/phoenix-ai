@@ -38,6 +38,22 @@ export type PhoenixWorkspaceMember = {
   role: PhoenixWorkspaceRole;
   status: "active" | "invited" | "disabled";
 };
+export type PhoenixUser = {
+  id: string;
+  email: string;
+  name: string;
+  status: "active" | "disabled" | "locked";
+  email_verified: boolean;
+};
+export type PhoenixSession = {
+  id: string;
+  user_id: string;
+  created_at: string;
+  expires_at: string;
+  last_seen_at: string;
+  revoked_at: string | null;
+  user_agent_summary: string;
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };
@@ -45,6 +61,7 @@ export type PhoenixClientOptions = {
   baseUrl: string;
   apiKey?: string;
   bearerToken?: string;
+  credentials?: RequestCredentials;
   timeoutMs?: number;
   fetch?: typeof fetch;
 };

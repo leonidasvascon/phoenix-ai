@@ -18,6 +18,7 @@ export function apiFetch(path: string, init: RequestInit = {}): Promise<Response
 
   return fetch(`${apiUrl}${path}`, {
     ...init,
+    credentials: init.credentials ?? "include",
     headers
   });
 }
@@ -44,6 +45,10 @@ export function getApiKey(): string {
 
 export function getConfiguredApiKey(): string {
   return configuredApiKey;
+}
+
+export function getApiUrl(): string {
+  return apiUrl;
 }
 
 export function saveWorkspaceId(workspaceId: string): void {

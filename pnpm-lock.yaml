@@ -11,9 +11,15 @@ importers:
       '@phoenix-ai/config':
         specifier: workspace:*
         version: link:packages/config
+      '@phoenix-ai/identity':
+        specifier: workspace:*
+        version: link:packages/identity
       '@phoenix-ai/version':
         specifier: workspace:*
         version: link:packages/version
+      '@phoenix-ai/workspace':
+        specifier: workspace:*
+        version: link:packages/workspace
 
   apps/api:
     dependencies:
@@ -29,6 +35,9 @@ importers:
       '@phoenix-ai/feedback-engine':
         specifier: workspace:*
         version: link:../../packages/feedback-engine
+      '@phoenix-ai/identity':
+        specifier: workspace:*
+        version: link:../../packages/identity
       '@phoenix-ai/learning-engine':
         specifier: workspace:*
         version: link:../../packages/learning-engine
@@ -112,6 +121,15 @@ importers:
   packages/evaluation-engine: {}
 
   packages/feedback-engine: {}
+
+  packages/identity:
+    dependencies:
+      '@phoenix-ai/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@phoenix-ai/workspace':
+        specifier: workspace:*
+        version: link:../workspace
 
   packages/knowledge-engine: {}
 

@@ -9,7 +9,14 @@ export const phoenixApiKey = {
   name: "X-Phoenix-Api-Key"
 } as const;
 
+export const phoenixSessionCookie = {
+  type: "apiKey",
+  in: "cookie",
+  name: "phoenix_session"
+} as const;
+
 export const protectedSecurity = [
   { BearerAuth: [] },
-  { PhoenixApiKey: [] }
+  { PhoenixApiKey: [] },
+  { PhoenixSessionCookie: [] }
 ];

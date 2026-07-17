@@ -1314,3 +1314,48 @@ Teste local:
 ```bash
 pnpm run observability:test
 ```
+
+## Identity & SSO
+
+Sprint 52 adiciona Identity v1 para uso multiusuario:
+
+- login local por email e senha;
+- sessoes opacas via cookie HttpOnly;
+- API Key preservada para automacoes e integracoes de servico;
+- providers OIDC configuraveis, com provider mock para desenvolvimento;
+- vinculo com Workspaces/RBAC;
+- convites com token opaco e hash persistido;
+- auditoria de login, logout, sessoes e convites.
+
+Pacote:
+
+```text
+packages/identity
+```
+
+Comandos:
+
+```bash
+pnpm run identity:migrate
+pnpm run identity:test
+pnpm run identity:test:security
+```
+
+Variaveis principais:
+
+```bash
+PHOENIX_SESSION_COOKIE_NAME=phoenix_session
+PHOENIX_SESSION_TTL_HOURS=24
+PHOENIX_SESSION_IDLE_TIMEOUT_MINUTES=60
+PHOENIX_BOOTSTRAP_ADMIN_EMAIL=
+PHOENIX_BOOTSTRAP_ADMIN_PASSWORD=
+PHOENIX_OIDC_ENABLED=false
+```
+
+Telas:
+
+```text
+http://127.0.0.1:3000/login
+http://127.0.0.1:3000/account
+http://127.0.0.1:3000/settings/authentication
+```

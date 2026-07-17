@@ -23,6 +23,24 @@ const errors = {
 const secured = { security: protectedSecurity };
 
 export const paths = {
+  "/auth/login": {
+    post: {
+      tags: ["Identity"],
+      summary: "Create a local user session",
+      requestBody: json({ type: "object", required: ["email", "password"], properties: { email: { type: "string" }, password: { type: "string", format: "password" } } }),
+      responses: { "200": ok("Authenticated"), ...errors }
+    }
+  },
+  "/auth/logout": { post: { ...secured, tags: ["Identity"], summary: "End current session", responses: { "200": ok("Logged out"), ...errors } } },
+  "/auth/me": { get: { ...secured, tags: ["Identity"], summary: "Get current user", responses: { "200": ok("Current user"), ...errors } } },
+  "/auth/sessions": { get: { ...secured, tags: ["Identity"], summary: "List current user sessions", responses: { "200": ok("Sessions"), ...errors } } },
+  "/auth/sessions/{id}": { delete: { ...secured, tags: ["Identity"], summary: "Revoke session", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "200": ok("Revoked"), ...errors } } },
+  "/auth/providers": { get: { tags: ["Identity"], summary: "List configured identity providers", responses: { "200": ok("Providers"), ...errors } } },
+  "/auth/password/change": { post: { ...secured, tags: ["Identity"], summary: "Change password", requestBody: json({ type: "object" }), responses: { "200": ok("Changed"), ...errors } } },
+  "/users": { get: { ...secured, tags: ["Identity"], summary: "List users", responses: { "200": ok("Users"), ...errors } } },
+  "/users/{id}": { get: { ...secured, tags: ["Identity"], summary: "Get user", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], responses: { "200": ok("User"), ...errors } }, patch: { ...secured, tags: ["Identity"], summary: "Update user", parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }], requestBody: json({ type: "object" }), responses: { "200": ok("Updated"), ...errors } } },
+  "/invitations/{token}": { get: { tags: ["Identity"], summary: "Read invitation", parameters: [{ name: "token", in: "path", required: true, schema: { type: "string" } }], responses: { "200": ok("Invitation"), ...errors } } },
+  "/invitations/{token}/accept": { post: { tags: ["Identity"], summary: "Accept invitation", parameters: [{ name: "token", in: "path", required: true, schema: { type: "string" } }], requestBody: json({ type: "object" }), responses: { "200": ok("Accepted"), ...errors } } },
   "/tasks": {
     post: {
       ...secured,

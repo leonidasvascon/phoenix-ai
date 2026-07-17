@@ -23,6 +23,9 @@
                     "restore":  "node --experimental-strip-types scripts/restore.ts",
                     "integrity:check":  "node --experimental-strip-types scripts/integrity-check.ts",
                     "diagnostics":  "node --experimental-strip-types scripts/diagnostics.ts"
+                    ,"identity:migrate":  "node --experimental-strip-types scripts/migrate-identity-v1.ts"
+                    ,"identity:test":  "node --experimental-strip-types scripts/test-identity.ts"
+                    ,"identity:test:security":  "node --experimental-strip-types scripts/test-identity.ts"
                 },
     "workspaces":  [
                        "apps/*",
@@ -30,6 +33,8 @@
                    ],
     "dependencies":  {
                        "@phoenix-ai/config":  "workspace:*",
-                       "@phoenix-ai/version":  "workspace:*"
+                       "@phoenix-ai/identity":  "workspace:*",
+                       "@phoenix-ai/version":  "workspace:*",
+                       "@phoenix-ai/workspace":  "workspace:*"
                    }
 }

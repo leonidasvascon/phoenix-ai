@@ -1,16 +1,19 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { assertPhoenixEnv } from "@phoenix-ai/config";
+import { ensureIdentityStorage } from "@phoenix-ai/identity";
 import { ensureDefaultWorkspaceMigration, resolveWorkspaceContext } from "@phoenix-ai/workspace";
 import { basename, dirname, resolve } from "node:path";
-import { authenticateApiKey } from "./auth/api-key-auth.ts";
+import { authenticateRequest, headersWithAuthenticatedUser } from "./auth/identity-auth.ts";
 import { sendJson } from "./http.ts";
 import { handleAnalyticsRoute } from "./routes/analytics.ts";
+import { handleAuthRoute } from "./routes/auth.ts";
 import { handleBatchTemplatesRoute } from "./routes/batch-templates.ts";
 import { handleBrandsRoute } from "./routes/brands.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
 import { handleEvaluationRoute } from "./routes/evaluation.ts";
 import { handleFeedbackRoute } from "./routes/feedback.ts";
 import { handleHealthRoute } from "./routes/health.ts";
+import { handleInvitationsRoute } from "./routes/invitations.ts";
 import { handleLearningRoute } from "./routes/learning.ts";
 import { handleObservabilityRoute } from "./routes/observability.ts";
 import { handleOpenApiRoute } from "./routes/openapi.ts";
@@ -25,6 +28,7 @@ import { handleSettingsRoute } from "./routes/settings.ts";
 import { handleStrategyRoute } from "./routes/strategy.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
 import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
+import { handleUsersRoute } from "./routes/users.ts";
 import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
 import { handleVersionRoute } from "./routes/version.ts";
 import { handleWorkspacesRoute } from "./routes/workspaces.ts";
@@ -51,11 +55,13 @@ function notFound(response: ServerResponse): void {
 }
 
 const routes: Record<string, ApiHandler> = {
+  "/auth": handleAuthRoute,
   "/tasks": handleTasksRoute,
   "/executions": handleExecutionsRoute,
   "/evaluation": handleEvaluationRoute,
   "/feedback": handleFeedbackRoute,
   "/health": handleHealthRoute,
+  "/invitations": handleInvitationsRoute,
   "/learning": handleLearningRoute,
   "/metrics": handleObservabilityRoute,
   "/observability": handleObservabilityRoute,
@@ -75,17 +81,20 @@ const routes: Record<string, ApiHandler> = {
   "/task-templates": handleTaskTemplatesRoute,
   "/video-jobs": handleVideoJobsRoute,
   "/version": handleVersionRoute,
+  "/users": handleUsersRoute,
   "/workspaces": handleWorkspacesRoute
 };
 
 function resolveRoute(pathname: string): ApiHandler | undefined {
   if (
+    pathname.startsWith("/auth/") ||
     pathname.startsWith("/tasks/") ||
     pathname.startsWith("/batch-templates/") ||
     pathname.startsWith("/executions/") ||
     pathname.startsWith("/evaluation/") ||
     pathname.startsWith("/feedback/") ||
     pathname.startsWith("/health/") ||
+    pathname.startsWith("/invitations/") ||
     pathname.startsWith("/learning/") ||
     pathname.startsWith("/observability/") ||
     pathname.startsWith("/openapi.") ||
@@ -99,6 +108,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/task-templates/") ||
     pathname.startsWith("/video-jobs/") ||
     pathname.startsWith("/version/") ||
+    pathname.startsWith("/users/") ||
     pathname.startsWith("/workspaces/")
   ) {
     return routes[`/${pathname.split("/")[1]}`];
@@ -110,6 +120,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
 ensureRepositoryRoot();
 assertPhoenixEnv();
 await ensureDefaultWorkspaceMigration();
+await ensureIdentityStorage();
 startSchedulerWorker();
 
 const server = createServer(async (request, response) => {
@@ -135,17 +146,17 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  const publicHealth = url.pathname === "/health" || url.pathname === "/health/live" || url.pathname === "/health/ready" || url.pathname === "/version" || url.pathname === "/openapi.json" || url.pathname === "/openapi.yaml" || url.pathname === "/docs";
-  const auth = authenticateApiKey(request);
+  const publicRoute = url.pathname === "/health" || url.pathname === "/health/live" || url.pathname === "/health/ready" || url.pathname === "/version" || url.pathname === "/openapi.json" || url.pathname === "/openapi.yaml" || url.pathname === "/docs" || url.pathname.startsWith("/auth/") || url.pathname.startsWith("/invitations/");
+  const auth = await authenticateRequest(request);
 
-  if (!publicHealth && !auth.authenticated) {
+  if (!publicRoute && !auth.authenticated) {
     sendApiError(response, new ApiError(auth.status === 401 ? "UNAUTHORIZED" : "FORBIDDEN", auth.message, auth.status));
     return;
   }
 
-  if (!publicHealth) {
+  if (!publicRoute) {
     try {
-      await resolveWorkspaceContext(request.headers);
+      await resolveWorkspaceContext(headersWithAuthenticatedUser(request.headers, auth.authenticated && auth.kind === "user" ? auth.userId : undefined));
     } catch (error) {
       sendApiError(response, new ApiError("FORBIDDEN", error instanceof Error ? error.message : "Invalid workspace context.", 403));
       return;

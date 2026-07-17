@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createTraceId, getTraceId } from "@phoenix-ai/observability";
@@ -28,8 +28,12 @@ export type WorkspaceInvitation = {
   id: string;
   email: string;
   role: WorkspaceRole;
-  status: "pending" | "accepted" | "cancelled";
+  token_hash?: string;
+  status: "pending" | "accepted" | "rejected" | "cancelled";
   created_at: string;
+  expires_at?: string;
+  accepted_at?: string;
+  rejected_at?: string;
 };
 export type WorkspaceContext = {
   workspace_id: string;
@@ -160,17 +164,62 @@ export async function createInvitation(workspaceId: string, input: unknown, user
   await requireWorkspace(workspaceId);
   const payload = validateInvitationInput(input);
   const invitations = await readJsonFile<WorkspaceInvitation[]>(resolve(workspacePath(workspaceId), "invitations.json"), []);
+  const token = randomBytes(32).toString("base64url");
   const invitation: WorkspaceInvitation = {
     id: randomUUID(),
     email: payload.email,
     role: payload.role,
+    token_hash: hashInvitationToken(token),
     status: "pending",
-    created_at: now()
+    created_at: now(),
+    expires_at: new Date(Date.now() + Number(process.env.PHOENIX_INVITATION_TTL_DAYS ?? 7) * 24 * 60 * 60 * 1000).toISOString()
   };
   invitations.push(invitation);
   await writeJsonFile(resolve(workspacePath(workspaceId), "invitations.json"), invitations);
   await audit(workspaceId, userId, "invitation.created", { invitation_id: invitation.id, role: invitation.role });
+  return { ...invitation, token } as WorkspaceInvitation & { token: string };
+}
+
+export async function listInvitations(workspaceId: string): Promise<WorkspaceInvitation[]> {
+  await requireWorkspace(workspaceId);
+  return readJsonFile<WorkspaceInvitation[]>(resolve(workspacePath(workspaceId), "invitations.json"), []);
+}
+
+export async function acceptInvitation(workspaceId: string, invitationId: string, user: { user_id: string; name: string; email: string }): Promise<WorkspaceInvitation> {
+  const invitations = await listInvitations(workspaceId);
+  const invitation = invitations.find((item) => item.id === invitationId);
+  if (!invitation || invitation.status !== "pending") throw new Error("Invitation not found.");
+  if (invitation.expires_at && Date.parse(invitation.expires_at) <= Date.now()) throw new Error("Invitation expired.");
+  invitation.status = "accepted";
+  invitation.accepted_at = now();
+  await writeJsonFile(resolve(workspacePath(workspaceId), "invitations.json"), invitations);
+  const members = await readMembers(workspaceId);
+  if (!members.some((member) => member.user_id === user.user_id)) {
+    await addMember(workspaceId, { user_id: user.user_id, name: user.name, email: user.email, role: invitation.role }, user.user_id);
+  }
+  await audit(workspaceId, user.user_id, "invitation.accepted", { invitation_id: invitation.id, role: invitation.role });
   return invitation;
+}
+
+export async function rejectInvitation(workspaceId: string, invitationId: string, userId = "anonymous"): Promise<WorkspaceInvitation> {
+  const invitations = await listInvitations(workspaceId);
+  const invitation = invitations.find((item) => item.id === invitationId);
+  if (!invitation || invitation.status !== "pending") throw new Error("Invitation not found.");
+  invitation.status = "rejected";
+  invitation.rejected_at = now();
+  await writeJsonFile(resolve(workspacePath(workspaceId), "invitations.json"), invitations);
+  await audit(workspaceId, userId, "invitation.rejected", { invitation_id: invitation.id });
+  return invitation;
+}
+
+export async function findInvitationByToken(token: string): Promise<{ workspaceId: string; invitation: WorkspaceInvitation } | null> {
+  const tokenHash = hashInvitationToken(token);
+  for (const workspaceId of await listWorkspaceIds()) {
+    const invitations = await readJsonFile<WorkspaceInvitation[]>(resolve(workspacePath(workspaceId), "invitations.json"), []);
+    const invitation = invitations.find((item) => item.token_hash === tokenHash);
+    if (invitation) return { workspaceId, invitation };
+  }
+  return null;
 }
 
 export async function resolveWorkspaceContext(headers: { [key: string]: string | string[] | undefined }): Promise<WorkspaceContext> {
@@ -283,4 +332,8 @@ function validateInvitationInput(input: unknown): { email: string; role: Workspa
   if (!email.includes("@")) throw new Error("Invalid email.");
   if (!isWorkspaceRole(payload.role)) throw new Error("Invalid role.");
   return { email, role: payload.role };
+}
+
+function hashInvitationToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
 }

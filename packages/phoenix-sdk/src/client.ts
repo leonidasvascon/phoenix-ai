@@ -11,6 +11,7 @@ import { PublicationsResource } from "./resources/publications.ts";
 import { ProvidersResource } from "./resources/providers.ts";
 import { SchedulerResource } from "./resources/scheduler.ts";
 import { WorkspacesResource } from "./resources/workspaces.ts";
+import { AuthResource } from "./resources/auth.ts";
 
 export class PhoenixClient {
   readonly tasks = new TasksResource(this);
@@ -24,11 +25,13 @@ export class PhoenixClient {
   readonly providers = new ProvidersResource(this);
   readonly scheduler = new SchedulerResource(this);
   readonly workspaces = new WorkspacesResource(this);
+  readonly auth = new AuthResource(this);
   private readonly baseUrl: string;
   private readonly apiKey?: string;
   private readonly bearerToken?: string;
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
+  private readonly credentials?: RequestCredentials;
 
   constructor(options: PhoenixClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/$/, "");
@@ -36,6 +39,7 @@ export class PhoenixClient {
     this.bearerToken = options.bearerToken;
     this.timeoutMs = options.timeoutMs ?? 30000;
     this.fetchImpl = options.fetch ?? fetch;
+    this.credentials = options.credentials;
   }
 
   async request<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -50,7 +54,8 @@ export class PhoenixClient {
         method: options.method ?? "GET",
         headers,
         body: options.body === undefined ? undefined : JSON.stringify(options.body),
-        signal: controller.signal
+        signal: controller.signal,
+        credentials: this.credentials
       });
       const text = await response.text();
       const payload = text ? JSON.parse(text) as unknown : null;

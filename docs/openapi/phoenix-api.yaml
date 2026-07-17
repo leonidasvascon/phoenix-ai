@@ -7,12 +7,716 @@ servers:
   - url: http://127.0.0.1:4000
     description: "Local development"
 paths:
+  "/auth/login":
+    post:
+      tags:
+        - Identity
+      summary: "Create a local user session"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        200:
+          description: Authenticated
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/auth/logout":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "End current session"
+      responses:
+        200:
+          description: "Logged out"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/auth/me":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "Get current user"
+      responses:
+        200:
+          description: "Current user"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/auth/sessions":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "List current user sessions"
+      responses:
+        200:
+          description: Sessions
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/auth/sessions/{id}":
+    delete:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "Revoke session"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Revoked
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/auth/providers":
+    get:
+      tags:
+        - Identity
+      summary: "List configured identity providers"
+      responses:
+        200:
+          description: Providers
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/auth/password/change":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "Change password"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+      responses:
+        200:
+          description: Changed
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/users":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "List users"
+      responses:
+        200:
+          description: Users
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/users/{id}":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "Get user"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Identity
+      summary: "Update user"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+      responses:
+        200:
+          description: Updated
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/invitations/{token}":
+    get:
+      tags:
+        - Identity
+      summary: "Read invitation"
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Invitation
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/invitations/{token}/accept":
+    post:
+      tags:
+        - Identity
+      summary: "Accept invitation"
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+      responses:
+        200:
+          description: Accepted
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/tasks":
     post:
       security:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Tasks
@@ -71,6 +775,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Tasks
@@ -136,6 +842,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Executions
       summary: "List executions"
@@ -189,6 +897,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Executions
@@ -250,6 +960,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Analytics
       summary: "Get analytics"
@@ -303,6 +1015,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Learning
@@ -358,6 +1072,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Feedback
       summary: "List feedback"
@@ -410,6 +1126,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Feedback
@@ -470,6 +1188,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Strategy
       summary: "Get latest strategy"
@@ -524,6 +1244,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Brands
       summary: "List brands"
@@ -577,6 +1299,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Brands
@@ -636,6 +1360,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Workspaces
       summary: "List workspaces"
@@ -688,6 +1414,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Workspaces
@@ -748,6 +1476,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Workspaces
       summary: "Get workspace"
@@ -806,6 +1536,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Workspaces
@@ -872,6 +1604,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Workspaces
       summary: "List workspace members"
@@ -930,6 +1664,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Workspaces
@@ -995,6 +1731,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Workspaces
@@ -1065,6 +1803,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Workspaces
       summary: "Remove workspace member"
@@ -1129,6 +1869,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Workspaces
@@ -1195,6 +1937,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Publications
       summary: "List publications"
@@ -1247,6 +1991,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Publications
@@ -1307,6 +2053,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Providers
       summary: "List providers"
@@ -1361,6 +2109,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Scheduler
       summary: "List scheduled jobs"
@@ -1413,6 +2163,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Scheduler
@@ -1472,6 +2224,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Quality
@@ -1572,6 +2326,8 @@ paths:
 []
         - PhoenixApiKey:
 []
+        - PhoenixSessionCookie:
+[]
       tags:
         - Health
       summary: "Detailed operational health"
@@ -1654,6 +2410,8 @@ paths:
         - BearerAuth:
 []
         - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
 []
       tags:
         - Operations
@@ -1744,6 +2502,10 @@ components:
       type: apiKey
       in: header
       name: X-Phoenix-Api-Key
+    PhoenixSessionCookie:
+      type: apiKey
+      in: cookie
+      name: phoenix_session
   schemas:
     ErrorResponse:
       type: object
@@ -1834,6 +2596,7 @@ tags:
   - name: Feedback
   - name: Strategy
   - name: Brands
+  - name: Identity
   - name: Workspaces
   - name: Publications
   - name: Providers

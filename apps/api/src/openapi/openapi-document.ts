@@ -1,5 +1,5 @@
 import { paths } from "./paths.ts";
-import { bearerAuth, phoenixApiKey } from "./security.ts";
+import { bearerAuth, phoenixApiKey, phoenixSessionCookie } from "./security.ts";
 import { brandSchema, errorSchema, genericObjectSchema, runtimeResponseSchema, taskSchema } from "./schemas.ts";
 
 export const openApiDocument = {
@@ -16,7 +16,8 @@ export const openApiDocument = {
   components: {
     securitySchemes: {
       BearerAuth: bearerAuth,
-      PhoenixApiKey: phoenixApiKey
+      PhoenixApiKey: phoenixApiKey,
+      PhoenixSessionCookie: phoenixSessionCookie
     },
     schemas: {
       ErrorResponse: errorSchema,
@@ -34,6 +35,7 @@ export const openApiDocument = {
     { name: "Feedback" },
     { name: "Strategy" },
     { name: "Brands" },
+    { name: "Identity" },
     { name: "Workspaces" },
     { name: "Publications" },
     { name: "Providers" },

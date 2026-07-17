@@ -22,8 +22,10 @@ export function Navigation() {
       <Link href="/brands">Marcas</Link>
       <Link href="/settings">Configuracoes</Link>
       <Link href="/settings/system">Sistema</Link>
+      <Link href="/settings/authentication">Autenticacao</Link>
       <Link href="/templates">Templates</Link>
       <Link href="/workspaces">Workspaces</Link>
+      <Link href="/account">Conta</Link>
       <WorkspaceSelector />
       <LogoutButton />
     </nav>

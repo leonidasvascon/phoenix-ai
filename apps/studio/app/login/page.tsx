@@ -1,12 +1,24 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, type FormEvent, useState } from "react";
 import { apiFetch, clearApiKey, getConfiguredApiKey, saveApiKey } from "../api-client";
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="session-loading">Carregando login...</main>}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const search = useSearchParams();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [apiKey, setApiKey] = useState(getConfiguredApiKey);
+  const [mode, setMode] = useState<"user" | "service">("user");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -14,22 +26,27 @@ export default function LoginPage() {
     event.preventDefault();
     setError("");
     setIsLoading(true);
-    saveApiKey(apiKey.trim());
+    clearApiKey();
 
     try {
-      const response = await apiFetch("/brands");
-
-      if (!response.ok) {
-        clearApiKey();
-        setError(response.status === 403 ? "Chave invalida." : "Nao foi possivel autenticar.");
-        return;
+      if (mode === "service") {
+        saveApiKey(apiKey.trim());
+        const response = await apiFetch("/brands");
+        if (!response.ok) throw new Error(response.status === 403 ? "Chave invalida." : "Nao foi possivel autenticar.");
+      } else {
+        const response = await apiFetch("/auth/login", {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+          headers: { "Content-Type": "application/json" }
+        });
+        if (!response.ok) throw new Error("Email ou senha invalidos.");
       }
 
-      router.replace("/");
+      router.replace(search.get("next") ?? "/");
       router.refresh();
-    } catch {
+    } catch (caught) {
       clearApiKey();
-      setError("A API Phoenix nao esta disponivel.");
+      setError(caught instanceof Error ? caught.message : "A API Phoenix nao esta disponivel.");
     } finally {
       setIsLoading(false);
     }
@@ -42,21 +59,21 @@ export default function LoginPage() {
           <p>Phoenix Studio</p>
           <h1>Entrar</h1>
         </header>
+        <div className="segmented-control">
+          <button type="button" aria-pressed={mode === "user"} onClick={() => setMode("user")}>Usuario</button>
+          <button type="button" aria-pressed={mode === "service"} onClick={() => setMode("service")}>Chave</button>
+        </div>
         <form onSubmit={handleSubmit}>
-          <label>
-            Chave de acesso
-            <input
-              type="password"
-              value={apiKey}
-              onChange={(event) => setApiKey(event.target.value)}
-              autoComplete="current-password"
-              required
-            />
-          </label>
+          {mode === "user" ? (
+            <>
+              <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label>
+              <label>Senha<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required /></label>
+            </>
+          ) : (
+            <label>Chave de acesso<input type="password" value={apiKey} onChange={(event) => setApiKey(event.target.value)} autoComplete="current-password" required /></label>
+          )}
           {error ? <p className="error">{error}</p> : null}
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Validando..." : "Entrar"}
-          </button>
+          <button type="submit" disabled={isLoading}>{isLoading ? "Validando..." : "Entrar"}</button>
         </form>
       </section>
     </main>
