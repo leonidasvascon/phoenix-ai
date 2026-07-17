@@ -1,22 +1,26 @@
 {
-  "name": "phoenix-ai",
-  "version": "0.2.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "api:dev": "pnpm --filter @phoenix-ai/api dev",
-    "api:dev:worker": "pnpm --filter @phoenix-ai/api dev:worker",
-    "example:task": "node --experimental-strip-types examples/run-task.ts",
-    "example:analytics": "node --experimental-strip-types examples/generate-analytics.ts",
-    "quality:benchmarks": "node --experimental-strip-types scripts/run-benchmarks.ts",
-    "quality:regressions": "node --experimental-strip-types scripts/run-regressions.ts",
-    "quality:report": "node --experimental-strip-types scripts/generate-quality-report.ts",
-    "observability:test": "node --experimental-strip-types scripts/test-sanitization.ts",
-    "studio:dev": "pnpm --filter @phoenix-ai/studio dev",
-    "studio:build": "pnpm --filter @phoenix-ai/studio build"
-  },
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+    "name":  "phoenix-ai",
+    "version":  "0.2.0",
+    "private":  true,
+    "type":  "module",
+    "scripts":  {
+                    "api:dev":  "pnpm --filter @phoenix-ai/api dev",
+                    "api:dev:worker":  "pnpm --filter @phoenix-ai/api dev:worker",
+                    "example:task":  "node --experimental-strip-types examples/run-task.ts",
+                    "example:analytics":  "node --experimental-strip-types examples/generate-analytics.ts",
+                    "quality:benchmarks":  "node --experimental-strip-types scripts/run-benchmarks.ts",
+                    "quality:regressions":  "node --experimental-strip-types scripts/run-regressions.ts",
+                    "quality:report":  "node --experimental-strip-types scripts/generate-quality-report.ts",
+                    "observability:test":  "node --experimental-strip-types scripts/test-sanitization.ts",
+                    "studio:dev":  "pnpm --filter @phoenix-ai/studio dev",
+                    "studio:build":  "pnpm --filter @phoenix-ai/studio build",
+                    "openapi:generate":  "node --experimental-strip-types scripts/generate-openapi.ts",
+                    "openapi:validate":  "node --experimental-strip-types scripts/validate-openapi.ts",
+                    "sdk:build":  "node --experimental-strip-types packages/phoenix-sdk/src/index.ts",
+                    "sdk:test":  "node --experimental-strip-types packages/phoenix-sdk/src/test.ts"
+                },
+    "workspaces":  [
+                       "apps/*",
+                       "packages/*"
+                   ]
 }

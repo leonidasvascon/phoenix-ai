@@ -11,6 +11,9 @@ import { handleFeedbackRoute } from "./routes/feedback.ts";
 import { handleHealthRoute } from "./routes/health.ts";
 import { handleLearningRoute } from "./routes/learning.ts";
 import { handleObservabilityRoute } from "./routes/observability.ts";
+import { handleOpenApiRoute } from "./routes/openapi.ts";
+import { ApiError } from "./errors/api-error.ts";
+import { sendApiError } from "./errors/error-handler.ts";
 import { handlePromptOptimizationsRoute } from "./routes/prompt-optimizations.ts";
 import { handlePublicationsRoute } from "./routes/publications.ts";
 import { handleQualityRoute } from "./routes/quality.ts";
@@ -50,6 +53,9 @@ const routes: Record<string, ApiHandler> = {
   "/learning": handleLearningRoute,
   "/metrics": handleObservabilityRoute,
   "/observability": handleObservabilityRoute,
+  "/openapi.json": handleOpenApiRoute,
+  "/openapi.yaml": handleOpenApiRoute,
+  "/docs": handleOpenApiRoute,
   "/prompt-optimizations": handlePromptOptimizationsRoute,
   "/publications": handlePublicationsRoute,
   "/quality": handleQualityRoute,
@@ -74,6 +80,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/health/") ||
     pathname.startsWith("/learning/") ||
     pathname.startsWith("/observability/") ||
+    pathname.startsWith("/openapi.") ||
     pathname.startsWith("/prompt-optimizations/") ||
     pathname.startsWith("/publications/") ||
     pathname.startsWith("/quality/") ||
@@ -109,19 +116,16 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  const publicHealth = url.pathname === "/health" || url.pathname === "/health/live" || url.pathname === "/health/ready";
+  const publicHealth = url.pathname === "/health" || url.pathname === "/health/live" || url.pathname === "/health/ready" || url.pathname === "/openapi.json" || url.pathname === "/openapi.yaml" || url.pathname === "/docs";
   const auth = authenticateApiKey(request);
 
   if (!publicHealth && !auth.authenticated) {
-    sendJson(response, auth.status, {
-      status: "error",
-      message: auth.message
-    });
+    sendApiError(response, new ApiError(auth.status === 401 ? "UNAUTHORIZED" : "FORBIDDEN", auth.message, auth.status));
     return;
   }
 
   if (!route) {
-    notFound(response);
+    sendApiError(response, new ApiError("NOT_FOUND", "Route not found.", 404));
     return;
   }
 
@@ -138,10 +142,7 @@ const server = createServer(async (request, response) => {
       await route(request, response);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unknown API error.";
-      sendJson(response, 500, {
-        status: "error",
-        message
-      });
+      sendApiError(response, error);
     } finally {
       const durationMs = Math.round(performance.now() - startedAt);
       incrementCounter("phoenix_http_requests_total", {

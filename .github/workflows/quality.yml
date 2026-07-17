@@ -32,6 +32,18 @@ jobs:
       - name: Build Studio
         run: pnpm run studio:build
 
+      - name: Generate OpenAPI
+        run: pnpm run openapi:generate
+
+      - name: Validate OpenAPI
+        run: pnpm run openapi:validate
+
+      - name: Build SDK
+        run: pnpm run sdk:build
+
+      - name: Test SDK
+        run: pnpm run sdk:test
+
       - name: Benchmarks
         run: pnpm run quality:benchmarks
 

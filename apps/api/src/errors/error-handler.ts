@@ -1,0 +1,30 @@
+import type { ServerResponse } from "node:http";
+import { createTraceId, getTraceId } from "@phoenix-ai/observability";
+import { ApiError } from "./api-error.ts";
+
+export function errorPayload(error: unknown) {
+  const apiError = error instanceof ApiError
+    ? error
+    : new ApiError("INTERNAL_ERROR", error instanceof Error ? error.message : "Internal server error.", 500);
+
+  return {
+    error: {
+      code: apiError.code,
+      message: apiError.message,
+      status: apiError.status,
+      trace_id: getTraceId() ?? createTraceId()
+    }
+  };
+}
+
+export function sendApiError(response: ServerResponse, error: unknown): void {
+  const payload = errorPayload(error);
+  response.writeHead(payload.error.status, {
+    "Access-Control-Allow-Origin": process.env.PHOENIX_STUDIO_ORIGIN ?? "http://127.0.0.1:3000",
+    "Access-Control-Allow-Headers": "Authorization, Content-Type, X-Phoenix-Api-Key",
+    "Access-Control-Allow-Methods": "DELETE,GET,POST,PUT,OPTIONS",
+    "Content-Type": "application/json"
+  });
+  response.end(JSON.stringify(payload, null, 2));
+}
+

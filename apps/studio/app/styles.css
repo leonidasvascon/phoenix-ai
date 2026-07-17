@@ -2783,3 +2783,72 @@ select {
     flex-direction: column;
   }
 }
+
+.developers-shell {
+  width: min(1180px, calc(100vw - 40px));
+  margin: 40px auto;
+}
+
+.developers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.developers-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 18px;
+}
+
+.developers-card h2,
+.developers-card p {
+  margin: 0;
+}
+
+.developers-card dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.developers-card dt {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.developers-card dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+.developers-card a {
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
+.developers-card pre {
+  margin: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 12px;
+  background: #fffdfa;
+  line-height: 1.45;
+}
+
+@media (max-width: 860px) {
+  .developers-shell {
+    width: min(100% - 24px, 560px);
+    margin: 24px auto;
+  }
+
+  .developers-grid {
+    grid-template-columns: 1fr;
+  }
+}

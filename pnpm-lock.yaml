@@ -105,6 +105,8 @@ importers:
 
   packages/observability: {}
 
+  packages/phoenix-sdk: {}
+
   packages/prompt-optimizer: {}
 
   packages/publishing-engine:
