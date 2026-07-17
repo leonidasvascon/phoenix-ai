@@ -1,0 +1,48 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      NODE_ENV: production
+      PHOENIX_ENV: production
+      PHOENIX_API_KEY: ${PHOENIX_API_KEY:-change-me}
+      PHOENIX_API_PORT: 4000
+      PHOENIX_STUDIO_ORIGIN: http://127.0.0.1:3000
+      PHOENIX_PROVIDER: ${PHOENIX_PROVIDER:-mock}
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./.storage:/app/.storage
+      - ./reports:/app/reports
+      - ./output:/app/output
+
+  studio:
+    build:
+      context: .
+      dockerfile: Dockerfile.studio
+    environment:
+      NEXT_PUBLIC_PHOENIX_API_URL: http://127.0.0.1:4000
+      NEXT_PUBLIC_PHOENIX_API_KEY: ${PHOENIX_API_KEY:-change-me}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      NODE_ENV: production
+      PHOENIX_ENV: production
+      PHOENIX_API_KEY: ${PHOENIX_API_KEY:-change-me}
+      PHOENIX_API_PORT: 4001
+      PHOENIX_SCHEDULER_WORKER: "true"
+      PHOENIX_SCHEDULER_INTERVAL_MS: ${PHOENIX_SCHEDULER_INTERVAL_MS:-60000}
+      PHOENIX_PROVIDER: ${PHOENIX_PROVIDER:-mock}
+    volumes:
+      - ./.storage:/app/.storage
+      - ./reports:/app/reports
+      - ./output:/app/output
+

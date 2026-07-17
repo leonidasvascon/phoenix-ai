@@ -1,4 +1,5 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { assertPhoenixEnv } from "@phoenix-ai/config";
 import { basename, dirname, resolve } from "node:path";
 import { authenticateApiKey } from "./auth/api-key-auth.ts";
 import { sendJson } from "./http.ts";
@@ -24,6 +25,8 @@ import { handleStrategyRoute } from "./routes/strategy.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
 import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
 import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
+import { handleVersionRoute } from "./routes/version.ts";
+import { enforceRateLimit } from "./rate-limit.ts";
 import { startSchedulerWorker } from "./workers/scheduler-worker.ts";
 import { incrementCounter, logStructured, recordDuration, withSpan } from "@phoenix-ai/observability";
 
@@ -67,7 +70,8 @@ const routes: Record<string, ApiHandler> = {
   "/settings": handleSettingsRoute,
   "/strategy": handleStrategyRoute,
   "/task-templates": handleTaskTemplatesRoute,
-  "/video-jobs": handleVideoJobsRoute
+  "/video-jobs": handleVideoJobsRoute,
+  "/version": handleVersionRoute
 };
 
 function resolveRoute(pathname: string): ApiHandler | undefined {
@@ -89,7 +93,8 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/scheduled-jobs/") ||
     pathname.startsWith("/strategy/") ||
     pathname.startsWith("/task-templates/") ||
-    pathname.startsWith("/video-jobs/")
+    pathname.startsWith("/video-jobs/") ||
+    pathname.startsWith("/version/")
   ) {
     return routes[`/${pathname.split("/")[1]}`];
   }
@@ -98,6 +103,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
 }
 
 ensureRepositoryRoot();
+assertPhoenixEnv();
 startSchedulerWorker();
 
 const server = createServer(async (request, response) => {
@@ -116,7 +122,14 @@ const server = createServer(async (request, response) => {
     return;
   }
 
-  const publicHealth = url.pathname === "/health" || url.pathname === "/health/live" || url.pathname === "/health/ready" || url.pathname === "/openapi.json" || url.pathname === "/openapi.yaml" || url.pathname === "/docs";
+  try {
+    enforceRateLimit(request);
+  } catch (error) {
+    sendApiError(response, error);
+    return;
+  }
+
+  const publicHealth = url.pathname === "/health" || url.pathname === "/health/live" || url.pathname === "/health/ready" || url.pathname === "/version" || url.pathname === "/openapi.json" || url.pathname === "/openapi.yaml" || url.pathname === "/docs";
   const auth = authenticateApiKey(request);
 
   if (!publicHealth && !auth.authenticated) {

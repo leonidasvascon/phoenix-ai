@@ -5,6 +5,7 @@ dist/
 output/
 reports/quality-report.json
 reports/quality-report.md
+reports/diagnostics.json
 .env
 .env.*
 !.env.example

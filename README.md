@@ -2,7 +2,7 @@
 
 [![Quality](https://github.com/leonidasvascon/phoenix-ai/actions/workflows/quality.yml/badge.svg)](https://github.com/leonidasvascon/phoenix-ai/actions/workflows/quality.yml)
 
-Versao: 0.2.0
+Versao: 1.0.0-beta
 
 Phoenix AI e uma plataforma inteligente para criar, aprender, publicar e otimizar conteudo digital para diferentes marcas, nichos e canais usando Inteligencia Artificial.
 
@@ -37,13 +37,46 @@ Isso permite criar novos perfis sem alterar o codigo central da plataforma.
 
 ## Release atual
 
-`v0.2.0` - Produto Multi-Marca.
+`v1.0.0-beta` - Production Readiness.
 
-Esta versao consolida o Phoenix Studio e a Phoenix API em um produto utilizavel para criar, editar,
-duplicar, arquivar, restaurar, importar, exportar e versionar marcas. O Studio tambem oferece historico
-de execucoes, analytics e visualizacao dos pacotes gerados.
+Esta versao consolida a Phoenix AI como release candidate: API, Studio e Worker possuem Dockerfiles
+separados, Compose local/producao, validacao centralizada de ambiente, health detalhado, versionamento,
+backup, restore, diagnostico e checks de integridade.
 
-Release notes: `docs/releases/v0.2.0.md`.
+Release notes: `docs/releases/v1.0.0-beta.md`.
+
+## Production Readiness
+
+Rodar localmente com Docker:
+
+```bash
+docker compose up --build
+```
+
+Comandos operacionais:
+
+```bash
+pnpm run integrity:check
+pnpm run diagnostics
+pnpm run backup
+pnpm run restore -- .storage/backups/<arquivo>.json --yes
+```
+
+Endpoints operacionais:
+
+- `GET /version`
+- `GET /health/details`
+- `GET /health/live`
+- `GET /health/ready`
+
+Variaveis importantes:
+
+- `PHOENIX_ENV=production`
+- `PHOENIX_API_KEY`
+- `PHOENIX_CORS_ORIGIN`
+- `PHOENIX_RATE_LIMIT_ENABLED`
+- `PHOENIX_RATE_LIMIT_WINDOW_MS`
+- `PHOENIX_RATE_LIMIT_MAX`
 
 ## Documentos principais
 

@@ -55,6 +55,8 @@ export const paths = {
   "/health": { get: { tags: ["Health"], summary: "Health check", responses: { "200": ok("Alive") } } },
   "/health/live": { get: { tags: ["Health"], summary: "Liveness check", responses: { "200": ok("Live") } } },
   "/health/ready": { get: { tags: ["Health"], summary: "Readiness check", responses: { "200": ok("Ready"), "503": ok("Not ready", errorRef) } } },
+  "/health/details": { get: { ...secured, tags: ["Health"], summary: "Detailed operational health", responses: { "200": ok("Health details"), "503": ok("Degraded", errorRef), ...errors } } },
+  "/version": { get: { tags: ["Operations"], summary: "Get Phoenix version information", responses: { "200": ok("Version", { type: "object", properties: { version: { type: "string" }, commit: { type: "string" }, build_date: { type: "string" }, node: { type: "string" }, environment: { type: "string" } } }) } } },
   "/metrics": { get: { ...secured, tags: ["Operations"], summary: "Metrics snapshot", responses: { "200": ok("Metrics"), ...errors } } },
   "/openapi.json": { get: { tags: ["Documentation"], summary: "OpenAPI JSON", responses: { "200": ok("OpenAPI") } } },
   "/openapi.yaml": { get: { tags: ["Documentation"], summary: "OpenAPI YAML", responses: { "200": { description: "OpenAPI YAML", content: { "application/yaml": { schema: { type: "string" } } } } } } },

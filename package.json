@@ -1,6 +1,6 @@
 {
     "name":  "phoenix-ai",
-    "version":  "0.2.0",
+    "version":  "1.0.0-beta",
     "private":  true,
     "type":  "module",
     "scripts":  {
@@ -17,10 +17,18 @@
                     "openapi:generate":  "node --experimental-strip-types scripts/generate-openapi.ts",
                     "openapi:validate":  "node --experimental-strip-types scripts/validate-openapi.ts",
                     "sdk:build":  "node --experimental-strip-types packages/phoenix-sdk/src/index.ts",
-                    "sdk:test":  "node --experimental-strip-types packages/phoenix-sdk/src/test.ts"
+                    "sdk:test":  "node --experimental-strip-types packages/phoenix-sdk/src/test.ts",
+                    "backup":  "node --experimental-strip-types scripts/backup.ts",
+                    "restore":  "node --experimental-strip-types scripts/restore.ts",
+                    "integrity:check":  "node --experimental-strip-types scripts/integrity-check.ts",
+                    "diagnostics":  "node --experimental-strip-types scripts/diagnostics.ts"
                 },
     "workspaces":  [
                        "apps/*",
                        "packages/*"
-                   ]
+                   ],
+    "dependencies":  {
+                       "@phoenix-ai/config":  "workspace:*",
+                       "@phoenix-ai/version":  "workspace:*"
+                   }
 }

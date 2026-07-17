@@ -87,10 +87,37 @@ Objetivo: consolidar o primeiro produto multi-marca da Phoenix AI.
 - validar Studio, Runtime e Analytics
 - criar a tag `v0.2.0`
 
+## EPIC 6 - AI Quality & Reliability
+
+Status: concluida.
+
+- Evaluation Engine
+- Continuous Quality Pipeline
+- Observability
+- OpenAPI e SDK TypeScript
+- Production Readiness v1
+
+## Sprint 50 - Release v1.0.0-beta
+
+Status: em validacao.
+
+Objetivo: preparar a Phoenix AI para implantacao controlada.
+
+- Docker para API, Studio e Worker
+- Compose local e producao
+- validacao centralizada de variaveis
+- endpoint `/version`
+- endpoint `/health/details`
+- backup e restore
+- integrity check
+- diagnostico operacional
+- Studio `/settings/system`
+- CI expandido com Docker, integridade e diagnostico
+
 ## Proxima fase
 
-A partir da v0.3.0, o roadmap pode avancar para autenticacao, persistencia PostgreSQL/Supabase,
-Memory v2, Learning Engine e integracoes de publicacao.
+Apos a v1.0.0-beta, a recomendacao e executar uma sprint curta de estabilizacao para revisar
+dependencias, cobertura de testes, documentacao operacional, carga e recuperacao de falhas.
 
 ## Epics
 

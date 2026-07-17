@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@phoenix-ai/asset-engine": "workspace:*",
+    "@phoenix-ai/config": "workspace:*",
     "@phoenix-ai/evaluation-engine": "workspace:*",
     "@phoenix-ai/feedback-engine": "workspace:*",
     "@phoenix-ai/learning-engine": "workspace:*",
@@ -17,7 +18,8 @@
     "@phoenix-ai/publishing-engine": "workspace:*",
     "@phoenix-ai/prompt-optimizer": "workspace:*",
     "@phoenix-ai/strategy-engine": "workspace:*",
-    "@phoenix-ai/runtime": "workspace:*"
+    "@phoenix-ai/runtime": "workspace:*",
+    "@phoenix-ai/version": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",

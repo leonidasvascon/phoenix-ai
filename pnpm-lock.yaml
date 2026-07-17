@@ -6,13 +6,23 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    dependencies:
+      '@phoenix-ai/config':
+        specifier: workspace:*
+        version: link:packages/config
+      '@phoenix-ai/version':
+        specifier: workspace:*
+        version: link:packages/version
 
   apps/api:
     dependencies:
       '@phoenix-ai/asset-engine':
         specifier: workspace:*
         version: link:../../packages/asset-engine
+      '@phoenix-ai/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@phoenix-ai/evaluation-engine':
         specifier: workspace:*
         version: link:../../packages/evaluation-engine
@@ -40,6 +50,9 @@ importers:
       '@phoenix-ai/strategy-engine':
         specifier: workspace:*
         version: link:../../packages/strategy-engine
+      '@phoenix-ai/version':
+        specifier: workspace:*
+        version: link:../../packages/version
     devDependencies:
       '@types/node':
         specifier: ^24.0.10
@@ -91,6 +104,8 @@ importers:
         specifier: workspace:*
         version: link:../observability
 
+  packages/config: {}
+
   packages/evaluation-engine: {}
 
   packages/feedback-engine: {}
@@ -122,6 +137,8 @@ importers:
         version: link:../observability
 
   packages/strategy-engine: {}
+
+  packages/version: {}
 
 packages:
 

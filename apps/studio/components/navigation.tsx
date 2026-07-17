@@ -16,9 +16,11 @@ export function Navigation() {
       <Link href="/optimizations">Otimizacoes</Link>
       <Link href="/providers">Providers</Link>
       <Link href="/publications">Publicacoes</Link>
-      <Link href="/operations">Operacoes</Link>`r`n      <Link href="/developers">Desenvolvedores</Link>
+      <Link href="/operations">Operacoes</Link>
+      <Link href="/developers">Desenvolvedores</Link>
       <Link href="/brands">Marcas</Link>
       <Link href="/settings">Configuracoes</Link>
+      <Link href="/settings/system">Sistema</Link>
       <Link href="/templates">Templates</Link>
       <LogoutButton />
     </nav>

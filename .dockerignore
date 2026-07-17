@@ -1,0 +1,11 @@
+.git
+.next
+node_modules
+**/node_modules
+.storage
+output
+reports
+*.log
+.env
+.env.local
+.env.*.local

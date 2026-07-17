@@ -53,6 +53,21 @@ jobs:
       - name: Evaluation Engine and Quality Report
         run: pnpm run quality:report
 
+      - name: Integrity Check
+        run: pnpm run integrity:check
+
+      - name: Diagnostics
+        run: pnpm run diagnostics
+
+      - name: Build API Docker Image
+        run: docker build -f Dockerfile.api -t phoenix-api:test .
+
+      - name: Build Studio Docker Image
+        run: docker build -f Dockerfile.studio -t phoenix-studio:test .
+
+      - name: Build Worker Docker Image
+        run: docker build -f Dockerfile.worker -t phoenix-worker:test .
+
       - name: Upload Quality Report
         uses: actions/upload-artifact@v4
         if: always()
@@ -61,3 +76,4 @@ jobs:
           path: |
             reports/quality-report.json
             reports/quality-report.md
+            reports/diagnostics.json

@@ -6,7 +6,7 @@ export const openApiDocument = {
   openapi: "3.1.0",
   info: {
     title: "Phoenix API",
-    version: "0.2.0",
+    version: "1.0.0-beta",
     description: "Phoenix AI API for tasks, brands, analytics, learning, publishing, quality and operations. Secrets and provider raw responses are intentionally excluded."
   },
   servers: [
