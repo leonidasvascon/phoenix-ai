@@ -21,6 +21,23 @@ export type PhoenixBrand = {
   purpose?: string;
   [key: string]: unknown;
 };
+export type PhoenixWorkspaceRole = "owner" | "admin" | "editor" | "analyst" | "viewer";
+export type PhoenixWorkspace = {
+  id: string;
+  name: string;
+  status: "active" | "archived";
+  settings: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+export type PhoenixWorkspaceMember = {
+  id: string;
+  user_id: string;
+  name: string;
+  email?: string;
+  role: PhoenixWorkspaceRole;
+  status: "active" | "invited" | "disabled";
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };
@@ -32,6 +49,6 @@ export type PhoenixClientOptions = {
   fetch?: typeof fetch;
 };
 export type RequestOptions = {
-  method?: "DELETE" | "GET" | "POST" | "PUT";
+  method?: "DELETE" | "GET" | "PATCH" | "POST" | "PUT";
   body?: unknown;
 };

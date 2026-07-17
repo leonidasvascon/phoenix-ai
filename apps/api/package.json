@@ -19,7 +19,8 @@
     "@phoenix-ai/prompt-optimizer": "workspace:*",
     "@phoenix-ai/strategy-engine": "workspace:*",
     "@phoenix-ai/runtime": "workspace:*",
-    "@phoenix-ai/version": "workspace:*"
+    "@phoenix-ai/version": "workspace:*",
+    "@phoenix-ai/workspace": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",

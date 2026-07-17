@@ -1,5 +1,6 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { assertPhoenixEnv } from "@phoenix-ai/config";
+import { ensureDefaultWorkspaceMigration, resolveWorkspaceContext } from "@phoenix-ai/workspace";
 import { basename, dirname, resolve } from "node:path";
 import { authenticateApiKey } from "./auth/api-key-auth.ts";
 import { sendJson } from "./http.ts";
@@ -26,6 +27,7 @@ import { handleTasksRoute } from "./routes/tasks.ts";
 import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
 import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
 import { handleVersionRoute } from "./routes/version.ts";
+import { handleWorkspacesRoute } from "./routes/workspaces.ts";
 import { enforceRateLimit } from "./rate-limit.ts";
 import { startSchedulerWorker } from "./workers/scheduler-worker.ts";
 import { incrementCounter, logStructured, recordDuration, withSpan } from "@phoenix-ai/observability";
@@ -72,7 +74,8 @@ const routes: Record<string, ApiHandler> = {
   "/strategy": handleStrategyRoute,
   "/task-templates": handleTaskTemplatesRoute,
   "/video-jobs": handleVideoJobsRoute,
-  "/version": handleVersionRoute
+  "/version": handleVersionRoute,
+  "/workspaces": handleWorkspacesRoute
 };
 
 function resolveRoute(pathname: string): ApiHandler | undefined {
@@ -95,7 +98,8 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/strategy/") ||
     pathname.startsWith("/task-templates/") ||
     pathname.startsWith("/video-jobs/") ||
-    pathname.startsWith("/version/")
+    pathname.startsWith("/version/") ||
+    pathname.startsWith("/workspaces/")
   ) {
     return routes[`/${pathname.split("/")[1]}`];
   }
@@ -105,6 +109,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
 
 ensureRepositoryRoot();
 assertPhoenixEnv();
+await ensureDefaultWorkspaceMigration();
 startSchedulerWorker();
 
 const server = createServer(async (request, response) => {
@@ -136,6 +141,15 @@ const server = createServer(async (request, response) => {
   if (!publicHealth && !auth.authenticated) {
     sendApiError(response, new ApiError(auth.status === 401 ? "UNAUTHORIZED" : "FORBIDDEN", auth.message, auth.status));
     return;
+  }
+
+  if (!publicHealth) {
+    try {
+      await resolveWorkspaceContext(request.headers);
+    } catch (error) {
+      sendApiError(response, new ApiError("FORBIDDEN", error instanceof Error ? error.message : "Invalid workspace context.", 403));
+      return;
+    }
   }
 
   if (!route) {

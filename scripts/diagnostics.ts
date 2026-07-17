@@ -32,7 +32,8 @@ async function main() {
       enabled: (process.env.PHOENIX_OBSERVABILITY_ENABLED ?? "true") !== "false",
       service_name: process.env.PHOENIX_SERVICE_NAME ?? "phoenix-api"
     },
-    scheduler: await readOptionalJson(".storage/scheduled-jobs.json")
+    scheduler: await readOptionalJson(".storage/scheduled-jobs.json"),
+    workspaces: await readOptionalJson(".storage/workspaces/default-workspace/workspace.json")
   };
 
   await mkdir(resolve(process.cwd(), "reports"), { recursive: true });

@@ -20,7 +20,8 @@ const backupTargets = [
   ".storage/task-templates.json",
   ".storage/batch-templates.json",
   ".storage/settings.json",
-  ".storage/executions"
+  ".storage/executions",
+  ".storage/workspaces"
 ];
 
 async function collectFiles(target: string, files: BackupFile[]): Promise<void> {

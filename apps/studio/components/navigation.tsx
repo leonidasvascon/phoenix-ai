@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LogoutButton } from "./logout-button";
+import { WorkspaceSelector } from "./workspace-selector";
 
 export function Navigation() {
   return (
@@ -22,6 +23,8 @@ export function Navigation() {
       <Link href="/settings">Configuracoes</Link>
       <Link href="/settings/system">Sistema</Link>
       <Link href="/templates">Templates</Link>
+      <Link href="/workspaces">Workspaces</Link>
+      <WorkspaceSelector />
       <LogoutButton />
     </nav>
   );

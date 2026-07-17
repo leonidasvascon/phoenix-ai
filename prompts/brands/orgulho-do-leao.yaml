@@ -38,3 +38,5 @@ forbidden_patterns:
   - cliches
   - promessas vazias
   - linguagem agressiva
+
+workspace_id: default-workspace

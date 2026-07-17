@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { AssetService } from "@phoenix-ai/asset-engine";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
+import { defaultWorkspaceId } from "@phoenix-ai/workspace";
 import { getLearningReport } from "./learning-service.ts";
 import { listActivePromptOptimizations } from "./prompt-optimization-service.ts";
 import { getRuntimeSettings } from "./settings-service.ts";
@@ -344,6 +345,9 @@ export async function importBrand(input: unknown): Promise<Brand> {
   }
 
   const brand = parsed as EditableBrand;
+  if (typeof brand.workspace_id !== "string" || !brand.workspace_id.trim()) {
+    brand.workspace_id = defaultWorkspaceId;
+  }
   const identity = brand.brand;
   const brandId = identity && typeof identity === "object" && typeof identity.id === "string" ? identity.id.trim() : "";
   const brandName = identity && typeof identity === "object" && typeof identity.name === "string" ? identity.name.trim() : "";
@@ -528,6 +532,7 @@ export async function createBrand(input: unknown): Promise<Brand> {
       name: payload.name
     },
     purpose: payload.purpose,
+    workspace_id: defaultWorkspaceId,
     tone: payload.tone,
     emotions: payload.emotions,
     preferred_hooks: payload.preferred_hooks,

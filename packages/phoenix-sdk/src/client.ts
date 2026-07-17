@@ -10,6 +10,7 @@ import { StrategyResource } from "./resources/strategy.ts";
 import { PublicationsResource } from "./resources/publications.ts";
 import { ProvidersResource } from "./resources/providers.ts";
 import { SchedulerResource } from "./resources/scheduler.ts";
+import { WorkspacesResource } from "./resources/workspaces.ts";
 
 export class PhoenixClient {
   readonly tasks = new TasksResource(this);
@@ -22,6 +23,7 @@ export class PhoenixClient {
   readonly publications = new PublicationsResource(this);
   readonly providers = new ProvidersResource(this);
   readonly scheduler = new SchedulerResource(this);
+  readonly workspaces = new WorkspacesResource(this);
   private readonly baseUrl: string;
   private readonly apiKey?: string;
   private readonly bearerToken?: string;

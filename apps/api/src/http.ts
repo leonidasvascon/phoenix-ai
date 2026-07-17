@@ -5,7 +5,7 @@ export function sendJson(response: ServerResponse, statusCode: number, payload: 
   response.writeHead(statusCode, {
     "Access-Control-Allow-Origin": origin,
     "Access-Control-Allow-Headers": "Authorization, Content-Type, X-Phoenix-Api-Key",
-    "Access-Control-Allow-Methods": "DELETE,GET,POST,PUT,OPTIONS",
+    "Access-Control-Allow-Methods": "DELETE,GET,PATCH,POST,PUT,OPTIONS",
     "Content-Type": "application/json",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     "Referrer-Policy": "no-referrer",

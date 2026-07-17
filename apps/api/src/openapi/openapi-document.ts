@@ -34,6 +34,7 @@ export const openApiDocument = {
     { name: "Feedback" },
     { name: "Strategy" },
     { name: "Brands" },
+    { name: "Workspaces" },
     { name: "Publications" },
     { name: "Providers" },
     { name: "Scheduler" },

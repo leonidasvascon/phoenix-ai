@@ -78,6 +78,24 @@ Variaveis importantes:
 - `PHOENIX_RATE_LIMIT_WINDOW_MS`
 - `PHOENIX_RATE_LIMIT_MAX`
 
+## Enterprise Workspaces
+
+Sprint 51 adiciona a base multi-tenant da Phoenix AI.
+
+- `packages/workspace/`: servicos de workspace, membros, RBAC, convites e auditoria.
+- `.storage/workspaces/{workspace_id}/`: persistencia local de workspaces.
+- `GET /workspaces` e rotas administrativas de membros/configuracoes.
+- Seletor de workspace no Phoenix Studio.
+- Migracao idempotente para `default-workspace`.
+
+Roles iniciais:
+
+- Owner
+- Admin
+- Editor
+- Analyst
+- Viewer
+
 ## Documentos principais
 
 - `docs/00-Vision.md`

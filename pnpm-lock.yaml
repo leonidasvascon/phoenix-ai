@@ -53,6 +53,9 @@ importers:
       '@phoenix-ai/version':
         specifier: workspace:*
         version: link:../../packages/version
+      '@phoenix-ai/workspace':
+        specifier: workspace:*
+        version: link:../../packages/workspace
     devDependencies:
       '@types/node':
         specifier: ^24.0.10
@@ -139,6 +142,12 @@ importers:
   packages/strategy-engine: {}
 
   packages/version: {}
+
+  packages/workspace:
+    dependencies:
+      '@phoenix-ai/observability':
+        specifier: workspace:*
+        version: link:../observability
 
 packages:
 

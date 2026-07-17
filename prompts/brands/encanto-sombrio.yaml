@@ -75,3 +75,5 @@ preferred_emotions:
 
 forbidden_patterns:
   - cliches
+
+workspace_id: default-workspace

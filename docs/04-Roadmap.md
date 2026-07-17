@@ -119,6 +119,25 @@ Objetivo: preparar a Phoenix AI para implantacao controlada.
 Apos a v1.0.0-beta, a recomendacao e executar uma sprint curta de estabilizacao para revisar
 dependencias, cobertura de testes, documentacao operacional, carga e recuperacao de falhas.
 
+## EPIC 7 - Enterprise Platform
+
+### Sprint 51 - Multi-Tenant Workspace v1
+
+Status: em validacao.
+
+Objetivo: permitir que a Phoenix AI opere com organizacoes, membros, papeis e isolamento inicial de contexto.
+
+- package `@phoenix-ai/workspace`
+- modelo de Workspace, Members, Roles, Settings e Invitations
+- RBAC inicial: Owner, Admin, Editor, Analyst e Viewer
+- storage local em `.storage/workspaces/{workspace_id}`
+- migracao idempotente para `default-workspace`
+- brands vinculadas a `workspace_id`
+- API `/workspaces`
+- Studio `/workspaces`, `/workspaces/{id}`, membros e settings
+- seletor de workspace na navegacao
+- auditoria de operacoes administrativas
+
 ## Epics
 
 ### Epic 1 - Fundacao
