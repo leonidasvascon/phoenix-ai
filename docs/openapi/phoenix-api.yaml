@@ -709,6 +709,754 @@ paths:
             "application/json":
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/secrets":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "List secret metadata"
+      responses:
+        200:
+          description: Secrets
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Create secret"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              required:
+                - name
+                - namespace
+                - provider
+              properties:
+                name:
+                  type: string
+                namespace:
+                  type: string
+                provider:
+                  type: string
+                value:
+                  type: string
+                  writeOnly: true
+                envName:
+                  type: string
+      responses:
+        201:
+          description: "Secret metadata"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/secrets/{id}":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Get secret metadata"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "Secret metadata"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/secrets/{id}/validate":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Validate secret"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Validation
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/secrets/{id}/rotate":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Rotate secret"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              required:
+                - value
+              properties:
+                value:
+                  type: string
+                  writeOnly: true
+      responses:
+        200:
+          description: Rotated
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/secrets/{id}/revoke":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Revoke secret"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Revoked
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/secrets/providers":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "List secret providers"
+      responses:
+        200:
+          description: "Secret providers"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/secrets/status":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Secret system status"
+      responses:
+        200:
+          description: "Secret status"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api-keys":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "List API key metadata"
+      responses:
+        200:
+          description: "API keys"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Create API key"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                scopes:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        201:
+          description: "API key created once"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api-keys/{id}/rotate":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Rotate API key"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: "API key rotated once"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/api-keys/{id}/revoke":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Secrets
+      summary: "Revoke API key"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Revoked
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/tasks":
     post:
       security:
@@ -2597,6 +3345,7 @@ tags:
   - name: Strategy
   - name: Brands
   - name: Identity
+  - name: Secrets
   - name: Workspaces
   - name: Publications
   - name: Providers

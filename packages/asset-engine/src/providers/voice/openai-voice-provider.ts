@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import type { GeneratedAudio, VoiceGenerationOptions } from "../../types/assets.ts";
 import type { VoiceProvider } from "../voice-provider.ts";
 import { MockVoiceProvider } from "../mock-voice-provider.ts";
+import { resolveSecretValue } from "@phoenix-ai/secrets";
 
 const acceptedFormats = new Set(["mp3", "opus", "aac", "flac", "wav", "pcm"]);
 
@@ -18,6 +19,7 @@ export class OpenAIVoiceProvider implements VoiceProvider {
 
   async synthesize(text: string, options: VoiceGenerationOptions = {}): Promise<GeneratedAudio> {
     const config = this.readConfig(options);
+    config.apiKey = await resolveOpenAiApiKey(this.apiKey);
     const validation = this.validateConfig(config);
 
     if (validation) {
@@ -30,7 +32,7 @@ export class OpenAIVoiceProvider implements VoiceProvider {
       const response = await fetch("https://api.openai.com/v1/audio/speech", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${config.apiKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -82,11 +84,12 @@ export class OpenAIVoiceProvider implements VoiceProvider {
       format: options.format ?? process.env.PHOENIX_VOICE_FORMAT ?? "mp3",
       outputPath: options.outputPath,
       speed: options.speed ?? Number(process.env.PHOENIX_VOICE_SPEED ?? 1)
+      ,apiKey: this.apiKey
     };
   }
 
   private validateConfig(config: ReturnType<OpenAIVoiceProvider["readConfig"]>): string | null {
-    if (!this.apiKey) return "OPENAI_API_KEY is required.";
+    if (!config.apiKey) return "OPENAI_API_KEY is required.";
     if (!config.model?.trim()) return "PHOENIX_VOICE_MODEL is required.";
     if (!config.voice?.trim()) return "PHOENIX_VOICE_NAME is required.";
     if (!acceptedFormats.has(config.format)) return `Unsupported voice format: ${config.format}.`;
@@ -112,4 +115,17 @@ export class OpenAIVoiceProvider implements VoiceProvider {
       failureReason: reason
     });
   }
+}
+
+async function resolveOpenAiApiKey(fallback: string): Promise<string> {
+  const reference = process.env.OPENAI_API_KEY_REF;
+  if (!reference) return fallback;
+  return resolveSecretValue(reference, {
+    workspaceId: process.env.PHOENIX_WORKSPACE_ID ?? "default-workspace",
+    actorType: "system",
+    actorId: "asset-engine",
+    resource: "providers.openai",
+    action: "read",
+    traceId: "asset-engine"
+  }).catch(() => fallback);
 }

@@ -54,6 +54,31 @@ export type PhoenixSession = {
   revoked_at: string | null;
   user_agent_summary: string;
 };
+export type PhoenixSecretMetadata = {
+  id: string;
+  workspaceId: string;
+  name: string;
+  namespace: string;
+  provider: "environment" | "encrypted_file" | "memory";
+  reference: string;
+  status: "active" | "disabled" | "rotating" | "revoked" | "invalid";
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  expiresAt?: string;
+};
+export type PhoenixApiKeyMetadata = {
+  id: string;
+  key_id: string;
+  key_prefix: string;
+  workspace_id: string;
+  scopes: string[];
+  status: "active" | "revoked";
+  created_at: string;
+  updated_at: string;
+  expires_at?: string;
+  last_used_at?: string;
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };

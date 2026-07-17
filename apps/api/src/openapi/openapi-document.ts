@@ -36,6 +36,7 @@ export const openApiDocument = {
     { name: "Strategy" },
     { name: "Brands" },
     { name: "Identity" },
+    { name: "Secrets" },
     { name: "Workspaces" },
     { name: "Publications" },
     { name: "Providers" },

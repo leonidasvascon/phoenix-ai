@@ -14,6 +14,9 @@ importers:
       '@phoenix-ai/identity':
         specifier: workspace:*
         version: link:packages/identity
+      '@phoenix-ai/secrets':
+        specifier: workspace:*
+        version: link:packages/secrets
       '@phoenix-ai/version':
         specifier: workspace:*
         version: link:packages/version
@@ -56,6 +59,9 @@ importers:
       '@phoenix-ai/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
+      '@phoenix-ai/secrets':
+        specifier: workspace:*
+        version: link:../../packages/secrets
       '@phoenix-ai/strategy-engine':
         specifier: workspace:*
         version: link:../../packages/strategy-engine
@@ -115,6 +121,9 @@ importers:
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../observability
+      '@phoenix-ai/secrets':
+        specifier: workspace:*
+        version: link:../secrets
 
   packages/config: {}
 
@@ -150,12 +159,27 @@ importers:
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../observability
+      '@phoenix-ai/secrets':
+        specifier: workspace:*
+        version: link:../secrets
 
   packages/runtime:
     dependencies:
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../observability
+      '@phoenix-ai/secrets':
+        specifier: workspace:*
+        version: link:../secrets
+
+  packages/secrets:
+    dependencies:
+      '@phoenix-ai/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@phoenix-ai/workspace':
+        specifier: workspace:*
+        version: link:../workspace
 
   packages/strategy-engine: {}
 

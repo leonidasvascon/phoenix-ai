@@ -1,4 +1,5 @@
 import { getMetricsSnapshot, getObservabilityStatus } from "@phoenix-ai/observability";
+import { getSecretsStatus } from "@phoenix-ai/secrets";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { sendJson } from "../http.ts";
 
@@ -6,7 +7,10 @@ export async function handleObservabilityRoute(request: IncomingMessage, respons
   const url = new URL(request.url ?? "/", `http://${request.headers.host ?? "127.0.0.1"}`);
 
   if (request.method === "GET" && url.pathname === "/observability/status") {
-    sendJson(response, 200, getObservabilityStatus());
+    sendJson(response, 200, {
+      ...getObservabilityStatus(),
+      secrets: await getSecretsStatus().catch(() => ({ healthy: false }))
+    });
     return;
   }
 

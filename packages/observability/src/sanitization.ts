@@ -11,15 +11,33 @@ const blockedKeys = [
   "raw_response",
   "openai_api_key",
   "meta_access_token",
-  "phoenix_api_key"
+  "phoenix_api_key",
+  "clientsecret",
+  "client_secret",
+  "refreshtoken",
+  "refresh_token",
+  "idtoken",
+  "id_token",
+  "privatekey",
+  "private_key",
+  "masterkey",
+  "master_key",
+  "secretvalue",
+  "credential",
+  "cookie",
+  "set_cookie"
 ];
 
 const blockedValuePatterns = [
   /sk-[a-zA-Z0-9_-]{12,}/g,
+  /phx_(live|test)_[a-zA-Z0-9_-]{12,}/g,
   /Bearer\s+[a-zA-Z0-9._-]+/g
 ];
 
 export function sanitize(input: unknown): unknown {
+  if (input && typeof input === "object" && "__phoenixSecretValue" in input) {
+    return "[REDACTED]";
+  }
   if (Array.isArray(input)) {
     return input.map((item) => sanitize(item));
   }

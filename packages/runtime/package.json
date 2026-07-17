@@ -8,7 +8,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@phoenix-ai/observability": "workspace:*"
+    "@phoenix-ai/observability": "workspace:*",
+    "@phoenix-ai/secrets": "workspace:*"
   },
   "scripts": {
     "example:task": "node --experimental-strip-types ../../examples/run-task.ts"

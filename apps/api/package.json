@@ -20,6 +20,7 @@
     "@phoenix-ai/prompt-optimizer": "workspace:*",
     "@phoenix-ai/strategy-engine": "workspace:*",
     "@phoenix-ai/runtime": "workspace:*",
+    "@phoenix-ai/secrets": "workspace:*",
     "@phoenix-ai/version": "workspace:*",
     "@phoenix-ai/workspace": "workspace:*"
   },

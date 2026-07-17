@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import type { GeneratedImage, ImageGenerationOptions } from "../../types/assets.ts";
 import type { ImageProvider } from "../image-provider.ts";
 import { MockImageProvider } from "../mock-image-provider.ts";
+import { resolveSecretValue } from "@phoenix-ai/secrets";
 
 type OpenAIImageResponse = {
   data?: Array<{
@@ -28,7 +29,8 @@ export class OpenAIImageProvider implements ImageProvider {
   async generate(prompt: string, options: ImageGenerationOptions = {}): Promise<GeneratedImage> {
     const size = options.size ?? process.env.PHOENIX_IMAGE_SIZE ?? "1024x1024";
 
-    if (!this.apiKey) {
+    const apiKey = await resolveOpenAiApiKey(this.apiKey);
+    if (!apiKey) {
       return this.generateFallback(prompt, options, size);
     }
 
@@ -37,7 +39,7 @@ export class OpenAIImageProvider implements ImageProvider {
       const response = await fetch("https://api.openai.com/v1/images/generations", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
@@ -85,4 +87,17 @@ export class OpenAIImageProvider implements ImageProvider {
       size
     });
   }
+}
+
+async function resolveOpenAiApiKey(fallback: string): Promise<string> {
+  const reference = process.env.OPENAI_API_KEY_REF;
+  if (!reference) return fallback;
+  return resolveSecretValue(reference, {
+    workspaceId: process.env.PHOENIX_WORKSPACE_ID ?? "default-workspace",
+    actorType: "system",
+    actorId: "asset-engine",
+    resource: "providers.openai",
+    action: "read",
+    traceId: "asset-engine"
+  }).catch(() => fallback);
 }

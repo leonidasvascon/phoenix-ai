@@ -8,6 +8,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
+    "@phoenix-ai/secrets": "workspace:*",
     "@phoenix-ai/observability": "workspace:*"
   }
 }

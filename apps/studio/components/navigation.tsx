@@ -23,6 +23,8 @@ export function Navigation() {
       <Link href="/settings">Configuracoes</Link>
       <Link href="/settings/system">Sistema</Link>
       <Link href="/settings/authentication">Autenticacao</Link>
+      <Link href="/settings/secrets">Secrets</Link>
+      <Link href="/settings/api-keys">API Keys</Link>
       <Link href="/templates">Templates</Link>
       <Link href="/workspaces">Workspaces</Link>
       <Link href="/account">Conta</Link>

@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { sanitizePhoenixEnv, validatePhoenixEnv } from "@phoenix-ai/config";
+import { getSecretsStatus, sanitizeSecretPayload } from "@phoenix-ai/secrets";
 import { getVersionInfo } from "@phoenix-ai/version";
 
 async function readOptionalJson(path: string): Promise<unknown | null> {
@@ -13,7 +14,7 @@ async function readOptionalJson(path: string): Promise<unknown | null> {
 }
 
 async function main() {
-  const report = {
+  const report = sanitizeSecretPayload({
     generated_at: new Date().toISOString(),
     version: getVersionInfo(),
     config: {
@@ -33,8 +34,9 @@ async function main() {
       service_name: process.env.PHOENIX_SERVICE_NAME ?? "phoenix-api"
     },
     scheduler: await readOptionalJson(".storage/scheduled-jobs.json"),
-    workspaces: await readOptionalJson(".storage/workspaces/default-workspace/workspace.json")
-  };
+    workspaces: await readOptionalJson(".storage/workspaces/default-workspace/workspace.json"),
+    secrets: await getSecretsStatus().catch(() => ({ healthy: false }))
+  });
 
   await mkdir(resolve(process.cwd(), "reports"), { recursive: true });
   await writeFile(resolve(process.cwd(), "reports", "diagnostics.json"), JSON.stringify(report, null, 2), "utf8");

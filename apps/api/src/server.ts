@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { assertPhoenixEnv } from "@phoenix-ai/config";
 import { ensureIdentityStorage } from "@phoenix-ai/identity";
+import { ensureSecretsStorage } from "@phoenix-ai/secrets";
 import { ensureDefaultWorkspaceMigration, resolveWorkspaceContext } from "@phoenix-ai/workspace";
 import { basename, dirname, resolve } from "node:path";
 import { authenticateRequest, headersWithAuthenticatedUser } from "./auth/identity-auth.ts";
@@ -24,6 +25,7 @@ import { handlePublicationsRoute } from "./routes/publications.ts";
 import { handleQualityRoute } from "./routes/quality.ts";
 import { handleProvidersRoute } from "./routes/providers.ts";
 import { handleScheduledJobsRoute } from "./routes/scheduled-jobs.ts";
+import { handleApiKeysRoute, handleSecretsRoute } from "./routes/secrets.ts";
 import { handleSettingsRoute } from "./routes/settings.ts";
 import { handleStrategyRoute } from "./routes/strategy.ts";
 import { handleTasksRoute } from "./routes/tasks.ts";
@@ -56,6 +58,7 @@ function notFound(response: ServerResponse): void {
 
 const routes: Record<string, ApiHandler> = {
   "/auth": handleAuthRoute,
+  "/api-keys": handleApiKeysRoute,
   "/tasks": handleTasksRoute,
   "/executions": handleExecutionsRoute,
   "/evaluation": handleEvaluationRoute,
@@ -76,6 +79,7 @@ const routes: Record<string, ApiHandler> = {
   "/batch-templates": handleBatchTemplatesRoute,
   "/brands": handleBrandsRoute,
   "/scheduled-jobs": handleScheduledJobsRoute,
+  "/secrets": handleSecretsRoute,
   "/settings": handleSettingsRoute,
   "/strategy": handleStrategyRoute,
   "/task-templates": handleTaskTemplatesRoute,
@@ -88,6 +92,7 @@ const routes: Record<string, ApiHandler> = {
 function resolveRoute(pathname: string): ApiHandler | undefined {
   if (
     pathname.startsWith("/auth/") ||
+    pathname.startsWith("/api-keys/") ||
     pathname.startsWith("/tasks/") ||
     pathname.startsWith("/batch-templates/") ||
     pathname.startsWith("/executions/") ||
@@ -104,6 +109,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/providers/") ||
     pathname.startsWith("/brands/") ||
     pathname.startsWith("/scheduled-jobs/") ||
+    pathname.startsWith("/secrets/") ||
     pathname.startsWith("/strategy/") ||
     pathname.startsWith("/task-templates/") ||
     pathname.startsWith("/video-jobs/") ||
@@ -121,6 +127,7 @@ ensureRepositoryRoot();
 assertPhoenixEnv();
 await ensureDefaultWorkspaceMigration();
 await ensureIdentityStorage();
+await ensureSecretsStorage();
 startSchedulerWorker();
 
 const server = createServer(async (request, response) => {
@@ -156,7 +163,9 @@ const server = createServer(async (request, response) => {
 
   if (!publicRoute) {
     try {
-      await resolveWorkspaceContext(headersWithAuthenticatedUser(request.headers, auth.authenticated && auth.kind === "user" ? auth.userId : undefined));
+      const headers = headersWithAuthenticatedUser(request.headers, auth.authenticated && auth.kind === "user" ? auth.userId : undefined);
+      if (auth.authenticated && auth.kind === "service" && auth.workspaceId) headers["x-phoenix-workspace-id"] = auth.workspaceId;
+      await resolveWorkspaceContext(headers);
     } catch (error) {
       sendApiError(response, new ApiError("FORBIDDEN", error instanceof Error ? error.message : "Invalid workspace context.", 403));
       return;

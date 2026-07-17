@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { mkdir, readdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { getVersionInfo } from "@phoenix-ai/version";
 
@@ -21,7 +21,8 @@ const backupTargets = [
   ".storage/batch-templates.json",
   ".storage/settings.json",
   ".storage/executions",
-  ".storage/workspaces"
+  ".storage/workspaces",
+  ".storage/secrets/metadata"
 ];
 
 async function collectFiles(target: string, files: BackupFile[]): Promise<void> {
@@ -31,13 +32,14 @@ async function collectFiles(target: string, files: BackupFile[]): Promise<void> 
     return;
   }
 
-  const entries = await readdir(absolute, { withFileTypes: true }).catch(async () => []);
-
-  if (entries.length === 0 && !target.endsWith("/")) {
+  const info = await stat(absolute);
+  if (info.isFile()) {
     const content = await readFile(absolute, "utf8");
     files.push({ path: relative(process.cwd(), absolute).replaceAll("\\", "/"), content });
     return;
   }
+
+  const entries = await readdir(absolute, { withFileTypes: true }).catch(async () => []);
 
   for (const entry of entries) {
     const child = join(absolute, entry.name);

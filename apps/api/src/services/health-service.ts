@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { sanitizePhoenixEnv, validatePhoenixEnv } from "@phoenix-ai/config";
 import { getVersionInfo } from "@phoenix-ai/version";
+import { getSecretsStatus } from "@phoenix-ai/secrets";
 import { getProviderStatus } from "./provider-service.ts";
 import { getLatestQualityReport } from "./quality-service.ts";
 import { listScheduledJobs } from "./scheduled-job-service.ts";
@@ -52,6 +53,12 @@ export async function getHealthDetails() {
   const qualityReport = await getLatestQualityReport().catch(() => null);
   const providerStatus = getProviderStatus();
   const envValidation = validatePhoenixEnv();
+  const secrets = await getSecretsStatus().catch((error) => ({
+    provider: process.env.PHOENIX_SECRETS_PROVIDER ?? "encrypted_file",
+    configured: false,
+    healthy: false,
+    error: error instanceof Error ? error.message : "Secrets status failed."
+  }));
 
   return {
     status: readiness.status === "ready" && envValidation.valid ? "ok" : "degraded",
@@ -76,6 +83,7 @@ export async function getHealthDetails() {
       latest_quality_status: qualityReport?.status ?? "unknown",
       latest_average_score: qualityReport?.average_score ?? null
     },
+    secrets,
     config: {
       valid: envValidation.valid,
       mode: envValidation.mode,

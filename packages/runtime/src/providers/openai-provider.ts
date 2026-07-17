@@ -1,5 +1,6 @@
 import type { LlmProvider, LlmProviderResponse, LlmRequest } from "./llm-provider.ts";
 import { estimateCost } from "../execution/cost-tracker.ts";
+import { resolveSecretValue } from "@phoenix-ai/secrets";
 
 type OpenAIChatResponse = {
   choices?: Array<{
@@ -37,14 +38,15 @@ export class OpenAIProvider implements LlmProvider {
   }
 
   async generateJson(request: LlmRequest): Promise<LlmProviderResponse> {
-    if (!this.apiKey) {
+    const apiKey = await resolveOpenAiApiKey(this.apiKey);
+    if (!apiKey) {
       throw new Error("OPENAI_API_KEY is not configured.");
     }
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${this.apiKey}`,
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -82,4 +84,17 @@ export class OpenAIProvider implements LlmProvider {
       cost: estimateCost(this.id, this.model, usage)
     };
   }
+}
+
+async function resolveOpenAiApiKey(fallback: string): Promise<string> {
+  const reference = process.env.OPENAI_API_KEY_REF;
+  if (!reference) return fallback;
+  return resolveSecretValue(reference, {
+    workspaceId: process.env.PHOENIX_WORKSPACE_ID ?? "default-workspace",
+    actorType: "system",
+    actorId: "runtime",
+    resource: "providers.openai",
+    action: "read",
+    traceId: "runtime"
+  }).catch(() => fallback);
 }

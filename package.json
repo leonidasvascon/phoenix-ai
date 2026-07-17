@@ -25,7 +25,14 @@
                     "diagnostics":  "node --experimental-strip-types scripts/diagnostics.ts"
                     ,"identity:migrate":  "node --experimental-strip-types scripts/migrate-identity-v1.ts"
                     ,"identity:test":  "node --experimental-strip-types scripts/test-identity.ts"
-                    ,"identity:test:security":  "node --experimental-strip-types scripts/test-identity.ts"
+                    ,"identity:test:security":  "node --experimental-strip-types scripts/test-identity-security.ts"
+                    ,"secrets:migrate":  "node --experimental-strip-types scripts/migrate-secrets-v1.ts"
+                    ,"secrets:test":  "node --experimental-strip-types scripts/test-secrets.ts"
+                    ,"secrets:test:security":  "node --experimental-strip-types scripts/test-secrets-security.ts"
+                    ,"secrets:rotate:test":  "node --experimental-strip-types scripts/test-secrets.ts"
+                    ,"api-keys:test":  "node --experimental-strip-types scripts/test-api-keys.ts"
+                    ,"backup:secrets":  "node --experimental-strip-types scripts/backup-secrets.ts"
+                    ,"restore:secrets":  "node --experimental-strip-types scripts/restore-secrets.ts"
                 },
     "workspaces":  [
                        "apps/*",
@@ -34,6 +41,7 @@
     "dependencies":  {
                        "@phoenix-ai/config":  "workspace:*",
                        "@phoenix-ai/identity":  "workspace:*",
+                       "@phoenix-ai/secrets":  "workspace:*",
                        "@phoenix-ai/version":  "workspace:*",
                        "@phoenix-ai/workspace":  "workspace:*"
                    }

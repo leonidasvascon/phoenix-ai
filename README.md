@@ -1359,3 +1359,48 @@ http://127.0.0.1:3000/login
 http://127.0.0.1:3000/account
 http://127.0.0.1:3000/settings/authentication
 ```
+
+## Secrets & Key Management
+
+Sprint 53 adiciona `@phoenix-ai/secrets` para trabalhar com referencias em vez de transportar valores sensiveis entre modulos.
+
+Providers v1:
+
+- `environment`: resolve `env://OPENAI_API_KEY` e permanece somente leitura.
+- `encrypted_file`: salva vault cifrado em `.storage/secrets/vault/` usando AES-256-GCM.
+- `memory`: provider temporario para testes e CI.
+
+Exemplos de referencias:
+
+```text
+env://OPENAI_API_KEY
+secret://default-workspace/openai/api-key
+secret://default-workspace/meta/access-token
+```
+
+Comandos:
+
+```bash
+pnpm run secrets:migrate
+pnpm run secrets:test
+pnpm run secrets:test:security
+pnpm run secrets:rotate:test
+pnpm run api-keys:test
+pnpm run backup:secrets
+pnpm run restore:secrets
+```
+
+Telas:
+
+```text
+http://127.0.0.1:3000/settings/secrets
+http://127.0.0.1:3000/settings/api-keys
+```
+
+Regras importantes:
+
+- valores de secrets nunca sao retornados pela API;
+- API Keys completas aparecem apenas no momento da criacao;
+- backup comum inclui metadados, mas nao deve incluir vault cifrado;
+- `backup:secrets` exige `PHOENIX_CONFIRM_SECRETS_BACKUP=true`;
+- `PHOENIX_SECRETS_MASTER_KEY` deve ficar fora de `.storage`.

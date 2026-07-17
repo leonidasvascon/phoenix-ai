@@ -7,6 +7,7 @@ import { InstagramApiClient, sanitizeMetaError } from "./instagram-api-client.ts
 import { InstagramContainerPoller } from "./instagram-container-poller.ts";
 import { InstagramPublishingLimit } from "./instagram-publishing-limit.ts";
 import type { InstagramProviderConfig, InstagramProviderStatus } from "./instagram-types.ts";
+import { resolveSecretValue } from "@phoenix-ai/secrets";
 
 export class InstagramPublishingProvider implements PublishingProvider {
   readonly id = "instagram";
@@ -26,7 +27,7 @@ export class InstagramPublishingProvider implements PublishingProvider {
 
   async validate(request: PublicationRequest): Promise<PublicationValidation> {
     const base = await this.validator.validate(request);
-    const config = readConfig();
+    const config = await readConfig();
     const checks = [...base.checks];
     const publicVideo = await resolvePublicMedia(this.mediaResolver, request.media_path);
     const publicThumbnail = await resolvePublicMedia(this.mediaResolver, request.thumbnail_path);
@@ -75,7 +76,7 @@ export class InstagramPublishingProvider implements PublishingProvider {
   async publish(request: PublicationRequest): Promise<PublicationResult> {
     const validation = await this.validate(request);
     const now = new Date().toISOString();
-    const config = readConfig();
+    const config = await readConfig();
     const providerData = {
       container_id: request.provider_data?.container_id ?? null,
       container_status: request.provider_data?.container_status ?? null,
@@ -222,7 +223,7 @@ export async function validateInstagramProviderCredentials(): Promise<InstagramP
     return status;
   }
 
-  const config = readConfig();
+  const config = await readConfig();
 
   try {
     const client = new InstagramApiClient({
@@ -249,7 +250,7 @@ export async function validateInstagramProviderCredentials(): Promise<InstagramP
 }
 
 export function getInstagramProviderStatus(): InstagramProviderStatus {
-  const config = readConfig();
+  const config = readConfigSync();
   const publicMediaBaseUrl = process.env.PHOENIX_PUBLIC_MEDIA_BASE_URL ?? "";
   const publicBaseUrlValid = isValidPublicHttpsUrl(publicMediaBaseUrl);
   const configured = Boolean(config.instagramAccountId && config.accessToken && config.graphApiVersion && publicBaseUrlValid);
@@ -268,15 +269,40 @@ export function getInstagramProviderStatus(): InstagramProviderStatus {
   };
 }
 
-function readConfig(): InstagramProviderConfig {
+async function readConfig(): Promise<InstagramProviderConfig> {
+  const accessToken = await resolveMetaAccessToken();
   return {
     graphApiVersion: process.env.META_GRAPH_API_VERSION ?? null,
-    accessToken: process.env.META_ACCESS_TOKEN ?? null,
+    accessToken,
     instagramAccountId: process.env.META_INSTAGRAM_ACCOUNT_ID ?? null,
     dryRun: (process.env.PHOENIX_PUBLISHING_DRY_RUN ?? "true") !== "false",
     pollIntervalMs: Number(process.env.PHOENIX_INSTAGRAM_POLL_INTERVAL_MS ?? 5000),
     timeoutMs: Number(process.env.PHOENIX_INSTAGRAM_TIMEOUT_MS ?? 300000)
   };
+}
+
+function readConfigSync(): InstagramProviderConfig {
+  return {
+    graphApiVersion: process.env.META_GRAPH_API_VERSION ?? null,
+    accessToken: process.env.META_ACCESS_TOKEN ?? process.env.META_ACCESS_TOKEN_REF ?? null,
+    instagramAccountId: process.env.META_INSTAGRAM_ACCOUNT_ID ?? null,
+    dryRun: (process.env.PHOENIX_PUBLISHING_DRY_RUN ?? "true") !== "false",
+    pollIntervalMs: Number(process.env.PHOENIX_INSTAGRAM_POLL_INTERVAL_MS ?? 5000),
+    timeoutMs: Number(process.env.PHOENIX_INSTAGRAM_TIMEOUT_MS ?? 300000)
+  };
+}
+
+async function resolveMetaAccessToken(): Promise<string | null> {
+  const reference = process.env.META_ACCESS_TOKEN_REF;
+  if (!reference) return process.env.META_ACCESS_TOKEN ?? null;
+  return resolveSecretValue(reference, {
+    workspaceId: process.env.PHOENIX_WORKSPACE_ID ?? "default-workspace",
+    actorType: "system",
+    actorId: "publishing-engine",
+    resource: "publishing.instagram",
+    action: "read",
+    traceId: "publishing-engine"
+  }).catch(() => process.env.META_ACCESS_TOKEN ?? null);
 }
 
 async function resolvePublicMedia(resolver: PublishableMediaResolver, localPath: string): Promise<{ publicUrl?: string; error?: string }> {
