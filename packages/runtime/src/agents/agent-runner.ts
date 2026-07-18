@@ -2,6 +2,7 @@ import type { AgentOutput, Brand, ExecutionContext, PipelineStep, Task } from ".
 import type { LlmProvider } from "../providers/llm-provider.ts";
 import { MockProvider } from "../providers/mock-provider.ts";
 import { OpenAIProvider } from "../providers/openai-provider.ts";
+import { OrchestratedProvider } from "../providers/orchestrated-provider.ts";
 import { PromptAgent } from "./prompt-agent.ts";
 import { logStep } from "../utils/logger.ts";
 import { runQualityGate } from "../quality/quality-gate.ts";
@@ -13,6 +14,10 @@ import type { RetryPolicy } from "../quality/retry-policy.ts";
 import { incrementCounter, logStructured, recordGauge, withSpan } from "@phoenix-ai/observability";
 
 function selectProvider(provider = process.env.PHOENIX_PROVIDER ?? "mock"): LlmProvider {
+  if (provider === "orchestrator" || provider === "model-orchestrator" || process.env.PHOENIX_MODEL_ORCHESTRATOR === "true") {
+    return new OrchestratedProvider();
+  }
+
   if (provider === "openai") {
     return new OpenAIProvider();
   }

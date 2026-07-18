@@ -228,6 +228,72 @@ export type PhoenixKnowledgeIngestResponse = {
   embeddings: number;
   provenance: number;
 };
+export type PhoenixModelRoutingPolicy = "lowest_cost" | "highest_quality" | "lowest_latency" | "preferred_model" | "fallback" | "task_affinity";
+export type PhoenixModelTaskType = "agent" | "embedding" | "vision" | "audio" | "tool" | "general";
+export type PhoenixModelCapabilities = {
+  text: boolean;
+  embeddings: boolean;
+  vision: boolean;
+  audio: boolean;
+  tools: boolean;
+  max_context: number;
+  streaming: boolean;
+  structured_json: boolean;
+};
+export type PhoenixModelDescriptor = {
+  id: string;
+  provider_id: string;
+  name: string;
+  quality_score: number;
+  cost_per_1k_input: number;
+  cost_per_1k_output: number;
+  latency_score: number;
+  task_affinity: Partial<Record<PhoenixModelTaskType, number>>;
+  capabilities: PhoenixModelCapabilities;
+};
+export type PhoenixModelProvider = {
+  id: string;
+  capabilities: PhoenixModelCapabilities;
+};
+export type PhoenixModelHealth = {
+  provider_id: string;
+  available: boolean;
+  configured: boolean;
+  latency_ms: number;
+  error_rate: number;
+  last_checked_at: string;
+  reason?: string;
+};
+export type PhoenixModelPolicy = {
+  workspace_id: string;
+  default_policy: PhoenixModelRoutingPolicy;
+  fallback_order: string[];
+  task_policies: Partial<Record<PhoenixModelTaskType, PhoenixModelRoutingPolicy>>;
+  preferred_models: Partial<Record<PhoenixModelTaskType, string>>;
+};
+export type PhoenixModelsResponse = {
+  models: PhoenixModelDescriptor[];
+  capability_matrix: Array<{ provider_id: string; model: string; capabilities: PhoenixModelCapabilities }>;
+  active_policy: PhoenixModelPolicy;
+};
+export type PhoenixModelTestRequest = {
+  task_type?: PhoenixModelTaskType;
+  workspace_id?: string;
+  policy?: PhoenixModelRoutingPolicy;
+  preferred_model?: string;
+  response_format?: "json" | "text";
+  messages?: Array<{ role: "system" | "user" | "assistant"; content: string }>;
+};
+export type PhoenixModelTestResponse = {
+  status: "success";
+  provider_id: string;
+  model: string;
+  fallback: boolean;
+  selection_reason: string;
+  usage: { input: number; output: number; total: number };
+  cost: { currency: "USD"; estimated: number };
+  output: Record<string, unknown>;
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };

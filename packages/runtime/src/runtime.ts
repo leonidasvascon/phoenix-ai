@@ -49,7 +49,7 @@ export class Runtime {
       "phoenix.task.platform": task.platform
     }, async () => {
       const context = createExecutionContext(task);
-      const provider = options.provider ?? process.env.PHOENIX_PROVIDER ?? "mock";
+      const provider = options.provider ?? process.env.PHOENIX_PROVIDER ?? process.env.PHOENIX_MODEL_PROVIDER ?? "mock";
 
       return withObservabilityContext({ execution_id: context.executionId }, async () => {
         try {

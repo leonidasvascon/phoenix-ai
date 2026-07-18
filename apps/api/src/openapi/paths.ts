@@ -72,6 +72,11 @@ export const paths = {
   "/knowledge/search": { get: { ...secured, tags: ["Knowledge"], summary: "Run hybrid vector and graph RAG search", parameters: [{ name: "q", in: "query", required: false, schema: { type: "string" } }, { name: "limit", in: "query", required: false, schema: { type: "number" } }], responses: { "200": ok("Knowledge search results"), ...errors } } },
   "/knowledge/ingest": { post: { ...secured, tags: ["Knowledge"], summary: "Ingest platform data into the knowledge graph", requestBody: json({ type: "object", properties: { workspace_id: { type: "string" }, sources: { type: "array", items: { type: "string" } } } }), responses: { "200": ok("Knowledge ingest result"), ...errors } } },
   "/knowledge/graph": { get: { ...secured, tags: ["Knowledge"], summary: "Get the knowledge graph snapshot", responses: { "200": ok("Knowledge graph"), ...errors } } },
+  "/models": { get: { ...secured, tags: ["Models"], summary: "List models and capability matrix", responses: { "200": ok("Models"), ...errors } } },
+  "/models/providers": { get: { ...secured, tags: ["Models"], summary: "List model providers", responses: { "200": ok("Model providers"), ...errors } } },
+  "/models/health": { get: { ...secured, tags: ["Models"], summary: "Get model provider health", responses: { "200": ok("Model health"), ...errors } } },
+  "/models/policies": { get: { ...secured, tags: ["Models"], summary: "List model routing policies", responses: { "200": ok("Model policies"), ...errors } }, patch: { ...secured, tags: ["Models"], summary: "Update model routing policy", requestBody: json({ type: "object" }), responses: { "200": ok("Updated model policy"), ...errors } } },
+  "/models/test": { post: { ...secured, tags: ["Models"], summary: "Test model routing and fallback", requestBody: json({ type: "object" }), responses: { "200": ok("Model test result"), ...errors } } },
   "/tasks": {
     post: {
       ...secured,

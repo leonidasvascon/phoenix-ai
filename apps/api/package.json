@@ -15,6 +15,7 @@
     "@phoenix-ai/feedback-engine": "workspace:*",
     "@phoenix-ai/identity": "workspace:*",
     "@phoenix-ai/knowledge-graph": "workspace:*",
+    "@phoenix-ai/model-orchestrator": "workspace:*",
     "@phoenix-ai/learning-engine": "workspace:*",
     "@phoenix-ai/media-composer": "workspace:*",
     "@phoenix-ai/observability": "workspace:*",

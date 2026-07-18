@@ -1,7 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { executePluginHook } from "@phoenix-ai/plugin-sdk";
 import { logStructured, recordDuration, withSpan } from "@phoenix-ai/observability";
-import { cosineSimilarity, HashEmbeddingProvider, type EmbeddingProvider } from "./embedding-index.ts";
+import { cosineSimilarity, createEmbeddingProvider, type EmbeddingProvider } from "./embedding-index.ts";
 import { FileKnowledgeGraphStore } from "./graph.ts";
 import { searchGraph } from "./graph-search.ts";
 import { rerank } from "./reranker.ts";
@@ -32,7 +32,7 @@ export class KnowledgeRetriever {
 
   constructor(
     store = new FileKnowledgeGraphStore(),
-    embeddingProvider: EmbeddingProvider = new HashEmbeddingProvider()
+    embeddingProvider: EmbeddingProvider = createEmbeddingProvider()
   ) {
     this.store = store;
     this.embeddingProvider = embeddingProvider;

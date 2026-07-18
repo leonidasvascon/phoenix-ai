@@ -20,6 +20,9 @@ importers:
       '@phoenix-ai/knowledge-graph':
         specifier: workspace:*
         version: link:packages/knowledge-graph
+      '@phoenix-ai/model-orchestrator':
+        specifier: workspace:*
+        version: link:packages/model-orchestrator
       '@phoenix-ai/plugin-sdk':
         specifier: workspace:*
         version: link:packages/plugin-sdk
@@ -65,6 +68,9 @@ importers:
       '@phoenix-ai/media-composer':
         specifier: workspace:*
         version: link:../../packages/media-composer
+      '@phoenix-ai/model-orchestrator':
+        specifier: workspace:*
+        version: link:../../packages/model-orchestrator
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../../packages/observability
@@ -180,6 +186,9 @@ importers:
       '@phoenix-ai/knowledge-engine':
         specifier: workspace:*
         version: link:../knowledge-engine
+      '@phoenix-ai/model-orchestrator':
+        specifier: workspace:*
+        version: link:../model-orchestrator
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../observability
@@ -199,6 +208,12 @@ importers:
   packages/media-composer: {}
 
   packages/memory-engine: {}
+
+  packages/model-orchestrator:
+    dependencies:
+      '@phoenix-ai/observability':
+        specifier: workspace:*
+        version: link:../observability
 
   packages/observability: {}
 
@@ -232,6 +247,9 @@ importers:
       '@phoenix-ai/knowledge-graph':
         specifier: workspace:*
         version: link:../knowledge-graph
+      '@phoenix-ai/model-orchestrator':
+        specifier: workspace:*
+        version: link:../model-orchestrator
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../observability

@@ -10,6 +10,7 @@
   "dependencies": {
     "@phoenix-ai/event-bus": "workspace:*",
     "@phoenix-ai/knowledge-engine": "workspace:*",
+    "@phoenix-ai/model-orchestrator": "workspace:*",
     "@phoenix-ai/observability": "workspace:*",
     "@phoenix-ai/plugin-sdk": "workspace:*"
   },

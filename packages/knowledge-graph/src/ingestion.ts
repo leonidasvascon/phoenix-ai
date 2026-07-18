@@ -5,7 +5,7 @@ import { eventBus } from "@phoenix-ai/event-bus";
 import { loadKnowledgeBase } from "@phoenix-ai/knowledge-engine";
 import { executePluginHook } from "@phoenix-ai/plugin-sdk";
 import { logStructured, recordDuration, withSpan } from "@phoenix-ai/observability";
-import { HashEmbeddingProvider, type EmbeddingProvider } from "./embedding-index.ts";
+import { createEmbeddingProvider, type EmbeddingProvider } from "./embedding-index.ts";
 import { FileKnowledgeGraphStore, type KnowledgeGraphSnapshot } from "./graph.ts";
 import type { KnowledgeEdge } from "./edge.ts";
 import type { KnowledgeNode } from "./node.ts";
@@ -34,7 +34,7 @@ export class KnowledgeIngestionService {
 
   constructor(
     store = new FileKnowledgeGraphStore(),
-    embeddingProvider: EmbeddingProvider = new HashEmbeddingProvider()
+    embeddingProvider: EmbeddingProvider = createEmbeddingProvider()
   ) {
     this.store = store;
     this.embeddingProvider = embeddingProvider;

@@ -30,6 +30,12 @@ const mockFetch: typeof fetch = async (url, init) => {
   if (path === "/knowledge/search") {
     return new Response(JSON.stringify({ query: "saudade", results: [], metrics: {} }), { status: 200 });
   }
+  if (path === "/models") {
+    return new Response(JSON.stringify({ models: [], capability_matrix: [], active_policy: { workspace_id: "default-workspace", default_policy: "fallback", fallback_order: ["mock"], task_policies: {}, preferred_models: {} } }), { status: 200 });
+  }
+  if (path === "/models/test") {
+    return new Response(JSON.stringify({ status: "success", provider_id: "mock", model: "mock-model", fallback: true, selection_reason: "test", usage: { input: 0, output: 0, total: 0 }, cost: { currency: "USD", estimated: 0 }, output: { status: "ok" } }), { status: 200 });
+  }
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
 
@@ -48,6 +54,10 @@ const graph = await phoenix.knowledge.graph();
 if (graph.summary.entities !== 0) throw new Error("SDK knowledge graph resource failed.");
 const knowledge = await phoenix.knowledge.search("saudade");
 if (knowledge.query !== "saudade") throw new Error("SDK knowledge search resource failed.");
+const models = await phoenix.models.list();
+if (models.active_policy.default_policy !== "fallback") throw new Error("SDK models resource failed.");
+const modelTest = await phoenix.models.test();
+if (modelTest.provider_id !== "mock") throw new Error("SDK model test resource failed.");
 
 await expectError(new PhoenixClient({ baseUrl: "http://127.0.0.1:4000", fetch: mockFetch }).tasks.create({ brand: "encanto-intenso", theme: "saudade", objective: "viralizar", platform: "instagram", format: "reel" }), 401, "trace-401");
 await expectError(phoenix.request("/forbidden"), 403, "trace-403");

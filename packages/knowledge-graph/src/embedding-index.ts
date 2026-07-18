@@ -31,6 +31,27 @@ export class HashEmbeddingProvider implements EmbeddingProvider {
   }
 }
 
+export class OrchestratedEmbeddingProvider implements EmbeddingProvider {
+  readonly id = "model-orchestrator";
+
+  async embed(text: string): Promise<number[]> {
+    const { createDefaultModelOrchestrator } = await import("@phoenix-ai/model-orchestrator");
+    const response = await createDefaultModelOrchestrator().embed({
+      text,
+      task_type: "embedding",
+      policy: process.env.PHOENIX_EMBEDDING_POLICY as never
+    });
+    return response.vector;
+  }
+}
+
+export function createEmbeddingProvider(): EmbeddingProvider {
+  if (process.env.PHOENIX_EMBEDDING_PROVIDER === "model-orchestrator" || process.env.PHOENIX_MODEL_ORCHESTRATOR === "true") {
+    return new OrchestratedEmbeddingProvider();
+  }
+  return new HashEmbeddingProvider();
+}
+
 export function cosineSimilarity(a: number[], b: number[]): number {
   const length = Math.min(a.length, b.length);
   let dot = 0;

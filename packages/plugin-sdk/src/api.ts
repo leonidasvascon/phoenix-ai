@@ -26,6 +26,11 @@ export type PluginContext = {
     registerRelationType(type: string): Promise<void>;
     registerReranker(id: string): Promise<void>;
   };
+  models: {
+    registerProvider(id: string): Promise<void>;
+    registerModel(id: string): Promise<void>;
+    registerRoutingPolicy(id: string): Promise<void>;
+  };
   metrics: {
     increment(name: string): void;
   };

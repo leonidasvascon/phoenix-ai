@@ -207,6 +207,59 @@ Comando de validacao:
 pnpm run knowledge:test
 ```
 
+## Multi-Model Orchestration
+
+Sprint 58 adiciona o pacote `packages/model-orchestrator/` para decidir qual modelo usar por tarefa.
+
+Responsabilidades:
+
+- registrar provedores e modelos de OpenAI, Anthropic, Google Gemini, Azure OpenAI, Ollama e mock;
+- expor matriz de capacidades: texto, embeddings, visao, audio, tools, streaming, JSON estruturado e contexto maximo;
+- aplicar politicas de roteamento: menor custo, maior qualidade, menor latencia, modelo preferido, fallback e afinidade por tarefa;
+- executar fallback preservando contexto e registrando observabilidade;
+- monitorar saude dos provedores em `.storage/models/health.json`;
+- persistir catalogo e politicas em `.storage/models/providers.json` e `.storage/models/policies.json`.
+
+Variaveis:
+
+```env
+PHOENIX_MODEL_ORCHESTRATOR=false
+PHOENIX_PROVIDER=mock
+PHOENIX_MODEL_PROVIDER=mock
+PHOENIX_MODEL_POLICY=fallback
+PHOENIX_EMBEDDING_PROVIDER=hash
+PHOENIX_EMBEDDING_POLICY=lowest_cost
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+GOOGLE_API_KEY=
+GEMINI_API_KEY=
+AZURE_OPENAI_API_KEY=
+AZURE_OPENAI_ENDPOINT=
+OLLAMA_BASE_URL=
+```
+
+Uso:
+
+- `PHOENIX_PROVIDER=model-orchestrator pnpm run example:task`: Runtime usa o orquestrador para agentes.
+- `PHOENIX_EMBEDDING_PROVIDER=model-orchestrator pnpm run knowledge:test`: Knowledge Graph usa o orquestrador para embeddings.
+- `pnpm run models:test`: valida selecao, fallback, embeddings e health.
+
+Endpoints:
+
+- `GET /models`
+- `GET /models/providers`
+- `GET /models/health`
+- `GET /models/policies`
+- `PATCH /models/policies`
+- `POST /models/test`
+
+Studio:
+
+- `/models`: catalogo, capacidades e politica ativa;
+- `/models/providers`: provedores e capacidades;
+- `/models/policies`: edicao simples da politica padrao;
+- `/models/health`: disponibilidade, configuracao, latencia e taxa de erro.
+
 ## Documentos principais
 
 - `docs/00-Vision.md`

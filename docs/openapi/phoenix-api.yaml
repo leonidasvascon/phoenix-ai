@@ -3197,6 +3197,351 @@ paths:
             "application/json":
               schema:
                 "$ref": "#/components/schemas/ErrorResponse"
+  "/models":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Models
+      summary: "List models and capability matrix"
+      responses:
+        200:
+          description: Models
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/models/providers":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Models
+      summary: "List model providers"
+      responses:
+        200:
+          description: "Model providers"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/models/health":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Models
+      summary: "Get model provider health"
+      responses:
+        200:
+          description: "Model health"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/models/policies":
+    get:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Models
+      summary: "List model routing policies"
+      responses:
+        200:
+          description: "Model policies"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+    patch:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Models
+      summary: "Update model routing policy"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+      responses:
+        200:
+          description: "Updated model policy"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+  "/models/test":
+    post:
+      security:
+        - BearerAuth:
+[]
+        - PhoenixApiKey:
+[]
+        - PhoenixSessionCookie:
+[]
+      tags:
+        - Models
+      summary: "Test model routing and fallback"
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+      responses:
+        200:
+          description: "Model test result"
+          content:
+            "application/json":
+              schema:
+                type: object
+                additionalProperties: true
+        400:
+          description: "Bad request"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        401:
+          description: Unauthorized
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        403:
+          description: Forbidden
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        404:
+          description: "Not found"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        409:
+          description: Conflict
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
+        500:
+          description: "Internal error"
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/ErrorResponse"
   "/tasks":
     post:
       security:

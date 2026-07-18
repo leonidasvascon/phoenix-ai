@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@phoenix-ai/knowledge-graph": "workspace:*",
+    "@phoenix-ai/model-orchestrator": "workspace:*",
     "@phoenix-ai/observability": "workspace:*",
     "@phoenix-ai/secrets": "workspace:*"
   },

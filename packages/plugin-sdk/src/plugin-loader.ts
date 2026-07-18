@@ -242,6 +242,17 @@ function createPluginContext(record: PluginRecord, workspaceId = "default-worksp
         await appendPluginLog(record.id, "info", `Knowledge reranker registered: ${id}`);
       }
     },
+    models: {
+      registerProvider: async (id) => {
+        await appendPluginLog(record.id, "info", `Model provider registered: ${id}`);
+      },
+      registerModel: async (id) => {
+        await appendPluginLog(record.id, "info", `Model registered: ${id}`);
+      },
+      registerRoutingPolicy: async (id) => {
+        await appendPluginLog(record.id, "info", `Model routing policy registered: ${id}`);
+      }
+    },
     metrics: {
       increment: (name) => { void appendPluginLog(record.id, "info", `Metric incremented: ${name}`); }
     },
