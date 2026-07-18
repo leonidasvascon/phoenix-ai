@@ -171,6 +171,63 @@ export type PhoenixDeadLetterEntry = PhoenixWebhookDelivery & {
   payload: PhoenixEvent;
   reason: string;
 };
+export type PhoenixKnowledgeEntity = {
+  id: string;
+  type: string;
+  label: string;
+  workspace_id: string;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+export type PhoenixKnowledgeRelation = {
+  id: string;
+  from: string;
+  to: string;
+  type: string;
+  workspace_id: string;
+  weight: number;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+export type PhoenixKnowledgeSearchResult = {
+  id: string;
+  entity_id: string;
+  document_id: string;
+  workspace_id: string;
+  source: string;
+  chunk: string;
+  score: number;
+  created_at: string;
+  metadata: Record<string, unknown>;
+  entity?: { id: string; type: string; label: string };
+};
+export type PhoenixKnowledgeSearchResponse = {
+  query: string;
+  workspace_id?: string;
+  results: PhoenixKnowledgeSearchResult[];
+  metrics: Record<string, number>;
+};
+export type PhoenixKnowledgeGraph = {
+  nodes: PhoenixKnowledgeEntity[];
+  edges: PhoenixKnowledgeRelation[];
+  embeddings: Array<{ id: string; entity_id: string; workspace_id: string; text: string; vector: number[]; source: string; created_at: string }>;
+  provenance: PhoenixKnowledgeSearchResult[];
+  summary: { entities: number; relations: number; embeddings: number; provenance: number };
+};
+export type PhoenixKnowledgeIngestRequest = {
+  workspace_id?: string;
+  sources?: string[];
+};
+export type PhoenixKnowledgeIngestResponse = {
+  status: "success";
+  workspace_id: string;
+  sources: string[];
+  entities: number;
+  relations: number;
+  embeddings: number;
+  provenance: number;
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };

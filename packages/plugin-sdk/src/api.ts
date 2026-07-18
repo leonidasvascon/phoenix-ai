@@ -21,6 +21,11 @@ export type PluginContext = {
   events: {
     emit(event: string, payload?: unknown): Promise<void>;
   };
+  knowledgeGraph: {
+    registerEntityType(type: string): Promise<void>;
+    registerRelationType(type: string): Promise<void>;
+    registerReranker(id: string): Promise<void>;
+  };
   metrics: {
     increment(name: string): void;
   };

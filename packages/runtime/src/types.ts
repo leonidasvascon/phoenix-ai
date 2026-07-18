@@ -112,6 +112,7 @@ export type ExecutionContext = {
   brand?: Brand;
   pipeline?: Pipeline;
   knowledge?: KnowledgeContext;
+  knowledge_graph?: Record<string, unknown>;
   memory?: BrandMemory;
   learning_recommendations: LearningRecommendation[];
   prompt_optimizations: PromptOptimization[];

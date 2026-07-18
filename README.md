@@ -172,11 +172,39 @@ Nos iniciais:
 - Notification
 - Scheduler
 - Plugin
+- Knowledge Search
+- Knowledge Update
+- Knowledge Ingest
 
 Comando de validacao:
 
 ```bash
 pnpm run workflows:test
+```
+
+## Knowledge Graph & Advanced RAG
+
+Sprint 57 adiciona uma camada de conhecimento estruturado sobre a Knowledge Engine.
+
+- `packages/knowledge-graph/`: entidades, relacoes, embeddings, busca hibrida e proveniencia.
+- `.storage/knowledge/graph/`: nos e arestas do grafo.
+- `.storage/knowledge/embeddings/`: indice vetorial local.
+- `.storage/knowledge/provenance/`: origem dos trechos retornados pelo RAG.
+- `GET /knowledge/entities`, `GET /knowledge/relations`, `GET /knowledge/search`, `POST /knowledge/ingest` e `GET /knowledge/graph`.
+- `/knowledge`, `/knowledge/search`, `/knowledge/graph` e `/knowledge/entities` no Studio.
+
+O provider de embeddings segue uma interface substituivel:
+
+```ts
+interface EmbeddingProvider {
+  embed(text: string): Promise<number[]>;
+}
+```
+
+Comando de validacao:
+
+```bash
+pnpm run knowledge:test
 ```
 
 ## Documentos principais

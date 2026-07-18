@@ -43,6 +43,9 @@ export function defaultNodeDefinitions(): WorkflowNodeDefinition[] {
     { type: "webhook", label: "Webhook", description: "Calls an external webhook." },
     { type: "notification", label: "Notification", description: "Emits a notification event." },
     { type: "scheduler", label: "Scheduler", description: "Creates scheduled jobs." },
-    { type: "plugin", label: "Plugin", description: "Delegates to Plugin SDK hooks." }
+    { type: "plugin", label: "Plugin", description: "Delegates to Plugin SDK hooks." },
+    { type: "knowledge_search", label: "Knowledge Search", description: "Runs hybrid graph and vector retrieval." },
+    { type: "knowledge_update", label: "Knowledge Update", description: "Refreshes graph knowledge from current platform state." },
+    { type: "knowledge_ingest", label: "Knowledge Ingest", description: "Ingests documents, executions, events and platform objects into the graph." }
   ];
 }

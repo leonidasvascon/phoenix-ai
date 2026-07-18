@@ -231,6 +231,17 @@ function createPluginContext(record: PluginRecord, workspaceId = "default-worksp
         await appendPluginLog(record.id, "info", `Event emitted: ${event}`, payload && typeof payload === "object" ? payload as Record<string, unknown> : undefined);
       }
     },
+    knowledgeGraph: {
+      registerEntityType: async (type) => {
+        await appendPluginLog(record.id, "info", `Knowledge entity type registered: ${type}`);
+      },
+      registerRelationType: async (type) => {
+        await appendPluginLog(record.id, "info", `Knowledge relation type registered: ${type}`);
+      },
+      registerReranker: async (id) => {
+        await appendPluginLog(record.id, "info", `Knowledge reranker registered: ${id}`);
+      }
+    },
     metrics: {
       increment: (name) => { void appendPluginLog(record.id, "info", `Metric incremented: ${name}`); }
     },

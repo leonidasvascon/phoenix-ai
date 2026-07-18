@@ -10,7 +10,10 @@ export type WorkflowNodeType =
   | "webhook"
   | "notification"
   | "scheduler"
-  | "plugin";
+  | "plugin"
+  | "knowledge_search"
+  | "knowledge_update"
+  | "knowledge_ingest";
 
 export type WorkflowTriggerType = "manual" | "scheduler" | "webhook";
 

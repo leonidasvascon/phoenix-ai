@@ -37,6 +37,7 @@
                     ,"plugins:test:security":  "node --experimental-strip-types scripts/test-plugins-security.ts"
                     ,"workflows:test":  "node --experimental-strip-types scripts/test-workflows.ts"
                     ,"events:test":  "node --experimental-strip-types scripts/test-event-bus.ts"
+                    ,"knowledge:test":  "node --experimental-strip-types scripts/test-knowledge-graph.ts"
                 },
     "workspaces":  [
                        "apps/*",
@@ -46,6 +47,7 @@
                        "@phoenix-ai/config":  "workspace:*",
                        "@phoenix-ai/event-bus":  "workspace:*",
                        "@phoenix-ai/identity":  "workspace:*",
+                       "@phoenix-ai/knowledge-graph":  "workspace:*",
                        "@phoenix-ai/plugin-sdk":  "workspace:*",
                        "@phoenix-ai/secrets":  "workspace:*",
                        "@phoenix-ai/version":  "workspace:*",

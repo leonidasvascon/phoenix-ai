@@ -18,6 +18,7 @@ import { handleEvaluationRoute } from "./routes/evaluation.ts";
 import { handleFeedbackRoute } from "./routes/feedback.ts";
 import { handleHealthRoute } from "./routes/health.ts";
 import { handleInvitationsRoute } from "./routes/invitations.ts";
+import { handleKnowledgeRoute } from "./routes/knowledge.ts";
 import { handleLearningRoute } from "./routes/learning.ts";
 import { handleObservabilityRoute } from "./routes/observability.ts";
 import { handleOpenApiRoute } from "./routes/openapi.ts";
@@ -71,6 +72,7 @@ const routes: Record<string, ApiHandler> = {
   "/feedback": handleFeedbackRoute,
   "/health": handleHealthRoute,
   "/invitations": handleInvitationsRoute,
+  "/knowledge": handleKnowledgeRoute,
   "/learning": handleLearningRoute,
   "/metrics": handleObservabilityRoute,
   "/observability": handleObservabilityRoute,
@@ -113,6 +115,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/feedback/") ||
     pathname.startsWith("/health/") ||
     pathname.startsWith("/invitations/") ||
+    pathname.startsWith("/knowledge/") ||
     pathname.startsWith("/learning/") ||
     pathname.startsWith("/observability/") ||
     pathname.startsWith("/openapi.") ||

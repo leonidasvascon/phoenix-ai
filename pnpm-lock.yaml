@@ -17,6 +17,9 @@ importers:
       '@phoenix-ai/identity':
         specifier: workspace:*
         version: link:packages/identity
+      '@phoenix-ai/knowledge-graph':
+        specifier: workspace:*
+        version: link:packages/knowledge-graph
       '@phoenix-ai/plugin-sdk':
         specifier: workspace:*
         version: link:packages/plugin-sdk
@@ -53,6 +56,9 @@ importers:
       '@phoenix-ai/identity':
         specifier: workspace:*
         version: link:../../packages/identity
+      '@phoenix-ai/knowledge-graph':
+        specifier: workspace:*
+        version: link:../../packages/knowledge-graph
       '@phoenix-ai/learning-engine':
         specifier: workspace:*
         version: link:../../packages/learning-engine
@@ -166,6 +172,28 @@ importers:
 
   packages/knowledge-engine: {}
 
+  packages/knowledge-graph:
+    dependencies:
+      '@phoenix-ai/event-bus':
+        specifier: workspace:*
+        version: link:../event-bus
+      '@phoenix-ai/knowledge-engine':
+        specifier: workspace:*
+        version: link:../knowledge-engine
+      '@phoenix-ai/observability':
+        specifier: workspace:*
+        version: link:../observability
+      '@phoenix-ai/plugin-sdk':
+        specifier: workspace:*
+        version: link:../plugin-sdk
+    devDependencies:
+      '@types/node':
+        specifier: ^24.0.10
+        version: 24.13.2
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
+
   packages/learning-engine: {}
 
   packages/media-composer: {}
@@ -201,6 +229,9 @@ importers:
 
   packages/runtime:
     dependencies:
+      '@phoenix-ai/knowledge-graph':
+        specifier: workspace:*
+        version: link:../knowledge-graph
       '@phoenix-ai/observability':
         specifier: workspace:*
         version: link:../observability

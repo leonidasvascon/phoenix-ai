@@ -15,6 +15,7 @@ export type WorkflowExecutionContext = {
   assets?: unknown;
   strategy?: unknown;
   learning?: unknown;
+  knowledge?: unknown;
   plugin_results?: unknown;
 };
 

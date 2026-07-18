@@ -89,6 +89,7 @@ function assignContext(type: string, context: WorkflowExecutionContext, output: 
   if (type === "task") context.execution = output;
   if (type === "strategy") context.strategy = output;
   if (type === "learning") context.learning = output;
+  if (type.startsWith("knowledge_")) context.knowledge = output;
   if (type === "evaluation") context.quality = output;
   if (type === "publishing") context.publication = output;
   if (type === "plugin") context.plugin_results = output;
@@ -102,6 +103,7 @@ function serializeContext(context: WorkflowExecutionContext): Record<string, unk
     publication: context.publication,
     strategy: context.strategy,
     learning: context.learning,
+    knowledge: context.knowledge,
     plugin_results: context.plugin_results
   };
 }

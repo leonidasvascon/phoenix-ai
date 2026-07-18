@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { eventBus } from "@phoenix-ai/event-bus";
+import { KnowledgeIngestionService, KnowledgeRetriever } from "@phoenix-ai/knowledge-graph";
 import { executePluginHook } from "@phoenix-ai/plugin-sdk";
 import { WorkflowRunner, validateWorkflow, type Workflow, type WorkflowExecution, type WorkflowInput, type WorkflowNode, type WorkflowNodeHandler } from "@phoenix-ai/workflow-engine";
 import { defaultWorkspaceId } from "@phoenix-ai/workspace";
@@ -135,7 +136,17 @@ function createWorkflowHandlers(): Record<string, WorkflowNodeHandler> {
     }),
     webhook: async (node) => ({ status: "dry_run", url: node.config?.url ?? null }),
     notification: async (node) => ({ status: "sent", channel: node.config?.channel ?? "studio" }),
-    plugin: async (node, context) => executePluginHook("beforeTask", { workflow: context.workflow.id, node, context: context.variables }, context.workspace.id)
+    plugin: async (node, context) => executePluginHook("beforeTask", { workflow: context.workflow.id, node, context: context.variables }, context.workspace.id),
+    knowledge_search: async (node, context) => new KnowledgeRetriever().search({
+      query: String(node.config?.query ?? context.variables.query ?? context.variables.theme ?? "Phoenix AI"),
+      workspace_id: context.workspace.id,
+      limit: Number(node.config?.limit ?? 8)
+    }),
+    knowledge_update: async (_node, context) => new KnowledgeIngestionService().ingest({ workspace_id: context.workspace.id, sources: ["events", "executions", "publications"] }),
+    knowledge_ingest: async (node, context) => new KnowledgeIngestionService().ingest({
+      workspace_id: context.workspace.id,
+      sources: Array.isArray(node.config?.sources) ? node.config.sources.map((item) => String(item)) as never : undefined
+    })
   };
 }
 

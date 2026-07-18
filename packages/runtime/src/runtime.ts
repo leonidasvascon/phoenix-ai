@@ -1,4 +1,5 @@
 import type { RuntimeOptions, RuntimeResponse, Task } from "./types.ts";
+import { KnowledgeRetriever } from "@phoenix-ai/knowledge-graph";
 import { loadBrand } from "./loaders/brand-loader.ts";
 import { loadKnowledge } from "./loaders/knowledge-loader.ts";
 import { loadPipeline } from "./loaders/pipeline-loader.ts";
@@ -74,6 +75,26 @@ export class Runtime {
         "phoenix.brand.id": context.brand.brand.id
       }, () => loadKnowledge(context.task, context.brand!));
       logStep(context, "knowledge_loader", "success", `Knowledge loaded: ${context.knowledge.documents.length} documents.`);
+
+      context.knowledge_graph = await withSpan("phoenix.knowledge_graph.retrieve", {
+        "phoenix.execution.id": context.executionId,
+        "phoenix.brand.id": context.brand.brand.id
+      }, async () => {
+        try {
+          const retriever = new KnowledgeRetriever();
+          return await retriever.search({
+            query: `${context.brand!.brand.name} ${context.task.theme} ${context.task.objective} ${context.task.format}`,
+            limit: 6
+          });
+        } catch (error) {
+          return {
+            query: context.task.theme,
+            results: [],
+            error: error instanceof Error ? error.message : "Knowledge graph unavailable."
+          };
+        }
+      });
+      logStep(context, "knowledge_graph", "success", "Hybrid RAG context loaded.");
 
       const memoryStore = new FileMemoryStore();
       context.memory = await withSpan("phoenix.memory.load", {

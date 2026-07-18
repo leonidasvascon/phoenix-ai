@@ -29,6 +29,7 @@ export function Navigation() {
       <Link href="/workflows">Workflows</Link>
       <Link href="/events">Eventos</Link>
       <Link href="/webhooks">Webhooks</Link>
+      <Link href="/knowledge">Knowledge</Link>
       <Link href="/templates">Templates</Link>
       <Link href="/workspaces">Workspaces</Link>
       <Link href="/account">Conta</Link>
