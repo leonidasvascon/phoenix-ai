@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { eventBus } from "@phoenix-ai/event-bus";
 import { PublishingService, type PublicationRequest } from "@phoenix-ai/publishing-engine";
 import { getExecutionPackage } from "./runtime-service.ts";
 
@@ -41,11 +42,33 @@ export async function createPublication(input: unknown) {
     allow_fallback_assets: payload.allow_fallback_assets ?? process.env.PHOENIX_ALLOW_FALLBACK_ASSETS === "true"
   };
 
-  return publishingService.createDraft(request);
+  const publication = await publishingService.createDraft(request);
+  await eventBus.publish({
+    type: "publication.started",
+    origin: "publication-service",
+    payload: { publication_id: publication.id, execution_id: publication.execution_id, platform: publication.platform, status: publication.status }
+  });
+
+  return publication;
 }
 
-export function publishPublication(id: string) {
-  return publishingService.publish(id);
+export async function publishPublication(id: string) {
+  try {
+    const publication = await publishingService.publish(id);
+    await eventBus.publish({
+      type: publication.status === "published" ? "publication.completed" : "publication.failed",
+      origin: "publication-service",
+      payload: { publication_id: publication.id, execution_id: publication.execution_id, platform: publication.platform, status: publication.status, error: publication.error }
+    });
+    return publication;
+  } catch (error) {
+    await eventBus.publish({
+      type: "publication.failed",
+      origin: "publication-service",
+      payload: { publication_id: id, error: error instanceof Error ? error.message : "Publication failed." }
+    });
+    throw error;
+  }
 }
 
 export function cancelPublication(id: string) {

@@ -11,6 +11,8 @@ import { handleAnalyticsRoute } from "./routes/analytics.ts";
 import { handleAuthRoute } from "./routes/auth.ts";
 import { handleBatchTemplatesRoute } from "./routes/batch-templates.ts";
 import { handleBrandsRoute } from "./routes/brands.ts";
+import { handleDlqRoute } from "./routes/dlq.ts";
+import { handleEventsRoute } from "./routes/events.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
 import { handleEvaluationRoute } from "./routes/evaluation.ts";
 import { handleFeedbackRoute } from "./routes/feedback.ts";
@@ -35,6 +37,7 @@ import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
 import { handleUsersRoute } from "./routes/users.ts";
 import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
 import { handleVersionRoute } from "./routes/version.ts";
+import { handleWebhooksRoute } from "./routes/webhooks.ts";
 import { handleWorkflowsRoute } from "./routes/workflows.ts";
 import { handleWorkspacesRoute } from "./routes/workspaces.ts";
 import { enforceRateLimit } from "./rate-limit.ts";
@@ -74,6 +77,8 @@ const routes: Record<string, ApiHandler> = {
   "/openapi.json": handleOpenApiRoute,
   "/openapi.yaml": handleOpenApiRoute,
   "/docs": handleOpenApiRoute,
+  "/dlq": handleDlqRoute,
+  "/events": handleEventsRoute,
   "/prompt-optimizations": handlePromptOptimizationsRoute,
   "/plugins": handlePluginsRoute,
   "/publications": handlePublicationsRoute,
@@ -89,6 +94,7 @@ const routes: Record<string, ApiHandler> = {
   "/task-templates": handleTaskTemplatesRoute,
   "/video-jobs": handleVideoJobsRoute,
   "/version": handleVersionRoute,
+  "/webhooks": handleWebhooksRoute,
   "/workflows": handleWorkflowsRoute,
   "/users": handleUsersRoute,
   "/workspaces": handleWorkspacesRoute
@@ -100,6 +106,8 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/api-keys/") ||
     pathname.startsWith("/tasks/") ||
     pathname.startsWith("/batch-templates/") ||
+    pathname.startsWith("/dlq/") ||
+    pathname.startsWith("/events/") ||
     pathname.startsWith("/executions/") ||
     pathname.startsWith("/evaluation/") ||
     pathname.startsWith("/feedback/") ||
@@ -120,6 +128,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/task-templates/") ||
     pathname.startsWith("/video-jobs/") ||
     pathname.startsWith("/version/") ||
+    pathname.startsWith("/webhooks/") ||
     pathname.startsWith("/workflows/") ||
     pathname.startsWith("/users/") ||
     pathname.startsWith("/workspaces/")

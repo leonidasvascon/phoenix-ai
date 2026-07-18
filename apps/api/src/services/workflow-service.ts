@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { eventBus } from "@phoenix-ai/event-bus";
 import { executePluginHook } from "@phoenix-ai/plugin-sdk";
 import { WorkflowRunner, validateWorkflow, type Workflow, type WorkflowExecution, type WorkflowInput, type WorkflowNode, type WorkflowNodeHandler } from "@phoenix-ai/workflow-engine";
 import { defaultWorkspaceId } from "@phoenix-ai/workspace";
@@ -69,9 +70,32 @@ export async function deleteWorkflow(workflowId: string): Promise<boolean> {
 export async function runWorkflow(workflowId: string, input: unknown = {}): Promise<WorkflowExecution> {
   const workflow = await getWorkflow(workflowId);
   if (!workflow) throw new Error("Workflow not found.");
+  await eventBus.publish({
+    type: "workflow.started",
+    origin: "workflow-service",
+    workspace_id: workflow.metadata.workspace_id,
+    payload: { workflow_id: workflow.id, name: workflow.name }
+  });
   const runner = new WorkflowRunner(createWorkflowHandlers());
-  const execution = await runner.run(workflow, normalizeRunInput(input));
-  await writeWorkflowExecution(execution);
+  let execution: WorkflowExecution;
+  try {
+    execution = await runner.run(workflow, normalizeRunInput(input));
+    await writeWorkflowExecution(execution);
+    await eventBus.publish({
+      type: execution.status === "success" ? "workflow.completed" : "workflow.failed",
+      origin: "workflow-service",
+      workspace_id: workflow.metadata.workspace_id,
+      payload: { workflow_id: workflow.id, execution_id: execution.id, status: execution.status, error: execution.error }
+    });
+  } catch (error) {
+    await eventBus.publish({
+      type: "workflow.failed",
+      origin: "workflow-service",
+      workspace_id: workflow.metadata.workspace_id,
+      payload: { workflow_id: workflow.id, error: error instanceof Error ? error.message : "Workflow execution failed." }
+    });
+    throw error;
+  }
 
   return execution;
 }

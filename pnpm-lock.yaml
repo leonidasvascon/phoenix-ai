@@ -11,6 +11,9 @@ importers:
       '@phoenix-ai/config':
         specifier: workspace:*
         version: link:packages/config
+      '@phoenix-ai/event-bus':
+        specifier: workspace:*
+        version: link:packages/event-bus
       '@phoenix-ai/identity':
         specifier: workspace:*
         version: link:packages/identity
@@ -41,6 +44,9 @@ importers:
       '@phoenix-ai/evaluation-engine':
         specifier: workspace:*
         version: link:../../packages/evaluation-engine
+      '@phoenix-ai/event-bus':
+        specifier: workspace:*
+        version: link:../../packages/event-bus
       '@phoenix-ai/feedback-engine':
         specifier: workspace:*
         version: link:../../packages/feedback-engine
@@ -140,6 +146,12 @@ importers:
   packages/config: {}
 
   packages/evaluation-engine: {}
+
+  packages/event-bus:
+    dependencies:
+      '@phoenix-ai/observability':
+        specifier: workspace:*
+        version: link:../observability
 
   packages/feedback-engine: {}
 

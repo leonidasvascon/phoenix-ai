@@ -1,6 +1,7 @@
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { AssetService } from "@phoenix-ai/asset-engine";
+import { eventBus } from "@phoenix-ai/event-bus";
 import { composeMediaPackage } from "@phoenix-ai/media-composer";
 import { executePluginHook } from "@phoenix-ai/plugin-sdk";
 import { aggregateMetrics, loadBrand, parseSimpleYaml, readExecutionFiles, Runtime, type Brand, type RuntimeResponse, type Task } from "@phoenix-ai/runtime";
@@ -79,61 +80,89 @@ function normalizeTask(input: TaskRequest): Task {
 
 export async function executeTask(input: TaskRequest) {
   const task = normalizeTask(input);
-  await executePluginHook("beforeTask", { task }, defaultWorkspaceId);
-  const settings = await getRuntimeSettings();
-  const [learningReport, promptOptimizations] = await Promise.all([
-    getLearningReport(),
-    listActivePromptOptimizations(task.brand)
-  ]);
-  const runtimeResponse = await Runtime.execute(task, undefined, {
-    provider: settings.phoenix_provider,
-    quality: {
-      maxAttempts: settings.max_attempts,
-      minScore: settings.quality_min_score
-    },
-    learningRecommendations: learningReport.recommendations,
-    promptOptimizations
+  await eventBus.publish({
+    type: "task.created",
+    origin: "runtime-service",
+    workspace_id: defaultWorkspaceId,
+    payload: { task }
   });
-  const mediaPackage = await withSpan("phoenix.media.compose", {
-    "phoenix.execution.id": runtimeResponse.execution_id,
-    "phoenix.brand.id": task.brand,
-    "phoenix.task.format": task.format,
-    "phoenix.task.platform": task.platform
-  }, () => composeMediaPackage(runtimeResponse, {
-    outputRoot: settings.output_root
-  }));
-  const assetService = new AssetService();
-  const generatedAssets = await assetService.generate({
-    executionId: runtimeResponse.execution_id,
-    outputDirectory: mediaPackage.directory,
-    thumbnailPrompt: getOutputString(runtimeResponse.output, "thumbnail_prompt"),
-    videoPrompt: getOutputString(runtimeResponse.output, "video_prompt"),
-    narrationText: buildNarrationText(runtimeResponse.output)
-  });
+  try {
+    await executePluginHook("beforeTask", { task }, defaultWorkspaceId);
+    const settings = await getRuntimeSettings();
+    const [learningReport, promptOptimizations] = await Promise.all([
+      getLearningReport(),
+      listActivePromptOptimizations(task.brand)
+    ]);
+    const runtimeResponse = await Runtime.execute(task, undefined, {
+      provider: settings.phoenix_provider,
+      quality: {
+        maxAttempts: settings.max_attempts,
+        minScore: settings.quality_min_score
+      },
+      learningRecommendations: learningReport.recommendations,
+      promptOptimizations
+    });
+    const mediaPackage = await withSpan("phoenix.media.compose", {
+      "phoenix.execution.id": runtimeResponse.execution_id,
+      "phoenix.brand.id": task.brand,
+      "phoenix.task.format": task.format,
+      "phoenix.task.platform": task.platform
+    }, () => composeMediaPackage(runtimeResponse, {
+      outputRoot: settings.output_root
+    }));
+    const assetService = new AssetService();
+    const generatedAssets = await assetService.generate({
+      executionId: runtimeResponse.execution_id,
+      outputDirectory: mediaPackage.directory,
+      thumbnailPrompt: getOutputString(runtimeResponse.output, "thumbnail_prompt"),
+      videoPrompt: getOutputString(runtimeResponse.output, "video_prompt"),
+      narrationText: buildNarrationText(runtimeResponse.output)
+    });
 
-  const result = {
-    ...runtimeResponse,
-    media_package: {
-      directory: mediaPackage.directory,
-      files: [
-        ...Object.keys(mediaPackage.files),
-        "assets/thumbnail.png",
-        "assets/narration.mp3",
-        "assets/video.mp4",
-        "assets/assets.json"
-      ],
-      assets: {
-        directory: generatedAssets.directory,
-        image: generatedAssets.image.path,
-        voice: generatedAssets.voice.path,
-        video: generatedAssets.video.path
+    const result = {
+      ...runtimeResponse,
+      media_package: {
+        directory: mediaPackage.directory,
+        files: [
+          ...Object.keys(mediaPackage.files),
+          "assets/thumbnail.png",
+          "assets/narration.mp3",
+          "assets/video.mp4",
+          "assets/assets.json"
+        ],
+        assets: {
+          directory: generatedAssets.directory,
+          image: generatedAssets.image.path,
+          voice: generatedAssets.voice.path,
+          video: generatedAssets.video.path
+        }
       }
-    }
-  };
+    };
 
-  await executePluginHook("afterTask", { task, result }, defaultWorkspaceId);
+    await executePluginHook("afterTask", { task, result }, defaultWorkspaceId);
+    await eventBus.publish({
+      type: "task.completed",
+      origin: "runtime-service",
+      workspace_id: defaultWorkspaceId,
+      payload: {
+        execution_id: result.execution_id,
+        brand: task.brand,
+        theme: task.theme,
+        format: task.format,
+        score: result.score
+      }
+    });
 
-  return result;
+    return result;
+  } catch (error) {
+    await eventBus.publish({
+      type: "task.failed",
+      origin: "runtime-service",
+      workspace_id: defaultWorkspaceId,
+      payload: { task, error: error instanceof Error ? error.message : "Task execution failed." }
+    });
+    throw error;
+  }
 }
 
 function getOutputString(output: Record<string, unknown>, key: string): string {

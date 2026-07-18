@@ -11,6 +11,7 @@
     "@phoenix-ai/asset-engine": "workspace:*",
     "@phoenix-ai/config": "workspace:*",
     "@phoenix-ai/evaluation-engine": "workspace:*",
+    "@phoenix-ai/event-bus": "workspace:*",
     "@phoenix-ai/feedback-engine": "workspace:*",
     "@phoenix-ai/identity": "workspace:*",
     "@phoenix-ai/learning-engine": "workspace:*",

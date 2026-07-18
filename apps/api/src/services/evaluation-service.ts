@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { runBenchmarks, runRegression, type BenchmarkResult, type RegressionResult } from "@phoenix-ai/evaluation-engine";
+import { eventBus } from "@phoenix-ai/event-bus";
 import { readExecutionFiles } from "@phoenix-ai/runtime";
 
 export type EvaluationReport = {
@@ -56,6 +57,11 @@ export async function runEvaluation(): Promise<EvaluationReport> {
 
   await mkdir(resolve(process.cwd(), ".storage", "evaluation"), { recursive: true });
   await writeFile(evaluationPath, JSON.stringify(report, null, 2), "utf8");
+  await eventBus.publish({
+    type: "evaluation.completed",
+    origin: "evaluation-service",
+    payload: { report_id: report.id, summary: report.summary, dimensions: report.dimensions }
+  });
 
   return report;
 }

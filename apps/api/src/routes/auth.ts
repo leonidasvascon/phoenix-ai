@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { eventBus } from "@phoenix-ai/event-bus";
 import {
   changePassword,
   completeOidcLogin,
@@ -23,6 +24,11 @@ export async function handleAuthRoute(request: IncomingMessage, response: Server
     const result = await loginLocalUser(await readJsonBody(request), {
       ip: request.socket.remoteAddress,
       userAgent: request.headers["user-agent"]
+    });
+    await eventBus.publish({
+      type: "identity.login",
+      origin: "auth-route",
+      payload: { user_id: result.user.id, email: result.user.email }
     });
     sendJson(response, 200, { user: result.user, session: sanitizeSession(result.session) }, { "Set-Cookie": result.setCookie });
     return;
@@ -111,6 +117,11 @@ export async function handleAuthRoute(request: IncomingMessage, response: Server
     const result = await completeOidcLogin(provider, url.searchParams, {
       ip: request.socket.remoteAddress,
       userAgent: request.headers["user-agent"]
+    });
+    await eventBus.publish({
+      type: "identity.login",
+      origin: "auth-route",
+      payload: { user_id: result.user.id, provider }
     });
     sendJson(response, 200, { user: result.user, session: sanitizeSession(result.session) }, { "Set-Cookie": result.setCookie });
     return;

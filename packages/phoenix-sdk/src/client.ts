@@ -15,6 +15,8 @@ import { AuthResource } from "./resources/auth.ts";
 import { SecretsResource, ApiKeysResource } from "./resources/secrets.ts";
 import { PluginsResource } from "./resources/plugins.ts";
 import { WorkflowsResource } from "./resources/workflows.ts";
+import { EventsResource } from "./resources/events.ts";
+import { WebhooksResource } from "./resources/webhooks.ts";
 
 export class PhoenixClient {
   readonly tasks = new TasksResource(this);
@@ -33,6 +35,8 @@ export class PhoenixClient {
   readonly apiKeys = new ApiKeysResource(this);
   readonly plugins = new PluginsResource(this);
   readonly workflows = new WorkflowsResource(this);
+  readonly events = new EventsResource(this);
+  readonly webhooks = new WebhooksResource(this);
   private readonly baseUrl: string;
   private readonly apiKey?: string;
   private readonly bearerToken?: string;

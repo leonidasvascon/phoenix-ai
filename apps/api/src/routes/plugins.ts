@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { eventBus } from "@phoenix-ai/event-bus";
 import { sendJson } from "../http.ts";
 import { disablePlugin, enablePlugin, getPlugin, installPlugin, listPlugins, uninstallPlugin } from "@phoenix-ai/plugin-sdk";
 
@@ -28,12 +29,16 @@ export async function handlePluginsRoute(request: IncomingMessage, response: Ser
     }
 
     if (request.method === "POST" && segments[1] === "enable") {
-      sendJson(response, 200, await enablePlugin(await readJsonBody(request)));
+      const plugin = await enablePlugin(await readJsonBody(request));
+      await eventBus.publish({ type: "plugin.enabled", origin: "plugins-route", payload: { plugin_id: plugin.id } });
+      sendJson(response, 200, plugin);
       return;
     }
 
     if (request.method === "POST" && segments[1] === "disable") {
-      sendJson(response, 200, await disablePlugin(await readJsonBody(request)));
+      const plugin = await disablePlugin(await readJsonBody(request));
+      await eventBus.publish({ type: "plugin.disabled", origin: "plugins-route", payload: { plugin_id: plugin.id } });
+      sendJson(response, 200, plugin);
       return;
     }
 

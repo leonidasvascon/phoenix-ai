@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { eventBus } from "@phoenix-ai/event-bus";
 import { createApiKey, createSecret, deleteApiKey, getSecret, getSecretsStatus, listApiKeys, listSecretProviderStatuses, listSecrets, revokeApiKey, revokeSecret, rotateApiKey, rotateSecret, validateSecret } from "@phoenix-ai/secrets";
 import { createTraceId, getTraceId } from "@phoenix-ai/observability";
 import { resolveWorkspaceContext } from "@phoenix-ai/workspace";
@@ -48,7 +49,14 @@ export async function handleSecretsRoute(request: IncomingMessage, response: Ser
   }
 
   if (parts[2] === "rotate" && request.method === "POST") {
-    sendJson(response, 200, await rotateSecret(secretId, await readJsonBody(request), { ...context, action: "rotate" }));
+    const secret = await rotateSecret(secretId, await readJsonBody(request), { ...context, action: "rotate" });
+    await eventBus.publish({
+      type: "secret.rotated",
+      origin: "secrets-route",
+      workspace_id: context.workspaceId,
+      payload: { secret_id: secret.id, namespace: secret.namespace, provider: secret.provider }
+    });
+    sendJson(response, 200, secret);
     return;
   }
 

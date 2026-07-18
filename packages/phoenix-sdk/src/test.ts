@@ -18,6 +18,12 @@ const mockFetch: typeof fetch = async (url, init) => {
   if (path === "/workflows") {
     return new Response(JSON.stringify([{ id: "workflow-test", name: "Workflow Test", trigger: { type: "manual" }, nodes: [], edges: [], variables: {}, metadata: { workspace_id: "default-workspace", created_at: "", updated_at: "", version: "1.0" } }]), { status: 200 });
   }
+  if (path === "/events") {
+    return new Response(JSON.stringify([{ event_id: "event-test", type: "workflow.completed", workspace_id: "default-workspace", timestamp: "", origin: "sdk-test", payload: {} }]), { status: 200 });
+  }
+  if (path === "/webhooks") {
+    return new Response(JSON.stringify([{ id: "webhook-test", url: "https://example.com/webhook", events: ["workflow.completed"], status: "active", retries: 5, timeout_ms: 10000, created_at: "", updated_at: "", has_secret: true }]), { status: 200 });
+  }
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
 
@@ -28,6 +34,10 @@ const plugins = await phoenix.plugins.list();
 if (plugins[0]?.id !== "hello-world") throw new Error("SDK plugins resource failed.");
 const workflows = await phoenix.workflows.list();
 if (workflows[0]?.id !== "workflow-test") throw new Error("SDK workflows resource failed.");
+const events = await phoenix.events.list();
+if (events[0]?.event_id !== "event-test") throw new Error("SDK events resource failed.");
+const webhooks = await phoenix.webhooks.list();
+if (webhooks[0]?.id !== "webhook-test") throw new Error("SDK webhooks resource failed.");
 
 await expectError(new PhoenixClient({ baseUrl: "http://127.0.0.1:4000", fetch: mockFetch }).tasks.create({ brand: "encanto-intenso", theme: "saudade", objective: "viralizar", platform: "instagram", format: "reel" }), 401, "trace-401");
 await expectError(phoenix.request("/forbidden"), 403, "trace-403");
