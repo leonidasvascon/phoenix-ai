@@ -35,6 +35,7 @@ import { handleTaskTemplatesRoute } from "./routes/task-templates.ts";
 import { handleUsersRoute } from "./routes/users.ts";
 import { handleVideoJobsRoute } from "./routes/video-jobs.ts";
 import { handleVersionRoute } from "./routes/version.ts";
+import { handleWorkflowsRoute } from "./routes/workflows.ts";
 import { handleWorkspacesRoute } from "./routes/workspaces.ts";
 import { enforceRateLimit } from "./rate-limit.ts";
 import { startSchedulerWorker } from "./workers/scheduler-worker.ts";
@@ -88,6 +89,7 @@ const routes: Record<string, ApiHandler> = {
   "/task-templates": handleTaskTemplatesRoute,
   "/video-jobs": handleVideoJobsRoute,
   "/version": handleVersionRoute,
+  "/workflows": handleWorkflowsRoute,
   "/users": handleUsersRoute,
   "/workspaces": handleWorkspacesRoute
 };
@@ -118,6 +120,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/task-templates/") ||
     pathname.startsWith("/video-jobs/") ||
     pathname.startsWith("/version/") ||
+    pathname.startsWith("/workflows/") ||
     pathname.startsWith("/users/") ||
     pathname.startsWith("/workspaces/")
   ) {

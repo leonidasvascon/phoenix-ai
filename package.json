@@ -35,6 +35,7 @@
                     ,"restore:secrets":  "node --experimental-strip-types scripts/restore-secrets.ts"
                     ,"plugins:test":  "node --experimental-strip-types scripts/test-plugins.ts"
                     ,"plugins:test:security":  "node --experimental-strip-types scripts/test-plugins-security.ts"
+                    ,"workflows:test":  "node --experimental-strip-types scripts/test-workflows.ts"
                 },
     "workspaces":  [
                        "apps/*",
@@ -46,6 +47,7 @@
                        "@phoenix-ai/plugin-sdk":  "workspace:*",
                        "@phoenix-ai/secrets":  "workspace:*",
                        "@phoenix-ai/version":  "workspace:*",
+                       "@phoenix-ai/workflow-engine":  "workspace:*",
                        "@phoenix-ai/workspace":  "workspace:*"
                    }
 }

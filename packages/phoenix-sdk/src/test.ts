@@ -15,6 +15,9 @@ const mockFetch: typeof fetch = async (url, init) => {
   if (path === "/plugins") {
     return new Response(JSON.stringify([{ id: "hello-world", status: "enabled", manifest: { id: "hello-world", name: "Hello World", version: "1.0.0", engine: "^1.0.0", author: "Phoenix AI", capabilities: ["tool"] }, path: "plugins/hello-world", installedAt: "2026-07-17T00:00:00.000Z", logs: [] }]), { status: 200 });
   }
+  if (path === "/workflows") {
+    return new Response(JSON.stringify([{ id: "workflow-test", name: "Workflow Test", trigger: { type: "manual" }, nodes: [], edges: [], variables: {}, metadata: { workspace_id: "default-workspace", created_at: "", updated_at: "", version: "1.0" } }]), { status: 200 });
+  }
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
 
@@ -23,6 +26,8 @@ const result = await phoenix.tasks.create({ brand: "encanto-intenso", theme: "sa
 if (result.execution.trace_id !== "trace-ok") throw new Error("SDK did not preserve trace_id.");
 const plugins = await phoenix.plugins.list();
 if (plugins[0]?.id !== "hello-world") throw new Error("SDK plugins resource failed.");
+const workflows = await phoenix.workflows.list();
+if (workflows[0]?.id !== "workflow-test") throw new Error("SDK workflows resource failed.");
 
 await expectError(new PhoenixClient({ baseUrl: "http://127.0.0.1:4000", fetch: mockFetch }).tasks.create({ brand: "encanto-intenso", theme: "saudade", objective: "viralizar", platform: "instagram", format: "reel" }), 401, "trace-401");
 await expectError(phoenix.request("/forbidden"), 403, "trace-403");

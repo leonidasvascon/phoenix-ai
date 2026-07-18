@@ -102,6 +102,26 @@ export type PhoenixPluginRecord = {
   error?: string;
   logs: Array<{ timestamp: string; level: "info" | "warn" | "error"; message: string; metadata?: Record<string, unknown> }>;
 };
+export type PhoenixWorkflow = {
+  id: string;
+  name: string;
+  description?: string;
+  trigger: { type: "manual" | "scheduler" | "webhook"; config?: Record<string, unknown> };
+  nodes: Array<{ id: string; type: string; name: string; config?: Record<string, unknown>; position?: { x: number; y: number } }>;
+  edges: Array<{ id: string; from: string; to: string; condition?: string }>;
+  variables: Record<string, unknown>;
+  metadata: { workspace_id: string; created_at: string; updated_at: string; version: string };
+};
+export type PhoenixWorkflowExecution = {
+  id: string;
+  workflow_id: string;
+  status: "running" | "success" | "failed";
+  started_at: string;
+  completed_at: string;
+  steps: Array<{ node_id: string; node_type: string; status: "success" | "skipped" | "failed"; error?: string; output?: unknown }>;
+  context: Record<string, unknown>;
+  error?: string;
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };

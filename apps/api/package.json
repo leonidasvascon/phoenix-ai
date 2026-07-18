@@ -23,6 +23,7 @@
     "@phoenix-ai/runtime": "workspace:*",
     "@phoenix-ai/secrets": "workspace:*",
     "@phoenix-ai/version": "workspace:*",
+    "@phoenix-ai/workflow-engine": "workspace:*",
     "@phoenix-ai/workspace": "workspace:*"
   },
   "devDependencies": {

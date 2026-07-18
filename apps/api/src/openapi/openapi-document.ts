@@ -38,6 +38,7 @@ export const openApiDocument = {
     { name: "Identity" },
     { name: "Secrets" },
     { name: "Plugins" },
+    { name: "Workflows" },
     { name: "Workspaces" },
     { name: "Publications" },
     { name: "Providers" },

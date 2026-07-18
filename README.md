@@ -147,7 +147,37 @@ pnpm run plugins:test
 pnpm run plugins:test:security
 ```
 
-Os testes acima usam o mesmo `.storage/plugins` local e devem ser executados em sequencia. Para paralelizacao futura, cada suite deve apontar para um storage temporario isolado.
+Os testes acima usam o mesmo `.storage/plugins` local e devem ser executados em sequencia. O mesmo vale para `workflows:test`, pois o Workflow Engine aciona hooks do Plugin SDK. Para paralelizacao futura, cada suite deve apontar para um storage temporario isolado.
+
+## Workflow Builder
+
+Sprint 55 adiciona a primeira versao do Workflow Engine e do Workflow Builder.
+
+- `packages/workflow-engine/`: contratos, validador, node registry e runner.
+- `.storage/workflows/`: persistencia local de workflows e execucoes.
+- `GET /workflows`, `POST /workflows`, `PATCH /workflows/:id`, `DELETE /workflows/:id` e `POST /workflows/:id/run`.
+- `/workflows` no Studio para criar, visualizar e executar fluxos.
+
+Nos iniciais:
+
+- Trigger
+- Task
+- Strategy
+- Learning
+- Evaluation
+- Condition
+- Delay
+- Publishing
+- Webhook
+- Notification
+- Scheduler
+- Plugin
+
+Comando de validacao:
+
+```bash
+pnpm run workflows:test
+```
 
 ## Documentos principais
 
