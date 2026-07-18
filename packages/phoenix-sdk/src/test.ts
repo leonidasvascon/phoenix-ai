@@ -36,6 +36,9 @@ const mockFetch: typeof fetch = async (url, init) => {
   if (path === "/models/test") {
     return new Response(JSON.stringify({ status: "success", provider_id: "mock", model: "mock-model", fallback: true, selection_reason: "test", usage: { input: 0, output: 0, total: 0 }, cost: { currency: "USD", estimated: 0 }, output: { status: "ok" } }), { status: 200 });
   }
+  if (path === "/cost") {
+    return new Response(JSON.stringify({ total_cost: 0, total_tokens: 0, requests: 0, cache_hits: 0, cache_savings: 0, by_provider: {}, by_model: {}, budgets: [], quotas: [], alerts: [] }), { status: 200 });
+  }
   return new Response(JSON.stringify({ ok: true }), { status: 200 });
 };
 
@@ -58,6 +61,8 @@ const models = await phoenix.models.list();
 if (models.active_policy.default_policy !== "fallback") throw new Error("SDK models resource failed.");
 const modelTest = await phoenix.models.test();
 if (modelTest.provider_id !== "mock") throw new Error("SDK model test resource failed.");
+const cost = await phoenix.cost.report();
+if (cost.total_cost !== 0) throw new Error("SDK cost resource failed.");
 
 await expectError(new PhoenixClient({ baseUrl: "http://127.0.0.1:4000", fetch: mockFetch }).tasks.create({ brand: "encanto-intenso", theme: "saudade", objective: "viralizar", platform: "instagram", format: "reel" }), 401, "trace-401");
 await expectError(phoenix.request("/forbidden"), 403, "trace-403");

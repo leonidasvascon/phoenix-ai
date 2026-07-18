@@ -294,6 +294,81 @@ export type PhoenixModelTestResponse = {
   cost: { currency: "USD"; estimated: number };
   output: Record<string, unknown>;
 };
+export type PhoenixCostUsageRecord = {
+  id: string;
+  timestamp: string;
+  workspace_id: string;
+  provider: string;
+  model: string;
+  kind: "text" | "embedding" | "image" | "audio" | "video";
+  input_tokens: number;
+  output_tokens: number;
+  total_tokens: number;
+  estimated_cost: number;
+  consolidated_cost: number;
+  cache_hit: boolean;
+  policy?: string;
+};
+export type PhoenixPricingEntry = {
+  provider: string;
+  model: string;
+  kind: string;
+  effective_from: string;
+  currency: "USD";
+  input_per_1k: number;
+  output_per_1k: number;
+  embedding_per_1k: number;
+  image_unit: number;
+  audio_per_minute: number;
+  video_per_second: number;
+};
+export type PhoenixCostBudget = {
+  id: string;
+  scope: "workspace" | "user" | "api_key" | "workflow" | "plugin";
+  scope_id: string;
+  workspace_id: string;
+  period: "daily" | "monthly";
+  amount: number;
+  currency: "USD";
+  warning_threshold: number;
+  state: "normal" | "warning" | "exceeded" | "blocked";
+  spent: number;
+  remaining: number;
+  updated_at: string;
+};
+export type PhoenixCostQuota = {
+  id: string;
+  workspace_id: string;
+  requests_per_minute: number;
+  tokens_per_hour: number;
+  daily_cost: number;
+  monthly_cost: number;
+  updated_at: string;
+};
+export type PhoenixSemanticCacheEntry = {
+  id: string;
+  workspace_id: string;
+  provider: string;
+  model: string;
+  kind: string;
+  response_ref: string;
+  hits: number;
+  estimated_savings: number;
+  created_at: string;
+  updated_at: string;
+};
+export type PhoenixCostReport = {
+  total_cost: number;
+  total_tokens: number;
+  requests: number;
+  cache_hits: number;
+  cache_savings: number;
+  by_provider: Record<string, number>;
+  by_model: Record<string, number>;
+  budgets: PhoenixCostBudget[];
+  quotas: PhoenixCostQuota[];
+  alerts: Array<{ level: "info" | "warning" | "critical"; message: string; scope_id?: string }>;
+};
 export type PhoenixErrorPayload = {
   error: { code: string; message: string; status: number; trace_id?: string };
 };

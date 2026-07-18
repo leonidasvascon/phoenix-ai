@@ -17,6 +17,7 @@ export function Navigation() {
       <Link href="/optimizations">Otimizacoes</Link>
       <Link href="/providers">Providers</Link>
       <Link href="/models">Modelos</Link>
+      <Link href="/cost">Custos</Link>
       <Link href="/publications">Publicacoes</Link>
       <Link href="/operations">Operacoes</Link>
       <Link href="/developers">Desenvolvedores</Link>

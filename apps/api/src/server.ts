@@ -11,6 +11,7 @@ import { handleAnalyticsRoute } from "./routes/analytics.ts";
 import { handleAuthRoute } from "./routes/auth.ts";
 import { handleBatchTemplatesRoute } from "./routes/batch-templates.ts";
 import { handleBrandsRoute } from "./routes/brands.ts";
+import { handleCostRoute } from "./routes/cost.ts";
 import { handleDlqRoute } from "./routes/dlq.ts";
 import { handleEventsRoute } from "./routes/events.ts";
 import { handleExecutionsRoute } from "./routes/executions.ts";
@@ -78,6 +79,7 @@ const routes: Record<string, ApiHandler> = {
   "/metrics": handleObservabilityRoute,
   "/models": handleModelsRoute,
   "/observability": handleObservabilityRoute,
+  "/cost": handleCostRoute,
   "/openapi.json": handleOpenApiRoute,
   "/openapi.yaml": handleOpenApiRoute,
   "/docs": handleOpenApiRoute,
@@ -128,6 +130,7 @@ function resolveRoute(pathname: string): ApiHandler | undefined {
     pathname.startsWith("/quality/") ||
     pathname.startsWith("/providers/") ||
     pathname.startsWith("/brands/") ||
+    pathname.startsWith("/cost/") ||
     pathname.startsWith("/scheduled-jobs/") ||
     pathname.startsWith("/secrets/") ||
     pathname.startsWith("/strategy/") ||

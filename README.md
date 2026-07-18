@@ -260,6 +260,65 @@ Studio:
 - `/models/policies`: edicao simples da politica padrao;
 - `/models/health`: disponibilidade, configuracao, latencia e taxa de erro.
 
+## Cost & Token Intelligence
+
+Sprint 59 adiciona governanca financeira e operacional para uso de modelos.
+
+Pacote:
+
+- `packages/cost-intelligence/`
+
+Funcionalidades:
+
+- medicao de tokens por provider, modelo e tipo de uso;
+- calculo de custo estimado e consolidado;
+- registry de precos versionavel em `.storage/cost/pricing/pricing.json`;
+- budgets por workspace, usuario, API key, workflow e plugin;
+- quotas para requests por minuto, tokens por hora, custo diario e custo mensal;
+- cache semantico com limiar configuravel;
+- engine de otimizacao para rascunho barato, modelo premium, modelo local e reducao de contexto;
+- reporting consolidado com alertas.
+
+Persistencia:
+
+- `.storage/cost/usage/`
+- `.storage/cost/pricing/`
+- `.storage/cost/budgets/`
+- `.storage/cost/quotas/`
+- `.storage/cost/cache/`
+
+Variaveis:
+
+```env
+PHOENIX_SEMANTIC_CACHE_THRESHOLD=0.92
+```
+
+Endpoints:
+
+- `GET /cost`
+- `GET /cost/usage`
+- `GET /cost/budgets`
+- `PATCH /cost/budgets`
+- `GET /cost/quotas`
+- `PATCH /cost/quotas`
+- `GET /cost/pricing`
+- `GET /cost/cache`
+- `POST /cost/cache/clear`
+
+Studio:
+
+- `/cost`: resumo financeiro e alertas;
+- `/cost/usage`: consumo por request;
+- `/cost/budgets`: orcamentos;
+- `/cost/quotas`: limites operacionais;
+- `/cost/cache`: cache semantico e economia estimada.
+
+Comando:
+
+```bash
+pnpm run cost:test
+```
+
 ## Documentos principais
 
 - `docs/00-Vision.md`

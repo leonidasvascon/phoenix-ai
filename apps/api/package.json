@@ -10,6 +10,7 @@
   "dependencies": {
     "@phoenix-ai/asset-engine": "workspace:*",
     "@phoenix-ai/config": "workspace:*",
+    "@phoenix-ai/cost-intelligence": "workspace:*",
     "@phoenix-ai/evaluation-engine": "workspace:*",
     "@phoenix-ai/event-bus": "workspace:*",
     "@phoenix-ai/feedback-engine": "workspace:*",

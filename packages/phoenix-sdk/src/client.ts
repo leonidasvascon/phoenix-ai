@@ -19,6 +19,7 @@ import { EventsResource } from "./resources/events.ts";
 import { WebhooksResource } from "./resources/webhooks.ts";
 import { KnowledgeResource } from "./resources/knowledge.ts";
 import { ModelsResource } from "./resources/models.ts";
+import { CostResource } from "./resources/cost.ts";
 
 export class PhoenixClient {
   readonly tasks = new TasksResource(this);
@@ -41,6 +42,7 @@ export class PhoenixClient {
   readonly webhooks = new WebhooksResource(this);
   readonly knowledge = new KnowledgeResource(this);
   readonly models = new ModelsResource(this);
+  readonly cost = new CostResource(this);
   private readonly baseUrl: string;
   private readonly apiKey?: string;
   private readonly bearerToken?: string;

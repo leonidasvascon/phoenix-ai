@@ -39,6 +39,7 @@
                     ,"events:test":  "node --experimental-strip-types scripts/test-event-bus.ts"
                     ,"knowledge:test":  "node --experimental-strip-types scripts/test-knowledge-graph.ts"
                     ,"models:test":  "node --experimental-strip-types scripts/test-model-orchestrator.ts"
+                    ,"cost:test":  "node --experimental-strip-types scripts/test-cost-intelligence.ts"
                 },
     "workspaces":  [
                        "apps/*",
@@ -46,6 +47,7 @@
                    ],
     "dependencies":  {
                        "@phoenix-ai/config":  "workspace:*",
+                       "@phoenix-ai/cost-intelligence":  "workspace:*",
                        "@phoenix-ai/event-bus":  "workspace:*",
                        "@phoenix-ai/identity":  "workspace:*",
                        "@phoenix-ai/knowledge-graph":  "workspace:*",

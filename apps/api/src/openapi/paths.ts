@@ -77,6 +77,13 @@ export const paths = {
   "/models/health": { get: { ...secured, tags: ["Models"], summary: "Get model provider health", responses: { "200": ok("Model health"), ...errors } } },
   "/models/policies": { get: { ...secured, tags: ["Models"], summary: "List model routing policies", responses: { "200": ok("Model policies"), ...errors } }, patch: { ...secured, tags: ["Models"], summary: "Update model routing policy", requestBody: json({ type: "object" }), responses: { "200": ok("Updated model policy"), ...errors } } },
   "/models/test": { post: { ...secured, tags: ["Models"], summary: "Test model routing and fallback", requestBody: json({ type: "object" }), responses: { "200": ok("Model test result"), ...errors } } },
+  "/cost": { get: { ...secured, tags: ["Cost"], summary: "Get consolidated cost intelligence report", responses: { "200": ok("Cost report"), ...errors } } },
+  "/cost/usage": { get: { ...secured, tags: ["Cost"], summary: "List cost and token usage records", responses: { "200": ok("Usage records"), ...errors } } },
+  "/cost/budgets": { get: { ...secured, tags: ["Cost"], summary: "List budgets", responses: { "200": ok("Budgets"), ...errors } }, patch: { ...secured, tags: ["Cost"], summary: "Update budget", requestBody: json({ type: "object" }), responses: { "200": ok("Updated budget"), ...errors } } },
+  "/cost/quotas": { get: { ...secured, tags: ["Cost"], summary: "List quotas", responses: { "200": ok("Quotas"), ...errors } }, patch: { ...secured, tags: ["Cost"], summary: "Update quota", requestBody: json({ type: "object" }), responses: { "200": ok("Updated quota"), ...errors } } },
+  "/cost/pricing": { get: { ...secured, tags: ["Cost"], summary: "List pricing registry", responses: { "200": ok("Pricing"), ...errors } } },
+  "/cost/cache": { get: { ...secured, tags: ["Cost"], summary: "List semantic cache entries", responses: { "200": ok("Cache"), ...errors } } },
+  "/cost/cache/clear": { post: { ...secured, tags: ["Cost"], summary: "Clear semantic cache", responses: { "200": ok("Cache cleared"), ...errors } } },
   "/tasks": {
     post: {
       ...secured,
