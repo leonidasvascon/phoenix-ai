@@ -2,7 +2,7 @@
 
 [![Quality](https://github.com/leonidasvascon/phoenix-ai/actions/workflows/quality.yml/badge.svg)](https://github.com/leonidasvascon/phoenix-ai/actions/workflows/quality.yml)
 
-Versao: 1.0.0-beta
+Versao: 1.0.0-rc1
 
 Phoenix AI e uma plataforma inteligente para criar, aprender, publicar e otimizar conteudo digital para diferentes marcas, nichos e canais usando Inteligencia Artificial.
 
@@ -37,13 +37,13 @@ Isso permite criar novos perfis sem alterar o codigo central da plataforma.
 
 ## Release atual
 
-`v1.0.0-beta` - Production Readiness.
+`v1.0.0-rc1` - Release Candidate.
 
 Esta versao consolida a Phoenix AI como release candidate: API, Studio e Worker possuem Dockerfiles
 separados, Compose local/producao, validacao centralizada de ambiente, health detalhado, versionamento,
-backup, restore, diagnostico e checks de integridade.
+backup, restore, diagnostico, checks de integridade, hardening HTTP e documentacao operacional.
 
-Release notes: `docs/releases/v1.0.0-beta.md`.
+Release notes: `docs/releases/v1.0.0-rc1.md`.
 
 ## Production Readiness
 
@@ -58,8 +58,11 @@ Comandos operacionais:
 ```bash
 pnpm run integrity:check
 pnpm run diagnostics
-pnpm run backup
-pnpm run restore -- .storage/backups/<arquivo>.json --yes
+pnpm run backup-all
+pnpm run restore-all -- .storage/backups/<arquivo>.json --yes
+pnpm run health-check
+pnpm run preflight
+pnpm run post-upgrade
 ```
 
 Endpoints operacionais:
@@ -68,6 +71,11 @@ Endpoints operacionais:
 - `GET /health/details`
 - `GET /health/live`
 - `GET /health/ready`
+
+Studio:
+
+- `/system`: status consolidado, versao, componentes e comandos de RC.
+- `/settings/system`: configuracao operacional detalhada.
 
 Variaveis importantes:
 

@@ -2,6 +2,22 @@
 
 Todas as mudancas relevantes da Phoenix AI serao registradas neste arquivo.
 
+## [1.0.0-rc1] - 2026-07-18
+
+### Adicionado
+
+- Release Candidate v1 com hardening operacional.
+- Pagina Studio `/system` com versao, health e diagnostico consolidado.
+- Scripts `backup-all`, `restore-all`, `health-check`, `preflight` e `post-upgrade`.
+- Documentacao consolidada de arquitetura, deploy, operacao, seguranca, API, Plugin SDK e workflows.
+- Arquivos de governanca do repositorio: `LICENSE`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` e `SECURITY.md`.
+- Headers HTTP adicionais para CSP e isolamento de origem.
+
+### Alterado
+
+- Versao do produto atualizada para `1.0.0-rc1`.
+- Checklist de producao passa a orientar validacao antes de tags e deploys.
+
 ## [0.2.0] - 2026-07-08
 
 ### Adicionado

@@ -8,7 +8,7 @@ export type PhoenixVersionInfo = {
 
 export function getVersionInfo(): PhoenixVersionInfo {
   return {
-    version: "1.0.0-beta",
+    version: "1.0.0-rc1",
     commit: process.env.PHOENIX_COMMIT_SHA ?? "unknown",
     build_date: process.env.PHOENIX_BUILD_DATE ?? new Date().toISOString(),
     node: process.version,

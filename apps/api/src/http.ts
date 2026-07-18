@@ -8,6 +8,8 @@ export function sendJson(response: ServerResponse, statusCode: number, payload: 
     "Access-Control-Allow-Headers": "Authorization, Content-Type, X-Phoenix-Api-Key, X-Phoenix-Workspace-Id",
     "Access-Control-Allow-Methods": "DELETE,GET,PATCH,POST,PUT,OPTIONS",
     "Content-Type": "application/json",
+    "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'",
+    "Cross-Origin-Opener-Policy": "same-origin",
     "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
     "Referrer-Policy": "no-referrer",
     "X-Content-Type-Options": "nosniff",

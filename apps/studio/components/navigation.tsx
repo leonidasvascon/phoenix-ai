@@ -23,6 +23,7 @@ export function Navigation() {
       <Link href="/developers">Desenvolvedores</Link>
       <Link href="/brands">Marcas</Link>
       <Link href="/settings">Configuracoes</Link>
+      <Link href="/system">System</Link>
       <Link href="/settings/system">Sistema</Link>
       <Link href="/settings/authentication">Autenticacao</Link>
       <Link href="/settings/secrets">Secrets</Link>
