@@ -46,7 +46,7 @@ function PublicationsView() {
       const response = await apiFetch("/publications");
 
       if (!response.ok) {
-        throw new Error("Nao foi possivel carregar publicacoes.");
+        throw new Error("Não foi possível carregar publicações.");
       }
 
       return response.json();
@@ -59,7 +59,7 @@ function PublicationsView() {
       const response = await apiFetch(`/executions/${executionId}`);
 
       if (!response.ok) {
-        throw new Error("Nao foi possivel carregar pacote da execucao.");
+        throw new Error("Não foi possível carregar pacote da execução.");
       }
 
       return response.json();
@@ -91,8 +91,8 @@ function PublicationsView() {
       });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: "Nao foi possivel criar rascunho." }));
-        throw new Error(error.message ?? "Nao foi possivel criar rascunho.");
+        const error = await response.json().catch(() => ({ message: "Não foi possível criar rascunho." }));
+        throw new Error(error.message ?? "Não foi possível criar rascunho.");
       }
 
       return response.json() as Promise<Publication>;
@@ -107,14 +107,14 @@ function PublicationsView() {
       <Navigation />
       <section className="history-heading">
         <p>Phoenix Studio</p>
-        <h1>Publicacoes</h1>
+        <h1>Publicações</h1>
       </section>
 
       {executionId ? (
         <section className="publication-prep">
           <header>
             <div>
-              <p>Preparar publicacao</p>
+              <p>Preparar publicação</p>
               <h2>{executionId}</h2>
             </div>
             {assets?.hasFallback ? <span data-kind="warning">Assets fallback</span> : null}
@@ -122,7 +122,7 @@ function PublicationsView() {
           {executionPackage.isLoading ? <p className="muted">Carregando pacote...</p> : null}
           {executionPackage.error ? <p className="error">{executionPackage.error.message}</p> : null}
           {assets?.hasFallback ? (
-            <p className="publication-warning">Este pacote contem assets mock/fallback. A API bloqueia a publicacao quando `PHOENIX_ALLOW_FALLBACK_ASSETS=false`.</p>
+            <p className="publication-warning">Este pacote contém assets mock/fallback. A API bloqueia a publicação quando `PHOENIX_ALLOW_FALLBACK_ASSETS=false`.</p>
           ) : null}
           <label>
             Plataforma
@@ -138,7 +138,7 @@ function PublicationsView() {
             </select>
           </label>
           <label>
-            Legenda editavel
+            Legenda editável
             <textarea value={caption || suggestedCaption} onChange={(event) => setCaption(event.target.value)} />
           </label>
           <label>
@@ -147,7 +147,7 @@ function PublicationsView() {
           </label>
           <dl>
             <div>
-              <dt>Video</dt>
+              <dt>Vídeo</dt>
               <dd>{assets?.videoStatus ?? "-"}</dd>
             </div>
             <div>
@@ -156,7 +156,7 @@ function PublicationsView() {
             </div>
             <div>
               <dt>Dry-run</dt>
-              <dd>{dryRun ? "sim" : "nao"}</dd>
+              <dd>{dryRun ? "sim" : "não"}</dd>
             </div>
           </dl>
           <label className="checkbox-label">
@@ -171,12 +171,12 @@ function PublicationsView() {
         </section>
       ) : null}
 
-      {publications.isLoading ? <p className="muted">Carregando publicacoes...</p> : null}
+      {publications.isLoading ? <p className="muted">Carregando publicações...</p> : null}
       {publications.error ? <p className="error">{publications.error.message}</p> : null}
       {publications.data?.length === 0 ? (
         <section className="empty-state">
-          <h2>Nenhuma publicacao preparada</h2>
-          <p>Abra o preview de uma execucao e clique em Preparar publicacao.</p>
+          <h2>Nenhuma publicação preparada</h2>
+          <p>Abra o preview de uma execução e clique em Preparar publicação.</p>
         </section>
       ) : null}
       <section className="publication-list">
@@ -192,18 +192,18 @@ function PublicationsView() {
             <dl>
               <div>
                 <dt>Dry-run</dt>
-                <dd>{publication.dry_run ? "sim" : "nao"}</dd>
+                <dd>{publication.dry_run ? "sim" : "não"}</dd>
               </div>
               <div>
                 <dt>Fallback assets</dt>
-                <dd>{publication.fallback_assets ? "sim" : "nao"}</dd>
+                <dd>{publication.fallback_assets ? "sim" : "não"}</dd>
               </div>
               <div>
                 <dt>External ID</dt>
                 <dd>{publication.external_id ?? "-"}</dd>
               </div>
             </dl>
-            <Link href={`/publications/${publication.id}`}>Abrir publicacao</Link>
+            <Link href={`/publications/${publication.id}`}>Abrir publicação</Link>
           </article>
         ))}
       </section>
@@ -232,8 +232,8 @@ function parseAssets(source: string | undefined) {
 
     return {
       hasFallback: imageFallback || videoFallback,
-      imageStatus: imageFallback ? "fallback" : assets.image?.provider_id ?? "ok",
-      videoStatus: videoFallback ? "fallback" : assets.video?.status ?? assets.video?.provider_id ?? "ok"
+      imageStatus: imageFallback ? "mock/placeholder" : assets.image?.provider_id ?? "ok",
+      videoStatus: videoFallback ? "mock/placeholder" : assets.video?.status ?? assets.video?.provider_id ?? "ok"
     };
   } catch {
     return null;

@@ -6,32 +6,32 @@ const mockOutputs: Record<string, (input: AgentInput) => AgentOutput> = {
       theme: task.theme,
       brand: brand.brand.name,
       emotions: brand.emotions ?? [],
-      insight: "Saudade performa melhor quando combina ausencia, desejo e uma frase de impacto logo no inicio."
+      insight: "Saudade performa melhor quando combina ausência, desejo e uma frase de impacto logo no início."
     }
   }),
 
   hook_specialist: () => ({
-    hook: "Ela nao foi embora por falta de amor..."
+    hook: "Ela não foi embora por falta de amor..."
   }),
 
   story_writer: ({ task }) => ({
     story:
-      `Ela foi embora porque amar tambem cansava. ${task.theme} virou silencio, e o silencio virou memoria.`,
-    ending: "No fim, algumas pessoas nao somem. Elas ficam onde a gente nao consegue apagar.",
-    caption: "Nem toda ausencia significa fim. Algumas viram marca.",
+      `Ela foi embora porque amar também cansava. ${task.theme} virou silêncio, e o silêncio virou memória.`,
+    ending: "No fim, algumas pessoas não somem. Elas ficam onde a gente não consegue apagar.",
+    caption: "Nem toda ausência significa fim. Algumas viram marca.",
     hashtags: ["#saudade", "#desejo", "#encantointenso"],
     video_prompt:
       "Cinematic dark realistic scene, slow camera movement, intimate mood, emotional silence, subtle light, no explicit content.",
     thumbnail_prompt:
       "Dark cinematic close-up, elegant typography, emotional expression, subtle contrast.",
-    cta: "Salve se isso ja teve nome na sua vida."
+    cta: "Salve se isso já teve nome na sua vida."
   }),
 
   reviewer: () => ({
     score: 95,
     review: {
       approved: true,
-      reason: "O conteudo esta alinhado ao tom elegante, emocional e cinematografico da marca."
+      reason: "O conteúdo está alinhado ao tom elegante, emocional e cinematográfico da marca."
     }
   })
 };

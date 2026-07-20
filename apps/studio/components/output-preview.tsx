@@ -36,7 +36,7 @@ export function OutputPreview({ outputPackage }: Readonly<{ outputPackage: Outpu
           <h2>{execution.execution.task?.theme ?? execution.execution_id}</h2>
         </div>
         <div className="output-preview-actions">
-          <Link href={`/publications?execution_id=${execution.execution_id}`}>Preparar publicacao</Link>
+          <Link href={`/publications?execution_id=${execution.execution_id}`}>Preparar publicação</Link>
           <Link href={`/feedback?execution_id=${execution.execution_id}`}>Adicionar feedback</Link>
           <span data-status={execution.status}>{execution.status}</span>
         </div>
@@ -63,7 +63,7 @@ export function OutputPreview({ outputPackage }: Readonly<{ outputPackage: Outpu
 
       <section className="video-preview-panel">
         <div>
-          <p>Video</p>
+          <p>Vídeo</p>
           <h3>{formatVideoStatus(video)}</h3>
         </div>
         {video ? (
@@ -74,7 +74,7 @@ export function OutputPreview({ outputPackage }: Readonly<{ outputPackage: Outpu
             </div>
             <div>
               <dt>Fallback</dt>
-              <dd>{video.fallback ? "sim" : "nao"}</dd>
+              <dd>{video.fallback ? "sim" : video.placeholder ? "mock/placeholder" : "não"}</dd>
             </div>
             <div>
               <dt>Status</dt>
@@ -89,7 +89,7 @@ export function OutputPreview({ outputPackage }: Readonly<{ outputPackage: Outpu
         {visibleFiles.map((file) => (
           <article className="output-file" key={file}>
             <h3>{formatTitle(file)}</h3>
-            <pre>{outputPackage.files[file] || "Arquivo vazio ou nao encontrado."}</pre>
+            <pre>{outputPackage.files[file] || "Arquivo vazio ou não encontrado."}</pre>
           </article>
         ))}
       </div>
@@ -99,13 +99,14 @@ export function OutputPreview({ outputPackage }: Readonly<{ outputPackage: Outpu
 
 function parseVideoAsset(source: string | undefined): null | {
   fallback?: boolean;
+  placeholder?: boolean;
   provider_id?: string;
   status?: string;
 } {
   if (!source) return null;
 
   try {
-    const parsed = JSON.parse(source) as { video?: { fallback?: boolean; provider_id?: string; status?: string } };
+    const parsed = JSON.parse(source) as { video?: { fallback?: boolean; placeholder?: boolean; provider_id?: string; status?: string } };
     return parsed.video ?? null;
   } catch {
     return null;
@@ -113,9 +114,10 @@ function parseVideoAsset(source: string | undefined): null | {
 }
 
 function formatVideoStatus(video: ReturnType<typeof parseVideoAsset>): string {
-  if (!video) return "nao encontrado";
+  if (!video) return "não encontrado";
+  if (video.placeholder) return "mock/placeholder";
   if (video.fallback) return "fallback";
-  if (video.status === "completed") return "concluido";
+  if (video.status === "completed") return "concluído";
   if (video.status === "failed") return "falhou";
   if (video.status === "processing" || video.status === "queued") return "processando";
   return video.status ?? "desconhecido";
@@ -132,14 +134,14 @@ function VideoPlayer({ executionId }: { executionId: string }) {
     apiFetch(`/executions/${executionId}/assets/video`)
       .then(async (response) => {
         if (!response.ok) {
-          throw new Error("Nao foi possivel carregar o video.");
+      throw new Error("Não foi possível carregar o vídeo.");
         }
 
         objectUrl = URL.createObjectURL(await response.blob());
         if (mounted) setSource(objectUrl);
       })
       .catch((reason: unknown) => {
-        if (mounted) setError(reason instanceof Error ? reason.message : "Erro ao carregar video.");
+        if (mounted) setError(reason instanceof Error ? reason.message : "Erro ao carregar vídeo.");
       });
 
     return () => {
@@ -148,7 +150,7 @@ function VideoPlayer({ executionId }: { executionId: string }) {
     };
   }, [executionId]);
 
-  const label = useMemo(() => (source ? "Video gerado" : "Carregando video..."), [source]);
+  const label = useMemo(() => (source ? "Vídeo gerado" : "Carregando vídeo..."), [source]);
 
   if (error) return <p className="error">{error}</p>;
   if (!source) return <p className="muted">{label}</p>;

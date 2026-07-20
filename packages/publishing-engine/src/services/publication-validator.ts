@@ -8,22 +8,22 @@ export class PublicationValidator {
     checks.push({
       name: "caption",
       passed: Boolean(request.caption.trim()),
-      message: request.caption.trim() ? "Caption ready." : "Caption is required."
+      message: request.caption.trim() ? "Legenda pronta." : "Legenda obrigatória."
     });
     checks.push({
       name: "metadata",
       passed: Boolean(request.metadata_path) && await exists(request.metadata_path ?? ""),
-      message: "Metadata file must exist."
+      message: "O arquivo metadata.json deve existir."
     });
     checks.push({
       name: "video",
       passed: await exists(request.media_path),
-      message: "Video file must exist."
+      message: "O arquivo de vídeo deve existir."
     });
     checks.push({
       name: "thumbnail",
       passed: await exists(request.thumbnail_path),
-      message: "Thumbnail file must exist."
+      message: "O arquivo de thumbnail deve existir."
     });
 
     const fallbackAssets = await hasFallbackAssets(request.assets_manifest_path);
@@ -33,8 +33,8 @@ export class PublicationValidator {
       name: "fallback_assets",
       passed: !fallbackAssets || allowFallback,
       message: fallbackAssets
-        ? "Package contains fallback assets."
-        : "Package contains no fallback assets."
+        ? "O pacote contém assets mock/fallback."
+        : "O pacote não contém assets mock/fallback."
     });
 
     const errors = checks.filter((check) => !check.passed).map((check) => check.message);

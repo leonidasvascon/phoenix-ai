@@ -912,8 +912,8 @@ Voice Provider v1:
 ```env
 PHOENIX_VOICE_PROVIDER=mock
 OPENAI_API_KEY=
-PHOENIX_VOICE_MODEL=
-PHOENIX_VOICE_NAME=
+PHOENIX_VOICE_MODEL=gpt-4o-mini-tts
+PHOENIX_VOICE_NAME=alloy
 PHOENIX_VOICE_FORMAT=mp3
 PHOENIX_VOICE_SPEED=1
 ```
@@ -925,6 +925,19 @@ Regras:
 - sem `OPENAI_API_KEY`, modelo ou voz, o provider cai para `mock`.
 - `assets/assets.json` registra `requested_provider`, `provider_id`, `fallback`, `model`, `voice`, `format` e `speed`.
 - a narração usa `output.narration` quando existir, depois `story`, e por fim o roteiro completo.
+
+Para gerar imagem e narração reais no Docker:
+
+```powershell
+$env:OPENAI_API_KEY="sua-chave"
+$env:PHOENIX_IMAGE_PROVIDER="openai"
+$env:PHOENIX_VOICE_PROVIDER="openai"
+$env:PHOENIX_VOICE_MODEL="gpt-4o-mini-tts"
+$env:PHOENIX_VOICE_NAME="alloy"
+docker compose up --build
+```
+
+Os arquivos só deixam de ser `mock/placeholder` quando a chave tem billing/cota ativa e o provider real responde com sucesso. Vídeo real também exige `PHOENIX_VIDEO_PROVIDER=openai` e um `PHOENIX_VIDEO_MODEL` suportado.
 
 Video Provider v1:
 

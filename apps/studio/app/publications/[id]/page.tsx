@@ -55,7 +55,7 @@ function PublicationDetailView() {
       const response = await apiFetch(`/publications/${publicationId}`);
 
       if (!response.ok) {
-        throw new Error("Nao foi possivel carregar a publicacao.");
+        throw new Error("Não foi possível carregar a publicação.");
       }
 
       return response.json();
@@ -66,8 +66,8 @@ function PublicationDetailView() {
       const response = await apiFetch(`/publications/${publicationId}/publish`, { method: "POST" });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: "Nao foi possivel publicar." }));
-        throw new Error(error.message ?? "Nao foi possivel publicar.");
+        const error = await response.json().catch(() => ({ message: "Não foi possível publicar." }));
+        throw new Error(error.message ?? "Não foi possível publicar.");
       }
 
       return response.json() as Promise<Publication>;
@@ -82,8 +82,8 @@ function PublicationDetailView() {
       const response = await apiFetch(`/publications/${publicationId}/cancel`, { method: "POST" });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: "Nao foi possivel cancelar." }));
-        throw new Error(error.message ?? "Nao foi possivel cancelar.");
+        const error = await response.json().catch(() => ({ message: "Não foi possível cancelar." }));
+        throw new Error(error.message ?? "Não foi possível cancelar.");
       }
 
       return response.json() as Promise<Publication>;
@@ -98,7 +98,7 @@ function PublicationDetailView() {
       const response = await apiFetch("/providers/instagram/validate", { method: "POST" });
 
       if (!response.ok) {
-        throw new Error("Nao foi possivel validar configuracao do Instagram.");
+        throw new Error("Não foi possível validar configuração do Instagram.");
       }
 
       return response.json() as Promise<{
@@ -117,10 +117,10 @@ function PublicationDetailView() {
       <Navigation />
       <section className="history-heading">
         <p>Phoenix Studio</p>
-        <h1>Publicacao</h1>
+        <h1>Publicação</h1>
       </section>
 
-      {publication.isLoading ? <p className="muted">Carregando publicacao...</p> : null}
+      {publication.isLoading ? <p className="muted">Carregando publicação...</p> : null}
       {publication.error ? <p className="error">{publication.error.message}</p> : null}
       {data ? (
         <section className="publication-detail">
@@ -142,11 +142,11 @@ function PublicationDetailView() {
             </div>
             <div>
               <dt>Dry-run</dt>
-              <dd>{data.dry_run ? "sim" : "nao"}</dd>
+              <dd>{data.dry_run ? "sim" : "não"}</dd>
             </div>
             <div>
               <dt>Fallback assets</dt>
-              <dd>{data.fallback_assets ? "sim" : "nao"}</dd>
+              <dd>{data.fallback_assets ? "sim" : "não"}</dd>
             </div>
             <div>
               <dt>External ID</dt>
@@ -163,11 +163,11 @@ function PublicationDetailView() {
               <h3>Instagram</h3>
               <dl>
                 <div>
-                  <dt>URL publica video</dt>
+                  <dt>URL pública vídeo</dt>
                   <dd>{data.provider_data?.public_video_url ?? "-"}</dd>
                 </div>
                 <div>
-                  <dt>URL publica thumbnail</dt>
+                  <dt>URL pública thumbnail</dt>
                   <dd>{data.provider_data?.public_thumbnail_url ?? "-"}</dd>
                 </div>
                 <div>
@@ -188,12 +188,12 @@ function PublicationDetailView() {
                 </div>
               </dl>
               <button className="secondary-action" type="button" onClick={() => validateInstagram.mutate()} disabled={validateInstagram.isPending}>
-                {validateInstagram.isPending ? "Validando..." : "Validar configuracao"}
+                {validateInstagram.isPending ? "Validando..." : "Validar configuração"}
               </button>
               {validateInstagram.data ? (
                 <p className={validateInstagram.data.ready ? "success" : "error"}>
-                  Instagram {validateInstagram.data.ready ? "pronto" : "incompleto"}: conta {validateInstagram.data.account_id_present ? "ok" : "ausente"}, token {validateInstagram.data.access_token_present ? "ok" : "ausente"}, URL publica {validateInstagram.data.public_media_base_url_present ? "ok" : "ausente"}.
-                  Credenciais {validateInstagram.data.credentials_valid ? "validas" : "nao validadas"}.
+                  Instagram {validateInstagram.data.ready ? "pronto" : "incompleto"}: conta {validateInstagram.data.account_id_present ? "ok" : "ausente"}, token {validateInstagram.data.access_token_present ? "ok" : "ausente"}, URL pública {validateInstagram.data.public_media_base_url_present ? "ok" : "ausente"}.
+                  Credenciais {validateInstagram.data.credentials_valid ? "válidas" : "não validadas"}.
                 </p>
               ) : null}
               {validateInstagram.error ? <p className="error">{validateInstagram.error.message}</p> : null}
@@ -216,7 +216,7 @@ function PublicationDetailView() {
           </section>
 
           <section>
-            <h3>Validacoes</h3>
+            <h3>Validações</h3>
             <ul className="publication-checks">
               {data.validation.checks.map((check) => (
                 <li data-passed={check.passed} key={check.name}>
@@ -234,7 +234,7 @@ function PublicationDetailView() {
               type="button"
               disabled={data.status === "published" || data.status === "cancelled" || publish.isPending}
               onClick={() => {
-                if (!data.dry_run && !window.confirm("Confirmar publicacao real?")) return;
+                if (!data.dry_run && !window.confirm("Confirmar publicação real?")) return;
                 publish.mutate();
               }}
             >
