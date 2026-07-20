@@ -41,8 +41,8 @@ export class AssetService {
       new VideoGenerationService(this.registry.video).generate(input.videoPrompt, join(assetsDirectory, "video.mp4"), {
         executionId: input.executionId,
         requestedProvider: this.registry.video.id,
-        model: process.env.PHOENIX_VIDEO_MODEL ?? null,
-        size: process.env.PHOENIX_VIDEO_SIZE ?? "1080x1920",
+        model: process.env.PHOENIX_VIDEO_MODEL ?? "sora-2",
+        size: process.env.PHOENIX_VIDEO_SIZE ?? "720x1280",
         durationSeconds: Number(process.env.PHOENIX_VIDEO_DURATION_SECONDS ?? 8),
         pollIntervalMs: Number(process.env.PHOENIX_VIDEO_POLL_INTERVAL_MS ?? 5000),
         timeoutMs: Number(process.env.PHOENIX_VIDEO_TIMEOUT_MS ?? 600000)

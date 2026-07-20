@@ -32,7 +32,8 @@ export class AssetRegistry {
     const voiceFormat = process.env.PHOENIX_VOICE_FORMAT ?? "mp3";
     const voiceSpeed = Number(process.env.PHOENIX_VOICE_SPEED ?? 1);
     const requestedVideoProvider = process.env.PHOENIX_VIDEO_PROVIDER ?? "mock";
-    const videoCanUseOpenAI = Boolean(process.env.OPENAI_API_KEY && process.env.PHOENIX_VIDEO_MODEL?.trim());
+    const videoModel = process.env.PHOENIX_VIDEO_MODEL ?? "sora-2";
+    const videoCanUseOpenAI = Boolean(process.env.OPENAI_API_KEY && videoModel.trim());
     const videoProviderId = this.video.id === "openai" && !videoCanUseOpenAI ? "mock" : this.video.id;
     const videoDuration = Number(process.env.PHOENIX_VIDEO_DURATION_SECONDS ?? 8);
 
@@ -45,8 +46,8 @@ export class AssetRegistry {
         requested_provider: requestedVideoProvider,
         effective_provider: videoProviderId,
         fallback: requestedVideoProvider !== videoProviderId,
-        model: videoProviderId === "openai" ? process.env.PHOENIX_VIDEO_MODEL ?? null : null,
-        size: process.env.PHOENIX_VIDEO_SIZE ?? "1080x1920",
+        model: videoProviderId === "openai" ? videoModel : null,
+        size: process.env.PHOENIX_VIDEO_SIZE ?? "720x1280",
         duration_seconds: Number.isFinite(videoDuration) ? videoDuration : 8
       },
       {

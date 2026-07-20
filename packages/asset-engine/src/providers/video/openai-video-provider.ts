@@ -7,9 +7,10 @@ import { resolveSecretValue } from "@phoenix-ai/secrets";
 
 type OpenAIVideoJobResponse = {
   id?: string;
+  model?: string;
   status?: string;
-  url?: string;
-  result_url?: string;
+  size?: string;
+  seconds?: string;
   error?: {
     message?: string;
   };
@@ -37,18 +38,18 @@ export class OpenAIVideoProvider implements VideoJobProvider {
     }
 
     try {
+      const body = new FormData();
+      body.set("model", config.model);
+      body.set("prompt", prompt);
+      body.set("size", config.size);
+      body.set("seconds", String(config.durationSeconds));
+
       const response = await fetch("https://api.openai.com/v1/videos", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${config.apiKey}`,
-          "Content-Type": "application/json"
+          Authorization: `Bearer ${config.apiKey}`
         },
-        body: JSON.stringify({
-          model: config.model,
-          prompt,
-          size: config.size,
-          duration_seconds: config.durationSeconds
-        })
+        body
       });
       const payload = (await response.json()) as OpenAIVideoJobResponse;
 
@@ -66,11 +67,10 @@ export class OpenAIVideoProvider implements VideoJobProvider {
         requested_provider: config.requestedProvider,
         status: normalizeStatus(payload.status),
         prompt,
-        model: config.model,
-        size: config.size,
-        duration_seconds: config.durationSeconds,
-        created_at: new Date().toISOString(),
-        result_url: payload.result_url ?? payload.url
+        model: payload.model ?? config.model,
+        size: payload.size ?? config.size,
+        duration_seconds: Number(payload.seconds ?? config.durationSeconds),
+        created_at: new Date().toISOString()
       };
     } catch (error) {
       const reason = error instanceof Error ? error.message : "Unknown OpenAI video create error.";
@@ -102,11 +102,10 @@ export class OpenAIVideoProvider implements VideoJobProvider {
         requested_provider: this.id,
         status: normalizeStatus(payload.status),
         prompt: "",
-        model: process.env.PHOENIX_VIDEO_MODEL ?? null,
-        size: process.env.PHOENIX_VIDEO_SIZE ?? "1080x1920",
+        model: payload.model ?? process.env.PHOENIX_VIDEO_MODEL ?? null,
+        size: payload.size ?? process.env.PHOENIX_VIDEO_SIZE ?? "720x1280",
         duration_seconds: Number(process.env.PHOENIX_VIDEO_DURATION_SECONDS ?? 8),
-        created_at: new Date().toISOString(),
-        result_url: payload.result_url ?? payload.url
+        created_at: new Date().toISOString()
       };
     } catch (error) {
       return {
@@ -130,12 +129,8 @@ export class OpenAIVideoProvider implements VideoJobProvider {
       return this.fallback.downloadResult(job, destination);
     }
 
-    if (!job.result_url) {
-      throw new Error("Completed OpenAI video job does not include a result URL.");
-    }
-
     const apiKey = await resolveOpenAiApiKey(this.apiKey);
-    const response = await fetch(job.result_url, {
+    const response = await fetch(`https://api.openai.com/v1/videos/${job.id}/content`, {
       headers: {
         Authorization: `Bearer ${apiKey}`
       }
@@ -174,8 +169,8 @@ export class OpenAIVideoProvider implements VideoJobProvider {
   private readConfig(options: VideoGenerationOptions) {
     return {
       requestedProvider: options.requestedProvider ?? this.id,
-      model: options.model ?? process.env.PHOENIX_VIDEO_MODEL ?? null,
-      size: options.size ?? process.env.PHOENIX_VIDEO_SIZE ?? "1080x1920",
+      model: options.model ?? process.env.PHOENIX_VIDEO_MODEL ?? "sora-2",
+      size: options.size ?? process.env.PHOENIX_VIDEO_SIZE ?? "720x1280",
       durationSeconds: options.durationSeconds ?? Number(process.env.PHOENIX_VIDEO_DURATION_SECONDS ?? 8),
       apiKey: this.apiKey
     };
@@ -184,9 +179,14 @@ export class OpenAIVideoProvider implements VideoJobProvider {
   private validateConfig(config: ReturnType<OpenAIVideoProvider["readConfig"]>): string | null {
     if (!config.apiKey) return "OPENAI_API_KEY is required.";
     if (!config.model?.trim()) return "PHOENIX_VIDEO_MODEL is required.";
-    if (!config.size?.trim()) return "PHOENIX_VIDEO_SIZE is required.";
-    if (!Number.isFinite(config.durationSeconds) || config.durationSeconds <= 0) {
-      return "PHOENIX_VIDEO_DURATION_SECONDS must be greater than 0.";
+    if (!["sora-2", "sora-2-pro"].includes(config.model)) {
+      return "PHOENIX_VIDEO_MODEL must be sora-2 or sora-2-pro.";
+    }
+    if (!["720x1280", "1280x720", "1024x1792", "1792x1024"].includes(config.size)) {
+      return "PHOENIX_VIDEO_SIZE must be 720x1280, 1280x720, 1024x1792 or 1792x1024.";
+    }
+    if (![4, 8, 12].includes(config.durationSeconds)) {
+      return "PHOENIX_VIDEO_DURATION_SECONDS must be 4, 8 or 12.";
     }
 
     return null;
