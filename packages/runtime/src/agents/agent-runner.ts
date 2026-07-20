@@ -29,6 +29,7 @@ export class AgentRunner {
   private readonly primaryProvider: LlmProvider;
   private readonly fallbackProvider: LlmProvider;
   private readonly retryPolicy: RetryPolicy;
+  private readonly fallbackPolicy: string;
 
   constructor(
     options: { provider?: string; retryPolicy?: RetryPolicy } = {},
@@ -38,6 +39,7 @@ export class AgentRunner {
     this.primaryProvider = primaryProvider;
     this.fallbackProvider = fallbackProvider;
     this.retryPolicy = options.retryPolicy ?? defaultRetryPolicy;
+    this.fallbackPolicy = process.env.PHOENIX_LLM_FALLBACK_POLICY ?? "retry_then_mock";
   }
 
   async run(step: PipelineStep, task: Task, brand: Brand, context: ExecutionContext): Promise<AgentOutput> {
@@ -131,6 +133,12 @@ export class AgentRunner {
           break;
         }
       }
+    }
+
+    if (this.fallbackPolicy === "disabled") {
+      const message = `Provider ${this.primaryProvider.id} failed and fallback policy is disabled.`;
+      logStep(context, agentId, "error", message);
+      throw new Error(message);
     }
 
     logStep(

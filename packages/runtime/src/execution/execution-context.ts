@@ -24,7 +24,9 @@ export function createExecutionContext(task: Task): ExecutionContext {
       passed: true,
       attempts: 0,
       failed_agents: [],
-      final_score: 0
+      final_score: 0,
+      publishable: false,
+      rejection_reasons: []
     },
     execution: {
       id: executionId,

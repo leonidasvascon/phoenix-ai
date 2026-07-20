@@ -37,6 +37,15 @@ export class PublicationValidator {
         : "O pacote não contém assets mock/fallback."
     });
 
+    const providerIsMock = request.provider === "mock";
+    checks.push({
+      name: "real_publishing_provider",
+      passed: request.dry_run || !providerIsMock,
+      message: providerIsMock
+        ? "Provider mock permitido apenas em dry-run."
+        : "Provider real configurado para publicação."
+    });
+
     const errors = checks.filter((check) => !check.passed).map((check) => check.message);
 
     return {

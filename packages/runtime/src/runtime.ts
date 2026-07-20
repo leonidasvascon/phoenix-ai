@@ -4,6 +4,7 @@ import { loadBrand } from "./loaders/brand-loader.ts";
 import { loadKnowledge } from "./loaders/knowledge-loader.ts";
 import { loadPipeline } from "./loaders/pipeline-loader.ts";
 import { AgentRunner } from "./agents/agent-runner.ts";
+import { evaluateProductionSafety } from "./quality/production-safety-gate.ts";
 import { logStep } from "./utils/logger.ts";
 import { createExecutionContext } from "./execution/execution-context.ts";
 import { FilePersistenceAdapter } from "./persistence/file-persistence-adapter.ts";
@@ -133,7 +134,31 @@ export class Runtime {
         "phoenix.execution.id": context.executionId,
         "phoenix.quality.score": score || context.quality.final_score
       }, async () => {
+        const safetyGate = evaluateProductionSafety({
+          task: context.task,
+          brand: context.brand!,
+          output: context.outputs,
+          memory: context.memory,
+          execution: context.execution
+        });
+        context.quality.dimensions = safetyGate.dimensions;
+        context.quality.publishable = safetyGate.publishable;
+        context.quality.rejection_reasons = safetyGate.rejectionReasons;
         context.quality.final_score = score || context.quality.final_score;
+        context.quality.final_score = context.quality.final_score === 0
+          ? safetyGate.overallScore
+          : Math.min(context.quality.final_score, safetyGate.overallScore);
+        if (!safetyGate.passed) {
+          context.quality.failed_agents.push({
+            agent: "production_safety_gate",
+            reason: safetyGate.rejectionReasons.join(" ")
+          });
+          logStep(context, "production_safety_gate", "error", safetyGate.rejectionReasons.join(" "));
+        } else if (!safetyGate.publishable) {
+          logStep(context, "production_safety_gate", "success", "Content passed semantic quality checks but is not publishable because it used mock/fallback providers.");
+        } else {
+          logStep(context, "production_safety_gate", "success", "Content passed semantic quality and publishability checks.");
+        }
         context.quality.passed = context.quality.failed_agents.length === 0;
         recordGauge("phoenix_quality_score", context.quality.final_score, {
           format: context.task.format,

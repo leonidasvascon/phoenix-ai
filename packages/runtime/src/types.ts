@@ -167,6 +167,18 @@ export type QualitySummary = {
   attempts: number;
   failed_agents: FailedAgent[];
   final_score: number;
+  dimensions?: QualityDimensions;
+  publishable?: boolean;
+  rejection_reasons?: string[];
+};
+
+export type QualityDimensions = {
+  structureScore: number;
+  brandAlignmentScore: number;
+  toneScore: number;
+  originalityScore: number;
+  safetyScore: number;
+  publishReadinessScore: number;
 };
 
 export type TokenUsage = {

@@ -48,12 +48,27 @@ emotions:
   - silencio
   - reencontro
 
+allowed:
+  - mensagens emocionais
+  - relacionamentos
+  - identificacao afetiva
+  - reflexao
+  - intensidade
+  - romantismo
+  - vulnerabilidade
+
 avoid:
   - frases prontas
   - cliches
   - linguagem vulgar
   - pornografia
   - violencia
+  - linguagem corporativa
+  - venda agressiva
+  - promessas comerciais
+  - urgencia artificial
+  - tom de infoproduto
+  - linguagem excessivamente publicitaria
 
 success_metrics:
   retention: 70
@@ -77,5 +92,11 @@ preferred_emotions:
 
 forbidden_patterns:
   - cliches
+  - linguagem corporativa
+  - venda agressiva
+  - promessas comerciais
+  - urgencia artificial
+  - tom de infoproduto
+  - linguagem excessivamente publicitaria
 
 workspace_id: default-workspace
