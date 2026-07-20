@@ -36,6 +36,15 @@ type ExecutionPackage = {
   };
 };
 
+type SocialConnection = {
+  id: string;
+  provider: "instagram";
+  accountUsername?: string;
+  accountId: string;
+  ready: boolean;
+  status: string;
+};
+
 function PublicationsView() {
   const searchParams = useSearchParams();
   const executionId = searchParams.get("execution_id") ?? "";
@@ -69,7 +78,17 @@ function PublicationsView() {
   const [hashtags, setHashtags] = useState("");
   const [provider, setProvider] = useState("mock");
   const [dryRun, setDryRun] = useState(true);
+  const socialConnections = useQuery({
+    queryKey: ["social-connections", "publications"],
+    queryFn: async (): Promise<SocialConnection[]> => {
+      const response = await apiFetch("/social-connections");
+      if (!response.ok) return [];
+      return response.json();
+    }
+  });
   const assets = useMemo(() => parseAssets(executionPackage.data?.files["assets/assets.json"]), [executionPackage.data]);
+  const readyInstagramConnection = socialConnections.data?.find((connection) => connection.provider === "instagram" && connection.ready);
+  const instagramBlocked = provider === "instagram" && !readyInstagramConnection;
   const suggestedCaption = executionPackage.data?.files["legenda.txt"]?.trim() ?? "";
   const suggestedHashtags = executionPackage.data?.files["hashtags.txt"]?.trim() ?? "";
   const createDraft = useMutation({
@@ -141,6 +160,13 @@ function PublicationsView() {
             Legenda editável
             <textarea value={caption || suggestedCaption} onChange={(event) => setCaption(event.target.value)} />
           </label>
+          {provider === "instagram" ? (
+            <p className={readyInstagramConnection ? "success" : "publication-warning"}>
+              {readyInstagramConnection
+                ? `Instagram conectado: @${readyInstagramConnection.accountUsername ?? readyInstagramConnection.accountId}`
+                : "Nenhum canal Instagram válido foi encontrado. Configure em Canais Sociais antes de publicar."}
+            </p>
+          ) : null}
           <label>
             Hashtags
             <input value={hashtags || suggestedHashtags} onChange={(event) => setHashtags(event.target.value)} />
@@ -163,7 +189,7 @@ function PublicationsView() {
             <input type="checkbox" checked={dryRun} onChange={(event) => setDryRun(event.target.checked)} />
             Somente validar
           </label>
-          <button className="primary-action" type="button" disabled={!executionPackage.data || createDraft.isPending} onClick={() => createDraft.mutate()}>
+          <button className="primary-action" type="button" disabled={!executionPackage.data || createDraft.isPending || instagramBlocked} onClick={() => createDraft.mutate()}>
             {createDraft.isPending ? "Criando..." : "Criar rascunho"}
           </button>
           {createDraft.error ? <p className="error">{createDraft.error.message}</p> : null}

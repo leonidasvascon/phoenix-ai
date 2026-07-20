@@ -16,6 +16,7 @@ export function Navigation() {
       <Link href="/feedback">Feedback</Link>
       <Link href="/optimizations">Otimizações</Link>
       <Link href="/providers">Providers</Link>
+      <Link href="/settings/social/instagram">Canais Sociais</Link>
       <Link href="/models">Modelos</Link>
       <Link href="/cost">Custos</Link>
       <Link href="/publications">Publicações</Link>
